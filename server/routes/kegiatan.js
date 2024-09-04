@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Kegiatan = require('../models/kegiatan');  // Adjust the path as needed
+const { authenticateToken, authorizeRole } = require('./authMiddleware'); // Import the middleware
 
-// Create a new Kegiatan
-router.post('/', async (req, res) => {
+// Create a new Kegiatan (Admin Only)
+router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const { nama, tanggal, jenis, deskripsi } = req.body;
         const newKegiatan = await Kegiatan.create({ nama, tanggal, jenis, deskripsi });
@@ -13,7 +14,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all Kegiatans
+// Read all Kegiatans (Authenticated Users)
 router.get('/', async (req, res) => {
     try {
         const kegiatans = await Kegiatan.findAll();
@@ -23,7 +24,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single Kegiatan by ID
+// Read a single Kegiatan by ID (Authenticated Users)
 router.get('/:id', async (req, res) => {
     try {
         const kegiatan = await Kegiatan.findByPk(req.params.id);
@@ -37,8 +38,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a Kegiatan by ID
-router.put('/:id', async (req, res) => {
+// Update a Kegiatan by ID (Admin Only)
+router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const { nama, tanggal, jenis, deskripsi } = req.body;
         const kegiatan = await Kegiatan.findByPk(req.params.id);
@@ -57,8 +58,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a Kegiatan by ID
-router.delete('/:id', async (req, res) => {
+// Delete a Kegiatan by ID (Admin Only)
+router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const kegiatan = await Kegiatan.findByPk(req.params.id);
         if (kegiatan) {

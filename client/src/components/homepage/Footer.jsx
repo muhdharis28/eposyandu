@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../../assets/hero.png'; // Make sure to have a logo image in your assets folder
+import logo from '@/assets/hero.png'; // Make sure to have a logo image in your assets folder
 
 const Footer = () => (
   <footer className="bg-gradient-to-r from-blue-900 via-blue-700 to-blue-600 text-white rounded-lg shadow-lg m-4">

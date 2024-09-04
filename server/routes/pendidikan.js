@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Pendidikan = require('../models/pendidikan');  // Adjust the path as needed
+const Pendidikan = require('../models/pendidikan'); // Adjust the path as needed
+const { authenticateToken, authorizeRole } = require('./authMiddleware'); // Import the middleware
 
-// Create a new Pendidikan
-router.post('/', async (req, res) => {
+// Create a new Pendidikan (Admin Only)
+router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const newPendidikan = await Pendidikan.create({ nama });
@@ -13,8 +14,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all Pendidikans
-router.get('/', async (req, res) => {
+// Read all Pendidikans (Authenticated Users)
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const pendidikans = await Pendidikan.findAll();
         res.status(200).json(pendidikans);
@@ -23,8 +24,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single Pendidikan by ID
-router.get('/:id', async (req, res) => {
+// Read a single Pendidikan by ID (Authenticated Users)
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const pendidikan = await Pendidikan.findByPk(req.params.id);
         if (pendidikan) {
@@ -37,8 +38,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a Pendidikan by ID
-router.put('/:id', async (req, res) => {
+// Update a Pendidikan by ID (Admin Only)
+router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const pendidikan = await Pendidikan.findByPk(req.params.id);
@@ -54,8 +55,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a Pendidikan by ID
-router.delete('/:id', async (req, res) => {
+// Delete a Pendidikan by ID (Admin Only)
+router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const pendidikan = await Pendidikan.findByPk(req.params.id);
         if (pendidikan) {

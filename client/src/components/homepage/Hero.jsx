@@ -1,5 +1,5 @@
 import React from 'react';
-import heroImage from '../../assets/hero.png'; // Import the image
+import heroImage from '@/assets/hero.png'; // Import the image
 import { Link } from 'react-router-dom';
 
 const Hero = () => (
@@ -12,9 +12,6 @@ const Hero = () => (
         <p className="text-gray-700 mt-4 leading-relaxed mb-6">
           Website posyandu Bintan menyediakan informasi kesehatan meliputi data balita, ibu hamil, dokumentasi kegiatan dan jadwal kesehatan.
         </p>
-        <Link to="/login" className="mt-6 bg-gradient-to-r from-blue-500 to-blue-700 text-white px-8 py-4 rounded-full shadow-lg hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-500 transition duration-300 transform hover:scale-105">
-          MASUK
-        </Link>
       </div>
       <div className="md:w-1/2 mt-10 md:mt-0 lg:mt-0 relative flex justify-center items-center">
         <div className="relative">

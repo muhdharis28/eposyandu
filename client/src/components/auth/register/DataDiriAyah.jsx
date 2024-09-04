@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios, { formToJSON } from 'axios';
 
 const DataDiriAyah = ({ formData, updateFormData }) => {
   const location = useLocation();
@@ -15,20 +15,18 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
   useEffect(() => {
     const fetchPekerjaan = async () => {
       try {
-        const response = await axios.get('http://192.168.18.57:4800/api/pekerjaan'); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
         setPekerjaanOptions(response.data); // Assuming the response data is an array
       } catch (error) {
-        console.error('Failed to fetch Pekerjaan data:', error);
         setPekerjaanOptions([]); // Fallback to an empty array
       }
     };
 
     const fetchPendidikan = async () => {
       try {
-        const response = await axios.get('http://192.168.18.57:4800/api/pendidikan'); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
         setPendidikanOptions(response.data); // Assuming the response data is an array
       } catch (error) {
-        console.error('Failed to fetch Pendidikan data:', error);
         setPendidikanOptions([]); // Fallback to an empty array
       }
     };
@@ -128,21 +126,42 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
   };
 
   const handleNext = async () => {
-    // if (!validateForm()) return;
-    console.log(formData)
     const confirmed = window.confirm('Apakah data yang anda masukkan sudah benar?');
     if (!confirmed) return;
-
+    const fieldsToConvert = [
+      'nik_ayah', 'nik_ibu', 'pekerjaan_ibu', 'pendidikan_ibu', 'pekerjaan_ayah', 'pendidikan_ayah',
+      'no_kk', 'no_hp_ibu', 'no_hp_ayah', 'no_kk', 'no_ktp'
+    ];
     try {
-      if (!formData.pekerjaan_ibu || !pekerjaanOptions.some(p => p.id === parseInt(formData.pekerjaan_ibu))) {
+      
+      fieldsToConvert.forEach((field) => {
+        if (typeof formData[field] === 'string') {
+          formData[field] = parseInt(formData[field], 10);
+        }
+      });
+
+      // Validate pekerjaan_ibu
+      if (!formData.pekerjaan_ibu || !pekerjaanOptions.some(p => p.id === formData.pekerjaan_ibu)) {
         throw new Error('Invalid pekerjaan_ibu selected.');
       }
-      if (!formData.pendidikan_ibu || !pendidikanOptions.some(p => p.id === parseInt(formData.pendidikan_ibu))) {
+
+      // Validate pendidikan_ibu
+      if (!formData.pendidikan_ibu || !pendidikanOptions.some(p => p.id === formData.pendidikan_ibu)) {
         throw new Error('Invalid pendidikan_ibu selected.');
       }
 
+      // Validate pekerjaan_ayah
+      if (!formData.pekerjaan_ayah || !pekerjaanOptions.some(p => p.id === formData.pekerjaan_ayah)) {
+        throw new Error('Invalid pekerjaan_ibu selected.');
+      }
+
+      // Validate pendidikan_ayah
+      if (!formData.pendidikan_ayah || !pendidikanOptions.some(p => p.id === formData.pendidikan_ayah)) {
+        throw new Error('Invalid pendidikan_ayah selected.');
+      }
+
       // Store OrangTua data
-      const orangTuaResponse = await axios.post('http://192.168.18.57:4800/api/orangtua', {
+      const orangTuaResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/orangtua`, {
         no_kk: formData.no_kk,
         nik_ibu: formData.nik_ibu,
         nama_ibu: formData.nama_ibu,
@@ -181,9 +200,9 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
         pekerjaan_ayah: formData.pekerjaan_ayah,
         pendidikan_ayah: formData.pendidikan_ayah,
       });
-
+      console.log('ffffffffffffffff', formData)
       // Store Pengguna data and associate with OrangTua
-      await axios.post('http://localhost:192.168.18.57/api/pengguna', {
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/pengguna`, {
         nama: formData.nama,
         email: formData.email,
         kata_sandi: formData.kata_sandi, // Ensure this is hashed in the backend
@@ -191,7 +210,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
         // no_hp: formData.no_hp_ayah, // or use no_hp_ibu if desired
         no_kk: formData.no_kk,
         no_ktp: formData.no_ktp,
-        foto_kk: formData.foto_kk,
+        // foto_kk: formData.foto_kk,
         orangtua: orangTuaResponse.data.id, // Use the ID returned from the OrangTua creation
       });
 
@@ -262,16 +281,16 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                 {errors.tanggal_lahir_ayah && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir_ayah}</p>}
               </div>
               <div className="mb-4">
-                <label className="block text-sm mb-2">No KTP</label>
+                <label className="block text-sm mb-2">No HP</label>
                 <input
                   type="text"
-                  name="no_ktp_ayah"
-                  value={formData.no_ktp_ayah}
+                  name="no_hp_ayah"
+                  value={formData.no_hp_ayah}
                   onChange={handleInputChange}
                   placeholder="No KTP"
-                  className={`w-full p-2 border ${errors.no_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full p-2 border ${errors.no_hp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
                 />
-                {errors.no_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.no_ktp_ayah}</p>}
+                {errors.no_hp_ayah && <p className="text-red-500 text-sm mt-1">{errors.no_hp_ayah}</p>}
               </div>
               <div className="mb-4">
                 <label className="block text-sm mb-2">Email</label>

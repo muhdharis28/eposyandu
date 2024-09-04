@@ -1,9 +1,11 @@
+// dokter.js
 const express = require('express');
 const router = express.Router();
 const Dokter = require('../models/dokter');  // Adjust the path as needed
+const { authenticateToken, authorizeRole } = require('./authMiddleware'); // Import middleware
 
-// Create a new Dokter
-router.post('/', async (req, res) => {
+// Create a new Dokter (authenticated and authorized as admin)
+router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const newDokter = await Dokter.create({ nama });
@@ -13,8 +15,8 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all Dokters
-router.get('/', async (req, res) => {
+// Read all Dokters (authenticated)
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const dokters = await Dokter.findAll();
         res.status(200).json(dokters);
@@ -23,8 +25,8 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single Dokter by ID
-router.get('/:id', async (req, res) => {
+// Read a single Dokter by ID (authenticated)
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const dokter = await Dokter.findByPk(req.params.id);
         if (dokter) {
@@ -37,8 +39,8 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a Dokter by ID
-router.put('/:id', async (req, res) => {
+// Update a Dokter by ID (authenticated and authorized as admin)
+router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const dokter = await Dokter.findByPk(req.params.id);
@@ -54,8 +56,8 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a Dokter by ID
-router.delete('/:id', async (req, res) => {
+// Delete a Dokter by ID (authenticated and authorized as admin)
+router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
     try {
         const dokter = await Dokter.findByPk(req.params.id);
         if (dokter) {

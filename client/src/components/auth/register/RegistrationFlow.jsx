@@ -3,6 +3,7 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import RegistrationDetails from './RegistrationDetails';
 import DataDiriIbu from './DataDiriIbu';
 import DataDiriAyah from './DataDiriAyah';
+import Register from './Register'; 
 
 const RegistrationFlow = () => {
     const [formData, setFormData] = useState({
@@ -58,6 +59,16 @@ const RegistrationFlow = () => {
 
   return (
     <Routes>
+      <Route
+        path="/register"
+        element={
+          <Register
+            formData={formData}
+            setFormData={updateFormData} // Passing down the update function
+            navigate={navigate}
+          />
+        }
+      />
       <Route
         path="/register/details"
         element={

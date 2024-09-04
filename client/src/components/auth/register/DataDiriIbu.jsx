@@ -15,7 +15,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
   useEffect(() => {
     const fetchPekerjaan = async () => {
       try {
-        const response = await axios.get('http://192.168.18.57:4800/api/pekerjaan'); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
         setPekerjaanOptions(response.data);
       } catch (error) {
         console.error('Failed to fetch Pekerjaan data:', error);
@@ -24,7 +24,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
 
     const fetchPendidikan = async () => {
       try {
-        const response = await axios.get('http://192.168.18.57:4800/api/pendidikan'); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
         setPendidikanOptions(response.data);
       } catch (error) {
         console.error('Failed to fetch Pendidikan data:', error);

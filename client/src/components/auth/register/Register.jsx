@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    nama: '',
-    email: '',
-    kata_sandi: '',
-  });
+const Register = ({ formData, setFormData, navigate }) => {
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
   const validate = () => {
     let formErrors = {};
@@ -36,7 +30,6 @@ const Register = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({
-      ...formData,
       [name]: value,
     });
   };
@@ -45,8 +38,8 @@ const Register = () => {
     e.preventDefault();
     if (!validate()) return;
 
-    // Navigate to RegistrationDetails component with formData
-    navigate('/register/details', { state: { formData } });
+    // Navigate to the next step in the registration flow
+    navigate('/register/details');
   };
 
   return (

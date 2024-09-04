@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import image from '../../assets/register-detail.png';
+import image from '@/assets/register-detail.png';
 
 const RegistrationDetails = ({ formData, updateFormData }) => {  // Correctly receive props here
   const location = useLocation();
@@ -38,7 +38,6 @@ const RegistrationDetails = ({ formData, updateFormData }) => {  // Correctly re
   };
 
   const handleNext = () => {
-    console.log(formData)
     if (validateForm()) {
       navigate('/register/data-diri-ibu', { state: { formData } }); // Pass formData to the next component
     }
