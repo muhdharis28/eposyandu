@@ -5,7 +5,7 @@ const router = express.Router();
 const Pengguna = require('../models/pengguna');
 const OrangTua = require('../models/orangtua');
 const Wali = require('../models/wali');
-const { authenticateToken, authorizeRole } = require('./authMiddleware');
+const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -13,28 +13,33 @@ const JWT_SECRET = process.env.JWT_SECRET;
 router.post('/', async (req, res) => {
     try {
         const {
-            nama, email, kata_sandi, role, no_kk, no_ktp, foto_kk, orangtua, wali
+            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali
         } = req.body;
 
-        // Hash the password before saving
+        // Hash the password
         const hashedPassword = await bcrypt.hash(kata_sandi, 10);
+
+        // Create a new user with the uploaded file path
         const newUser = await Pengguna.create({
             nama,
             email,
-            kata_sandi: hashedPassword,  // Store the hashed password
+            kata_sandi: hashedPassword,
             role,
+            no_hp,
             no_kk,
             no_ktp,
-            foto_kk,
+            foto_kk, // Path of the uploaded file
             orangtua,
-            wali
+            wali,
         });
 
         res.status(201).json(newUser);
     } catch (error) {
+        console.log(error);
         res.status(500).json({ error: error.message });
     }
 });
+
 
 // Login endpoint
 router.post('/login', async (req, res) => {
@@ -63,20 +68,41 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Protect routes with JWT authentication
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const users = await Pengguna.findAll({
-            include: [
-                { model: OrangTua, as: 'orang_tua' },
-                { model: Wali, as: 'wali' }
-            ]
-        });
-        res.status(200).json(users);
+      // Fetch all Pengguna records
+      const users = await Pengguna.findAll();
+  
+      // Fetch related OrangTua and Wali data for each user
+      const usersWithRelations = await Promise.all(
+        users.map(async (user) => {
+          // Fetch associated OrangTua data
+          let orangTua = null;
+          if (user.orangtua) {
+            orangTua = await OrangTua.findOne({ where: { id: user.orangtua } });
+          }
+  
+          // Fetch associated Wali data
+          let wali = null;
+          if (user.wali) {
+            wali = await Wali.findOne({ where: { id: user.wali } });
+          }
+  
+          // Return user with related data
+          return {
+            ...user.toJSON(),
+            orang_tua: orangTua,
+            wali: wali,
+          };
+        })
+      );
+  
+      res.status(200).json(usersWithRelations);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+      console.error('Error fetching pengguna data:', error);
+      res.status(500).json({ error: error.message });
     }
-});
+  });
 
 // Read a single Pengguna by ID
 router.get('/:id', authenticateToken, async (req, res) => {
@@ -108,17 +134,17 @@ router.put('/:id', authenticateToken, async (req, res) => {
         if (user) {
             user.nama = nama;
             user.email = email;
-            
-            // If a new password is provided, hash it before saving
+
+            // Update password if provided
             if (kata_sandi) {
                 user.kata_sandi = await bcrypt.hash(kata_sandi, 10);
             }
-            
+
             user.role = role;
             user.no_hp = no_hp;
             user.no_kk = no_kk;
             user.no_ktp = no_ktp;
-            user.foto_kk = foto_kk;
+            user.foto_kk = foto_kk; // Updated file path
             user.orangtua = orangtua;
             user.wali = wali;
             await user.save();

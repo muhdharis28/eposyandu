@@ -1,5 +1,5 @@
 @layer tailwind-base, primereact, tailwind-utilities;
-
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600&display=swap");
 /* IMPORTANT: In "styled" mode you must add the PrimeReact Theme here. Do NOT include in "unstyled" mode */
 @import 'primereact/resources/themes/lara-light-blue/theme.css' layer(primereact);
 
@@ -10,4 +10,8 @@
 @layer tailwind-utilities {
   @tailwind components;
   @tailwind utilities;
+}
+
+body {
+  @apply font-poppins bg-gray-400;
 }

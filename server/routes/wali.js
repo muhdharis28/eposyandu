@@ -6,14 +6,14 @@ const Wali = require('../models/wali');  // Adjust the path as needed
 router.post('/', async (req, res) => {
     try {
         const {
-            no_kk, nik, nama, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_ktp, kelurahan_ktp,
-            kecamatan_ktp, kota_ktp, provinsi_ktp, alamat_domisili, kelurahan_domisili,
-            kecamatan_domisili, kota_domisili, provinsi_domisili, no_hp, email, pekerjaan, pendidikan
+            no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
+            kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, alamat_domisili_wali, kelurahan_domisili_wali,
+            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
         } = req.body;
         const newWali = await Wali.create({
-            no_kk, nik, nama, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_ktp, kelurahan_ktp,
-            kecamatan_ktp, kota_ktp, provinsi_ktp, alamat_domisili, kelurahan_domisili,
-            kecamatan_domisili, kota_domisili, provinsi_domisili, no_hp, email, pekerjaan, pendidikan
+            no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
+            kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, alamat_domisili_wali, kelurahan_domisili_wali,
+            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
         });
         res.status(201).json(newWali);
     } catch (error) {
@@ -49,32 +49,32 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const {
-            no_kk, nik, nama, tempat_lahir, tanggal_lahir, jenis_kelamin, alamat_ktp, kelurahan_ktp,
-            kecamatan_ktp, kota_ktp, provinsi_ktp, alamat_domisili, kelurahan_domisili,
-            kecamatan_domisili, kota_domisili, provinsi_domisili, no_hp, email, pekerjaan, pendidikan
+            no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
+            kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, alamat_domisili_wali, kelurahan_domisili_wali,
+            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
         } = req.body;
         const wali = await Wali.findByPk(req.params.id);
         if (wali) {
             wali.no_kk = no_kk;
-            wali.nik = nik;
-            wali.nama = nama;
-            wali.tempat_lahir = tempat_lahir;
-            wali.tanggal_lahir = tanggal_lahir;
-            wali.jenis_kelamin = jenis_kelamin;
-            wali.alamat_ktp = alamat_ktp;
-            wali.kelurahan_ktp = kelurahan_ktp;
-            wali.kecamatan_ktp = kecamatan_ktp;
-            wali.kota_ktp = kota_ktp;
-            wali.provinsi_ktp = provinsi_ktp;
-            wali.alamat_domisili = alamat_domisili;
-            wali.kelurahan_domisili = kelurahan_domisili;
-            wali.kecamatan_domisili = kecamatan_domisili;
-            wali.kota_domisili = kota_domisili;
-            wali.provinsi_domisili = provinsi_domisili;
-            wali.no_hp = no_hp;
-            wali.email = email;
-            wali.pekerjaan = pekerjaan;
-            wali.pendidikan = pendidikan;
+            wali.nik_wali = nik_wali;
+            wali.nama_wali = nama_wali;
+            wali.tempat_lahir_wali = tempat_lahir_wali;
+            wali.tanggal_lahir_wali = tanggal_lahir_wali;
+            wali.jenis_kelamin_wali = jenis_kelamin_wali;
+            wali.alamat_ktp_wali = alamat_ktp_wali;
+            wali.kelurahan_ktp_wali = kelurahan_ktp_wali;
+            wali.kecamatan_ktp_wali = kecamatan_ktp_wali;
+            wali.kota_ktp_wali = kota_ktp_wali;
+            wali.provinsi_ktp_wali = provinsi_ktp_wali;
+            wali.alamat_domisili_wali = alamat_domisili_wali;
+            wali.kelurahan_domisili_wali = kelurahan_domisili_wali;
+            wali.kecamatan_domisili_wali = kecamatan_domisili_wali;
+            wali.kota_domisili_wali = kota_domisili_wali;
+            wali.provinsi_domisili_wali = provinsi_domisili_wali;
+            wali.no_hp_wali = no_hp_wali;
+            wali.email_wali = email_wali;
+            wali.pekerjaan_wali = pekerjaan_wali;
+            wali.pendidikan_wali = pendidikan_wali;
             await wali.save();
             res.status(200).json(wali);
         } else {

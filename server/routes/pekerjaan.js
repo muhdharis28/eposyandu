@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pekerjaan = require('../models/pekerjaan');  // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./authMiddleware');  // Import the middleware
+const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware');  // Import the middleware
 
 // Create a new Pekerjaan (Protected route, requires authentication)
 router.post('/', authenticateToken, async (req, res) => {
@@ -15,7 +15,7 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 // Read all Pekerjaans (Protected route, requires authentication)
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const pekerjaans = await Pekerjaan.findAll();
         res.status(200).json(pekerjaans);

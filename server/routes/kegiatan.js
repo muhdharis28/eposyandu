@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Kegiatan = require('../models/kegiatan');  // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./authMiddleware'); // Import the middleware
+const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware'); // Import the middleware
 
 // Create a new Kegiatan (Admin Only)
 router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {

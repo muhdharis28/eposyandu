@@ -22,7 +22,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    if (error.response && error.response.status === 401 || error.response.status === 403) {
       // Token is expired or invalid
       localStorage.removeItem('token'); // Clear the token
       window.location.href = '/login'; // Redirect to login page

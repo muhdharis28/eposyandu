@@ -154,7 +154,7 @@ const PekerjaanList = () => {
         <DataTable
           value={jobs}
           paginator
-          rows={10}
+          rows={3}
           globalFilter={globalFilter}
           emptyMessage="No pekerjaan found."
           header={renderHeader()}

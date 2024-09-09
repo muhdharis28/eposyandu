@@ -27,11 +27,11 @@ Pengguna.init({
         unique: true,
     },
     no_kk: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         unique: true,
     },
     no_ktp: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         unique: true,
     },
     foto_kk: {

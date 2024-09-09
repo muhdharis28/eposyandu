@@ -214,7 +214,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
         orangtua: orangTuaResponse.data.id, // Use the ID returned from the OrangTua creation
       });
 
-      navigate('/summary', { state: { formData } });
+      navigate('/register/summary', { state: { formData } });
     } catch (error) {
       console.error('Error saving data:', error);
       alert('Terjadi kesalahan saat menyimpan data. Silakan coba lagi.');

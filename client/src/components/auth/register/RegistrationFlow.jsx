@@ -3,7 +3,9 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import RegistrationDetails from './RegistrationDetails';
 import DataDiriIbu from './DataDiriIbu';
 import DataDiriAyah from './DataDiriAyah';
+import DataDiriWali from './DataDiriWali';
 import Register from './Register'; 
+import Summary from './Summary';
 
 const RegistrationFlow = () => {
     const [formData, setFormData] = useState({
@@ -48,7 +50,26 @@ const RegistrationFlow = () => {
         no_hp_ayah: '',
         email_ayah: '',
         pekerjaan_ayah: '',  // Store the ID or name depending on your frontend logic
-        pendidikan_ayah: ''  // Store the ID or name depending on your frontend logic
+        pendidikan_ayah: '',  // Store the ID or name depending on your frontend logic
+        nik_wali: '',
+        nama_wali: '',
+        tempat_lahir_wali: '',
+        jenis_kelamin_wali: '',
+        tanggal_lahir_wali: '',
+        alamat_ktp_wali: '',
+        kelurahan_ktp_wali: '',
+        kecamatan_ktp_wali: '',
+        kota_ktp_wali: '',
+        provinsi_ktp_wali: '',
+        alamat_domisili_wali: '',
+        kelurahan_domisili_wali: '',
+        kecamatan_domisili_wali: '',
+        kota_domisili_wali: '',
+        provinsi_domisili_wali: '',
+        no_hp_wali: '',
+        email_wali: '',
+        pekerjaan_wali: '',  // Store the ID or name depending on your frontend logic
+        pendidikan_wali: '',  // Store the ID or name depending on your frontend logic
     });
 
   const navigate = useNavigate();
@@ -97,6 +118,22 @@ const RegistrationFlow = () => {
             updateFormData={updateFormData}
             navigate={navigate}
           />
+        }
+      />
+      <Route
+        path="/register/data-diri-wali"
+        element={
+          <DataDiriWali
+            formData={formData}
+            updateFormData={updateFormData}
+            navigate={navigate}
+          />
+        }
+      />
+      <Route
+        path="/register/summary"
+        element={
+          <Summary/>
         }
       />
     </Routes>

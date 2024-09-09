@@ -15,6 +15,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/api', require('./routes/upload'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/pengguna', require('./routes/pengguna'));
@@ -28,6 +29,7 @@ app.use('/api/pemeriksaan-lansia', require('./routes/pemeriksaan_lansia'));
 app.use('/api/pendidikan', require('./routes/pendidikan'));
 app.use('/api/perkembangan-balita', require('./routes/perkembangan_balita'));
 app.use('/api/wali', require('./routes/wali'));
+app.use('/api/stats', require('./routes/stats'));
 
 const server = app.listen(port, () => console.log(`running server on port ${port}`));
 

@@ -23,11 +23,12 @@ const SideBar = ({ isCollapsed }) => {
 
   const navItems = [
     { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },
+    { icon: FaChartBar, label: 'Data', path: '/data' },
     { icon: FaUserMd, label: 'Dokter', path: '/dokter' },
     { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },
     { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },
     { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },
-    { icon: FaUsers, label: 'Pengguna', path: '/pengguna' },
+    { icon: FaUsers, label: 'Pasien', path: '/patient' },
     { icon: FaFileAlt, label: 'Laporan', path: '/report' },
     { icon: FaCog, label: 'Pengaturan', path: '/settings' },
   ];

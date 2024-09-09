@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const Dokter = require('../models/dokter');  // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./authMiddleware'); // Import middleware
+const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware'); // Import middleware
 
 // Create a new Dokter (authenticated and authorized as admin)
 router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {

@@ -7,12 +7,12 @@ class OrangTua extends Model {}
 
 OrangTua.init({
     no_kk: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         unique: true,
         allowNull: false,
     },
     nik_ibu: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },
@@ -89,7 +89,7 @@ OrangTua.init({
         }
     },
     nik_ayah: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },

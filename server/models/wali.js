@@ -7,85 +7,85 @@ class Wali extends Model {}
 
 Wali.init({
     no_kk: {
-        type: DataTypes.STRING,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },
-    nik: {
-        type: DataTypes.STRING,
+    nik_wali: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },
-    nama: {
+    nama_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    tempat_lahir: {
+    tempat_lahir_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    tanggal_lahir: {
+    tanggal_lahir_wali: {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
-    jenis_kelamin: {
+    jenis_kelamin_wali: {
         type: DataTypes.ENUM('l','p'),
         allowNull: false,
     },
-    alamat_ktp: {
+    alamat_ktp_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kelurahan_ktp: {
+    kelurahan_ktp_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kecamatan_ktp: {
+    kecamatan_ktp_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kota_ktp: {
+    kota_ktp_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    provinsi_ktp: {
+    provinsi_ktp_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    alamat_domisili: {
+    alamat_domisili_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kelurahan_domisili: {
+    kelurahan_domisili_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kecamatan_domisili: {
+    kecamatan_domisili_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kota_domisili: {
+    kota_domisili_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    provinsi_domisili: {
+    provinsi_domisili_wali: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    no_hp: {
+    no_hp_wali: {
         type: DataTypes.INTEGER
     },
-    email: {
+    email_wali: {
         type: DataTypes.STRING
     },
-    pekerjaan: {
+    pekerjaan_wali: {
         type: DataTypes.INTEGER,
         references: {
             model: Pekerjaan,
             key: 'id'
         }
     },
-    pendidikan: {
+    pendidikan_wali: {
         type: DataTypes.INTEGER,
         references: {
             model: Pendidikan,

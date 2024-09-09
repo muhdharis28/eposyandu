@@ -37,9 +37,15 @@ const RegistrationDetails = ({ formData, updateFormData }) => {  // Correctly re
     return Object.keys(formErrors).length === 0;
   };
 
-  const handleNext = () => {
+  const handleNextBayi = () => {
     if (validateForm()) {
       navigate('/register/data-diri-ibu', { state: { formData } }); // Pass formData to the next component
+    }
+  };
+
+  const handleNextLansia = () => {
+    if (validateForm()) {
+      navigate('/register/data-diri-wali', { state: { formData } }); // Pass formData to the next component
     }
   };
 
@@ -87,14 +93,14 @@ const RegistrationDetails = ({ formData, updateFormData }) => {  // Correctly re
               <button
                 type="button"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded"
-                onClick={handleNext}
+                onClick={handleNextBayi}
               >
                 Untuk Bayi
               </button>
               <button
                 type="button"
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded"
-                // Add your logic for "Untuk Lansia"
+                onClick={handleNextLansia}
               >
                 Untuk Lansia
               </button>

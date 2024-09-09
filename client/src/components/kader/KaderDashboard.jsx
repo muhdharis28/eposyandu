@@ -1,82 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import TopBar from './TopBar'; // Assuming TopBar is used similarly in UserDashboard
+import SideBar from './SideBar'; // Assuming the SideBar component is reusable
+import { useSidebarKader } from './SideBarContext'; // Sidebar context for toggling
+import { useNavigate } from 'react-router-dom';
 
+// Main User Dashboard Component
 const KaderDashboard = () => {
+  const { isSidebarCollapsed, toggleSidebar } = useSidebarKader(); // Access sidebar state and toggler
+  const navigate = useNavigate();
+
+  // Retrieve user's data from localStorage
+  const userName = localStorage.getItem('userName');
+  const userEmail = localStorage.getItem('userEmail');
+
+  const handleLogout = () => {
+    // Clear stored data and redirect to login
+    localStorage.clear();
+    navigate('/login');
+  };
+
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-blue-800 text-white flex flex-col">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold">Posyandu</h2>
-        </div>
-        <nav className="flex flex-col flex-grow p-4">
-          <Link to="/kader-dashboard" className="py-2 px-4 hover:bg-blue-700 rounded">
-            Dashboard
-          </Link>
-          <Link to="/kader-data" className="py-2 px-4 hover:bg-blue-700 rounded">
-            Data
-          </Link>
-          <Link to="/kader-kegiatan" className="py-2 px-4 hover:bg-blue-700 rounded">
-            Kegiatan
-          </Link>
-          <Link to="/kader-pasien" className="py-2 px-4 hover:bg-blue-700 rounded">
-            Pasien
-          </Link>
-          <Link to="/kader-laporan" className="py-2 px-4 hover:bg-blue-700 rounded">
-            Laporan
-          </Link>
-          <Link to="/kader-pengaturan" className="py-2 px-4 hover:bg-blue-700 rounded">
-            Pengaturan
-          </Link>
-        </nav>
-        <div className="p-4 mt-auto">
-          <Link to="/logout" className="text-red-400 hover:text-red-600">
-            Logout
-          </Link>
-        </div>
-      </div>
+    <div className="h-screen flex flex-col">
+      {/* TopBar with toggle functionality */}
+      <TopBar onToggle={toggleSidebar} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
-        <header className="bg-white shadow p-4 flex justify-between items-center">
-          <h1 className="text-2xl font-semibold">Dashboard</h1>
-          <input
-            type="text"
-            placeholder="Search..."
-            className="border rounded px-4 py-2 w-1/4"
-          />
-        </header>
+      {/* Main layout with sidebar and content area */}
+      <div className="flex flex-grow transition-all duration-500 ease-in-out">
+        <SideBar isCollapsed={isSidebarCollapsed} />
 
-        {/* Dashboard Stats */}
-        <main className="flex-1 p-6 bg-gray-200">
+        <div className="flex-1 bg-gray-100 p-6">
+          {/* Welcome Section */}
+          <div className="bg-white p-4 rounded shadow mb-6">
+            <h2 className="text-2xl font-bold">Welcome, {userName}!</h2>
+            <p className="text-gray-700">Email: {userEmail}</p>
+          </div>
+
+          {/* Dashboard Stats */}
           <div className="grid grid-cols-3 gap-6">
             <div className="bg-white p-4 rounded shadow">
-              <h2 className="text-xl font-bold">Kegiatan</h2>
-              <p className="text-4xl">132</p>
+              <h2 className="text-xl font-bold">Upcoming Appointments</h2>
+              <p className="text-4xl">2</p>
             </div>
             <div className="bg-white p-4 rounded shadow">
-              <h2 className="text-xl font-bold">Pasien</h2>
-              <p className="text-4xl">45</p>
+              <h2 className="text-xl font-bold">Reports</h2>
+              <p className="text-4xl">7</p>
             </div>
             <div className="bg-white p-4 rounded shadow">
-              <h2 className="text-xl font-bold">Dokter</h2>
-              <p className="text-4xl">5</p>
+              <h2 className="text-xl font-bold">Notifications</h2>
+              <p className="text-4xl">3</p>
             </div>
             <div className="bg-white p-4 rounded shadow">
-              <h2 className="text-xl font-bold">Laporan</h2>
-              <p className="text-4xl">28</p>
-            </div>
-            <div className="bg-white p-4 rounded shadow">
-              <h2 className="text-xl font-bold">Bayi</h2>
-              <p className="text-4xl">12</p>
-            </div>
-            <div className="bg-white p-4 rounded shadow">
-              <h2 className="text-xl font-bold">Lansia</h2>
-              <p className="text-4xl">4</p>
+              <h2 className="text-xl font-bold">Health Stats</h2>
+              <p className="text-4xl">Normal</p>
             </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );

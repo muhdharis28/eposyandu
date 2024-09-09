@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pendidikan = require('../models/pendidikan'); // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./authMiddleware'); // Import the middleware
+const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware'); // Import the middleware
 
 // Create a new Pendidikan (Admin Only)
 router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
@@ -15,7 +15,7 @@ router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => 
 });
 
 // Read all Pendidikans (Authenticated Users)
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', async (req, res) => {
     try {
         const pendidikans = await Pendidikan.findAll();
         res.status(200).json(pendidikans);
