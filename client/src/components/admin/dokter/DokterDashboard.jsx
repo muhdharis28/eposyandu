@@ -4,10 +4,10 @@ import SideBar from '../SideBar';
 import DokterList from './DokterList';
 import DokterForm from './DokterForm';
 import Modal from '../Modal';
-import { useSidebarAdmin } from '../SideBarContext'; // Import the sidebar context
+import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 
 const DokterDashboard = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSidebarAdmin(); // Use context for sidebar state
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
   const [editingDoctorId, setEditingDoctorId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 

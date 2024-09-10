@@ -17,7 +17,8 @@ import PenggunaForm from './components/admin/pengguna/PenggunaForm';
 import PenggunaDashboard from './components/admin/pengguna/PenggunaDashboard';
 import KaderDashboard from './components/kader/KaderDashboard'; // Example path
 import UserDashboard from './components/user/UserDashboard'; // Example path
-import { SidebarProvider } from './components/admin/SideBarContext';
+import { SidebarProvider } from './components/SideBarContext';
+import DataBayi from './components/kader/Bayi/DataBayi';
 
 const App = () => (
   <SidebarProvider>
@@ -49,6 +50,7 @@ const App = () => (
 
         <Route element={<ProtectedRoute role="kader" />}>
           <Route path="/kader-dashboard" element={<KaderDashboard />} />
+          <Route path="/data-anak" element={<DataBayi />} />
         </Route>
 
         <Route element={<ProtectedRoute role="user" />}>

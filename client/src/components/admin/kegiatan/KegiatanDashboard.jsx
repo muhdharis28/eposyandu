@@ -4,10 +4,10 @@ import SideBar from '../SideBar';
 import KegiatanList from './KegiatanList';
 import KegiatanForm from './KegiatanForm';
 import Modal from '../Modal';
-import { useSidebarAdmin } from '../SideBarContext'; // Import the sidebar context
+import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 
 const KegiatanDashboard = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSidebarAdmin(); // Use context for sidebar state
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
   const [editingKegiatanId, setEditingKegiatanId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 

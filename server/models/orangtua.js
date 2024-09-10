@@ -69,7 +69,7 @@ OrangTua.init({
         allowNull: false,
     },
     no_hp_ibu: {
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT
     },
     email_ibu: {
         type: DataTypes.STRING
@@ -146,7 +146,7 @@ OrangTua.init({
         allowNull: false,
     },
     no_hp_ayah: {
-        type: DataTypes.INTEGER
+        type: DataTypes.BIGINT
     },
     email_ayah: {
         type: DataTypes.STRING

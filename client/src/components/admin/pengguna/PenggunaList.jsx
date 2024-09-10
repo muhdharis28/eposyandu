@@ -3,7 +3,6 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
-import { Dropdown } from 'primereact/dropdown'; // Import Dropdown from PrimeReact
 import { getPengguna, deletePengguna } from './PenggunaService';
 import PenggunaForm from './PenggunaForm'; // Form component for add/edit
 import PenggunaDetail from './PenggunaDetail'; // Detail component for viewing data
@@ -16,25 +15,15 @@ const PenggunaList = () => {
   const [showDetail, setShowDetail] = useState(false);
   const [selectedPengguna, setSelectedPengguna] = useState(null);
   const [globalFilter, setGlobalFilter] = useState('');
-  const [roleFilter, setRoleFilter] = useState(null); // State for role filter
   const [error, setError] = useState('');
-
-  // Role options for the dropdown
-  const roleOptions = [
-    { label: 'All', value: null },
-    { label: 'Admin', value: 'admin' },
-    { label: 'User', value: 'user' },
-    { label: 'Kader', value: 'kader' },
-  ];
 
   useEffect(() => {
     loadPengguna();
   }, []);
 
-  // Reload pengguna when role filter changes
   useEffect(() => {
     applyFilters();
-  }, [penggunaList, roleFilter, globalFilter]);
+  }, [penggunaList, globalFilter]);
 
   const loadPengguna = async () => {
     try {
@@ -46,14 +35,9 @@ const PenggunaList = () => {
     }
   };
 
-  // Filter pengguna based on role and global search
+  // Filter pengguna based on global search
   const applyFilters = () => {
     let filteredList = penggunaList;
-
-    // Apply role filter if selected
-    if (roleFilter) {
-      filteredList = filteredList.filter((pengguna) => pengguna.role === roleFilter);
-    }
 
     // Apply global filter
     if (globalFilter) {
@@ -122,13 +106,6 @@ const PenggunaList = () => {
           onChange={onGlobalFilterChange}
           placeholder="Keyword Search"
           className="p-inputtext-sm w-full md:w-30rem"
-        />
-        <Dropdown
-          value={roleFilter}
-          options={roleOptions}
-          onChange={(e) => setRoleFilter(e.value)}
-          placeholder="Select Role"
-          className="w-30rem md:w-15rem ml-2"
         />
       </div>
     );
@@ -211,7 +188,6 @@ const PenggunaList = () => {
           />
           <Column field="nama" header="Nama Pengguna" />
           <Column field="email" header="Email" />
-          <Column field="role" header="Role" />
           <Column
             body={actionBodyTemplate}
             style={{ textAlign: 'center' }}

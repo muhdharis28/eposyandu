@@ -4,10 +4,10 @@ import SideBar from '../SideBar';
 import PendidikanList from './PendidikanList';
 import PendidikanForm from './PendidikanForm';
 import Modal from '../Modal';
-import { useSidebarAdmin } from '../SideBarContext'; // Import the sidebar context
+import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 
 const PendidikanDashboard = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSidebarAdmin(); // Use context for sidebar state
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
   const [editingPendidikanId, setEditingPendidikanId] = useState(null);
   const [showForm, setShowForm] = useState(false);
 

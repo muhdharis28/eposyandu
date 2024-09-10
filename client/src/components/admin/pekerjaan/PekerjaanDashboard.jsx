@@ -4,10 +4,10 @@ import SideBar from '../SideBar';
 import PekerjaanList from './PekerjaanList';
 import PekerjaanForm from './PekerjaanForm';
 import Modal from '../Modal';
-import { useSidebarAdmin } from '../SideBarContext'; // Import the sidebar context
+import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 
 const PekerjaanDashboard = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSidebarAdmin(); // Use context
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context
 
   const [editingPekerjaanId, setEditingPekerjaanId] = useState(null);
   const [showForm, setShowForm] = useState(false);

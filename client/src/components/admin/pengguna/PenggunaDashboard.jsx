@@ -4,10 +4,10 @@ import SideBar from '../SideBar'; // Ensure the correct path to the SideBar comp
 import PenggunaList from './PenggunaList'; // Placeholder component for displaying users
 import PenggunaForm from './PenggunaForm'; // Placeholder form component for adding/editing users
 import Modal from '../Modal'; // Modal component for showing the form
-import { useSidebarAdmin } from '../SideBarContext'; // Use sidebar context for collapsible sidebar
+import { useSidebar } from '../../SideBarContext'; // Use sidebar context for collapsible sidebar
 
 const PenggunaDashboard = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSidebarAdmin(); // Sidebar state and toggler
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state and toggler
   const [editingPenggunaId, setEditingPenggunaId] = useState(null); // State for tracking which user is being edited
   const [showForm, setShowForm] = useState(false); // State for showing/hiding the form
 

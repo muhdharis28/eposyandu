@@ -1,65 +1,32 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  FaHome,
-  FaChartBar,
-  FaUserMd,
-  FaBriefcase,
-  FaGraduationCap,
-  FaCalendarAlt,
-  FaUsers,
-  FaFileAlt,
-  FaCog,
-  FaPowerOff,
-} from 'react-icons/fa';
+import { FaChild, FaUserFriends, FaClipboardList, FaSyringe, FaStar } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
-
-  const navItems = [
-    { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },
-    { icon: FaChartBar, label: 'Data', path: '/data' },
-    { icon: FaUserMd, label: 'Dokter', path: '/dokter' },
-    { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },
-    { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },
-    { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },
-    { icon: FaUsers, label: 'Pasien', path: '/patient' },
-    { icon: FaFileAlt, label: 'Laporan', path: '/report' },
-    { icon: FaCog, label: 'Pengaturan', path: '/settings' },
+  // Menu items for the sidebar
+  const menuItems = [
+    { label: 'Data Anak', icon: <FaChild />, path: '/data-anak' },
+    { label: 'Data Ortu', icon: <FaUserFriends />, path: '/data-ortu' },
+    { label: 'Data PA', icon: <FaClipboardList />, path: '/data-pa' },
+    { label: 'Data Imunisasi', icon: <FaSyringe />, path: '/data-imunisasi' },
+    { label: 'Data Kunjungan Bulanan', icon: <FaStar />, path: '/data-kunjungan' },
+    { label: 'Laporan Rekapitulasi', icon: <FaClipboardList />, path: '/laporan-rekapitulasi' },
   ];
 
   return (
-    <div
-      className={`h-full ${
-        isCollapsed ? 'w-20' : 'w-64'
-      } bg-gradient-to-br from-blue-800 to-purple-900 p-5 flex flex-col justify-between transition-all duration-500 ease-in-out text-white shadow-2xl relative rounded-tr-lg rounded-br-lg overflow-hidden`}
-    >
-      <div className="flex flex-col items-start">
-        <ul className="space-y-4">
-          {navItems.map((item) => (
-            <li key={item.label}>
-              <Link
-                to={item.path}
-                className={`flex items-center hover:bg-blue-700 hover:bg-opacity-20 p-2 rounded-lg transition-colors duration-200 ease-in-out ${
-                  isCollapsed ? 'justify-center' : ''
-                }`}
-              >
-                <item.icon className="mr-2" size={18} />
-                {!isCollapsed && (
-                  <span className="transition-opacity duration-300 ease-in-out">
-                    {item.label}
-                  </span>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className={`bg-white shadow-md ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`}>
+      <nav className="h-full flex flex-col py-4">
+        {/* Render each menu item */}
+        {menuItems.map((item) => (
+          <a
+            key={item.label}
+            href={item.path}
+            className={`flex items-center px-4 py-2 text-gray-700 hover:bg-gray-200 transition-colors duration-300`}
+          >
+            <div className="text-lg">{item.icon}</div>
+            {!isCollapsed && <span className="ml-4">{item.label}</span>}
+          </a>
+        ))}
+      </nav>
     </div>
   );
 };
