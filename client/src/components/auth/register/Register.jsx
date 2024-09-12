@@ -55,14 +55,14 @@ const Register = ({ formData, setFormData, navigate }) => {
           </Link>
         </div>
         <div className="w-1/2 bg-pink-100 text-blue-800 flex flex-col justify-center items-center p-8">
-          <h1 className="text-3xl font-bold mb-4">Buat Akun</h1>
+          <h1 className="text-3xl font-bold mb-4">Buat Akun Anggota Posyandu</h1>
           <p className="text-center mb-6">Isi semua data yang di perlukan</p>
           <form className="w-full" onSubmit={handleSubmit}>
             <div className="mb-4">
               <input
                 type="text"
                 name="nama"
-                placeholder="Nama Pengguna"
+                placeholder="Nama Anggota"
                 value={formData.nama}
                 onChange={handleInputChange}
                 className="w-full p-3 border border-gray-300 rounded"
@@ -73,7 +73,7 @@ const Register = ({ formData, setFormData, navigate }) => {
               <input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="No HP"
                 value={formData.email}
                 onChange={handleInputChange}
                 className="w-full p-3 mb-4 border border-gray-300 rounded"

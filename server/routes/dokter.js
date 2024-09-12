@@ -11,7 +11,7 @@ router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => 
         const newDokter = await Dokter.create({ nama });
         res.status(201).json(newDokter);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 

@@ -18,3 +18,7 @@ export const updateDoctor = (id, doctor) => {
 export const deleteDoctor = (id) => {
   return api.delete(`${API_URL}/${id}`); // Authenticated request via interceptor
 };
+
+export const getDoctorById = (id) => {
+  return api.get(`${API_URL}/${id}`); // Authenticated request via interceptor
+};

@@ -1,64 +1,64 @@
-// KegiatanList.jsx
+// LansiaList.jsx
 import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext'; // For search input
-import { useNavigate } from 'react-router-dom'; // For navigation
-import { getKegiatan, deleteKegiatan } from './KegiatanService'; // Your API services
+import { InputText } from 'primereact/inputtext'; // For global filter
+import { useNavigate } from 'react-router-dom'; // For routing
+import { getLansia, deleteLansia } from './LansiaService'; // API service
 
-const KegiatanList = () => {
-  const [kegiatanList, setKegiatanList] = useState([]);
+const LansiaList = () => {
+  const [lansiaList, setLansiaList] = useState([]);
   const [globalFilter, setGlobalFilter] = useState(''); // For global filtering
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate(); // For routing
 
   useEffect(() => {
-    loadKegiatan();
+    loadLansia();
   }, []);
 
-  const loadKegiatan = async () => {
+  const loadLansia = async () => {
     try {
-      const result = await getKegiatan();
+      const result = await getLansia();
       const data = result.data;
-      setKegiatanList(Array.isArray(data) ? data : []);
+      setLansiaList(Array.isArray(data) ? data : []);
     } catch (error) {
-      setError('Failed to load kegiatan data or unauthorized.');
-      console.error('Failed to load kegiatan data:', error);
+      setError('Failed to load lansia data.');
+      console.error('Failed to load lansia data:', error);
     }
   };
 
   const refreshList = () => {
-    loadKegiatan();
+    loadLansia();
   };
 
-  const handleAddKegiatan = () => {
-    navigate('/kegiatan/baru'); // Navigate to add kegiatan form
+  const handleAddLansia = () => {
+    navigate('/lansia/baru'); // Navigate to the create Lansia form
   };
 
-  const handleEditKegiatan = (id) => {
-    navigate(`/kegiatan/edit/${id}`); // Navigate to edit kegiatan form
+  const handleEditLansia = (id) => {
+    navigate(`/lansia/edit/${id}`); // Navigate to the edit Lansia form
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus kegiatan ini?');
+    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus lansia ini?');
     if (confirmDelete) {
       try {
-        await deleteKegiatan(id);
+        await deleteLansia(id);
         refreshList();
       } catch (error) {
-        setError('Failed to delete kegiatan or unauthorized.');
-        console.error('Failed to delete kegiatan:', error);
+        setError('Failed to delete lansia.');
+        console.error('Failed to delete lansia:', error);
       }
     }
   };
 
   const handleViewDetail = (id) => {
-    navigate(`/kegiatan/${id}`); // Navigate to view detail
+    navigate(`/lansia/${id}`); // Navigate to the detail page
   };
 
   const onGlobalFilterChange = (e) => {
-    setGlobalFilter(e.target.value); // Update filter state
+    setGlobalFilter(e.target.value); // Update global filter state
   };
 
   const renderHeader = () => {
@@ -87,7 +87,7 @@ const KegiatanList = () => {
           label="Edit"
           icon="pi pi-pencil"
           className="p-button-text bg-blue-500 text-white hover:bg-blue-600 px-3 py-2"
-          onClick={() => handleEditKegiatan(rowData.id)}
+          onClick={() => handleEditLansia(rowData.id)}
         />
         <Button
           label="Delete"
@@ -102,23 +102,23 @@ const KegiatanList = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Data Master Kegiatan</h2>
+        <h2 className="text-xl font-bold">Data Master Lansia</h2>
         <Button
-          label="Tambah Kegiatan"
+          label="Tambah Lansia"
           icon="pi pi-plus"
           className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
-          onClick={handleAddKegiatan}
+          onClick={handleAddLansia}
         />
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <DataTable
-        value={kegiatanList}
+        value={lansiaList}
         paginator
         rows={10}
         globalFilter={globalFilter}
-        emptyMessage="No kegiatan found."
+        emptyMessage="No lansia found."
         header={renderHeader()}
       >
         <Column
@@ -126,14 +126,11 @@ const KegiatanList = () => {
           header="No"
           body={(rowData, options) => options.rowIndex + 1}
         />
-        <Column field="nama" header="Nama Kegiatan" />
-        <Column field="tanggal" header="Tanggal" />
-        <Column field="jenis" header="Jenis" />
-        <Column field="deskripsi" header="Deskripsi" />
+        <Column field="nama" header="Nama Lansia" />
         <Column body={actionBodyTemplate} style={{ textAlign: 'center' }} />
       </DataTable>
     </div>
   );
 };
 
-export default KegiatanList;
+export default LansiaList;

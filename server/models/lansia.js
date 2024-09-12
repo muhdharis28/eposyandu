@@ -7,8 +7,8 @@ const Pendidikan = require('./pendidikan');
 class Lansia extends Model {}
 
 Lansia.init({
-    no_kk: {
-        type: DataTypes.STRING,
+    no_kk_lansia: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },
@@ -19,84 +19,84 @@ Lansia.init({
             key: 'id'
         }
     },
-    nik: {
-        type: DataTypes.STRING,
+    nik_lansia: {
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },
-    nama: {
+    nama_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    tempat_lahir: {
+    tempat_lahir_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    tanggal_lahir: {
+    tanggal_lahir_lansia: {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
-    alamat_ktp: {
+    alamat_ktp_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kelurahan_ktp: {
+    kelurahan_ktp_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kecamatan_ktp: {
+    kecamatan_ktp_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kota_ktp: {
+    kota_ktp_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    provinsi_ktp: {
+    provinsi_ktp_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    alamat_domisili: {
+    alamat_domisili_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kelurahan_domisili: {
+    kelurahan_domisili_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kecamatan_domisili: {
+    kecamatan_domisili_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    kota_domisili: {
+    kota_domisili_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    provinsi_domisili: {
+    provinsi_domisili_lansia: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    no_hp: {
-        type: DataTypes.INTEGER
+    no_hp_lansia: {
+        type: DataTypes.BIGINT
     },
-    email: {
+    email_lansia: {
         type: DataTypes.STRING
     },
-    pekerjaan: {
+    pekerjaan_lansia: {
         type: DataTypes.INTEGER,
-        references: {
+        references_lansia: {
             model: Pekerjaan,
             key: 'id'
         }
     },
-    pendidikan: {
+    pendidikan_lansia: {
         type: DataTypes.INTEGER,
-        references: {
+        references_lansia: {
             model: Pendidikan,
             key: 'id'
         }
     },
-    status_pernikahan: {
+    status_pernikahan_lansia: {
         type: DataTypes.ENUM('Menikah','Duda','Janda','Tidak Menikah'),
         allowNull: false,
     },

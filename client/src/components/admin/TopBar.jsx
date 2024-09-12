@@ -2,33 +2,26 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaBars, FaUserCircle, FaCog, FaPowerOff } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-const TopBar = ({ onToggle }) => {
+import posyandu from '@/assets/posyandu.png';
+
+const TopBar = ({ onToggle, isCollapsed }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const profileRef = useRef(null);
   const [userName, setUserName] = useState('');
 
-  // Toggle the profile menu visibility
-  const toggleProfileMenu = () => {
-    setIsProfileMenuOpen(!isProfileMenuOpen);
-  };
-
-  // Close the profile menu when clicking outside
   useEffect(() => {
     const name = localStorage.getItem('userName');
-    if (name) {
-      setUserName(name);
-    }
+    if (name) setUserName(name);
 
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
         setIsProfileMenuOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -36,37 +29,46 @@ const TopBar = ({ onToggle }) => {
     navigate('/login');
   };
 
-  const handleSettings = () => {
-    navigate('/settings');
-  };
+  const handleSettings = () => navigate('/settings');
 
   return (
-    <div className="bg-blue-500 h-16 flex items-center justify-between px-6 shadow-md">
+    <div className="bg-white h-16 flex items-center justify-between pl-4 pr-6 shadow-lg fixed top-0 left-0 w-full z-10">
       <div className="flex items-center">
-        <div className="bg-yellow-400 w-12 h-12 rounded-full flex items-center justify-center mr-4">
-          {/* Logo placeholder */}
+        {/* Conditionally render logo based on isCollapsed */}
+        <div className={`text-gray-600 ${isCollapsed ? 'w-20' : 'w-64'} text-2xl font-bold`}>
+          {isCollapsed ? <img
+            src={posyandu}
+            alt="Posyandu Logo"
+            className={`transition-all duration-500 ease-in-out ${isCollapsed ? 'w-12' : 'w-32'}`}
+          /> : <div className="flex items-center">
+          <img
+            src={posyandu}
+            alt="Posyandu Logo"
+            className="w-12 mr-2" // Keep a smaller logo even when expanded
+          />
+          ePosyandu
+        </div>}
         </div>
-        <button onClick={onToggle} className="text-white hover:text-gray-300">
+        <button onClick={onToggle} className="text-gray-600 hover:text-gray-300">
           <FaBars size={24} />
         </button>
       </div>
       <div className="relative" ref={profileRef}>
-        
-        <button onClick={toggleProfileMenu} className="text-white text-3xl">
+        <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="text-gray-600 text-3xl">
           <FaUserCircle />
         </button>
         {isProfileMenuOpen && (
-          <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg py-2 z-10">
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
             <button
               onClick={handleSettings}
-              className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+              className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
             >
               <FaCog className="mr-2" />
               Settings
             </button>
             <button
               onClick={handleLogout}
-              className="flex items-center w-full px-4 py-2 text-red-500 hover:bg-gray-100 transition-colors"
+              className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"
             >
               <FaPowerOff className="mr-2" />
               Logout

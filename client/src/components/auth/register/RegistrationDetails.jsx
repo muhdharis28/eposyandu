@@ -56,13 +56,13 @@ const RegistrationDetails = ({ formData, updateFormData }) => {  // Correctly re
           <h1 className="text-3xl font-bold mb-8">Buat Akun</h1>
           <form className="w-full">
             <div className="mb-4">
-              <label className="block text-sm mb-2">No KTP</label>
+              <label className="block text-sm mb-2">NIK</label>
               <input
                 type="text"
                 name="no_ktp"
                 value={formData.no_ktp || ''}
                 onChange={handleInputChange}
-                placeholder="Inputkan No KTP"
+                placeholder="Inputkan NIK"
                 className={`w-full p-3 border ${errors.no_ktp ? 'border-red-500' : 'border-gray-300'} rounded`}
               />
               {errors.no_ktp && <p className="text-red-500 text-sm mt-1">{errors.no_ktp}</p>}

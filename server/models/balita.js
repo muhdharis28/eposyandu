@@ -5,7 +5,7 @@ const OrangTua = require('./orangtua');
 class Balita extends Model {}
 
 Balita.init({
-    nama: {
+    nama_balita: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
@@ -17,36 +17,36 @@ Balita.init({
             key: 'id'
         }
     },
-    nik: {
+    nik_balita: {
         type: DataTypes.INTEGER,
         allowNull: false,
         unique: true,
     },
-    jenis_kelamin: {
+    jenis_kelamin_balita: {
         type: DataTypes.ENUM('l','p'),
         allowNull: false,
     },
-    tempat_lahir: {
+    tempat_lahir_balita: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    tanggal_lahir: {
+    tanggal_lahir_balita: {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
-    berat_badan_awal: {
+    berat_badan_awal_balita: {
         type: DataTypes.INTEGER
     },
-    tinggi_badan_awal: {
+    tinggi_badan_awal_balita: {
         type: DataTypes.INTEGER
     },
-    riwayat_penyakit: {
+    riwayat_penyakit_balita: {
         type: DataTypes.STRING
     },
-    riwayat_kelahiran: {
+    riwayat_kelahiran_balita: {
         type: DataTypes.STRING
     },
-    keterangan: {
+    keterangan_balita: {
         type: DataTypes.STRING
     }
 }, {

@@ -10,13 +10,12 @@ const AdminDashboard = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      <TopBar onToggle={toggleSidebar} />
+      <TopBar onToggle={toggleSidebar} isCollapsed={isSidebarCollapsed} />
 
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
         <SideBar isCollapsed={isSidebarCollapsed} />
 
         <div className={`flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out`}>
-          <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
           <Dashboard />
         </div>
       </div>

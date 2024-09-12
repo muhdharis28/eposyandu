@@ -1,5 +1,10 @@
 import React from 'react';
-import { FaBars } from 'react-icons/fa';
+import { FaBars, FaPowerOff } from 'react-icons/fa';
+
+const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/login');
+  };
 
 const TopBar = ({ onToggle }) => {
   return (
@@ -8,11 +13,13 @@ const TopBar = ({ onToggle }) => {
         <FaBars />
       </button>
       <h2 className="text-xl font-semibold text-gray-800">Kader</h2>
-      <img
-        src="https://via.placeholder.com/40" // Replace with actual profile image URL
-        alt="Profile"
-        className="w-10 h-10 rounded-full"
-      />
+      <button
+              onClick={handleLogout}
+              className="flex items-center w-full px-4 py-2 text-red-500 hover:bg-gray-100 transition-colors"
+            >
+              <FaPowerOff className="mr-2" />
+              Logout
+            </button>
     </div>
   );
 };

@@ -1,25 +1,11 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom'; // Import useLocation for active route
 import {
-  FaHome,
-  FaChartBar,
-  FaUserMd,
-  FaBriefcase,
-  FaGraduationCap,
-  FaCalendarAlt,
-  FaUsers,
-  FaFileAlt,
-  FaCog,
-  FaPowerOff,
+  FaHome, FaUserMd, FaBriefcase, FaGraduationCap, FaCalendarAlt, FaFileAlt, FaCog, FaUserFriends, FaBaby
 } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
+  const location = useLocation();  // Get the current route
 
   const navItems = [
     { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },
@@ -27,38 +13,33 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },
     { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },
     { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },
-    { icon: FaUsers, label: 'Pengguna', path: '/pengguna' },
     { icon: FaFileAlt, label: 'Laporan', path: '/report' },
     { icon: FaCog, label: 'Pengaturan', path: '/settings' },
+    { icon: FaUserFriends, label: 'Lansia', path: '/lansia' },
+    { icon: FaBaby, label: 'Balita', path: '/balita' },
+    { icon: FaBaby, label: 'OrangTua', path: '/orangtua' },
+    { icon: FaBaby, label: 'Pengguna', path: '/pengguna' },
   ];
 
   return (
     <div
-      className={`h-full ${
-        isCollapsed ? 'w-20' : 'w-64'
-      } bg-gradient-to-br from-blue-800 to-purple-900 p-5 flex flex-col justify-between transition-all duration-500 ease-in-out text-white shadow-2xl relative rounded-tr-lg rounded-br-lg overflow-hidden`}
+      className={`h-full pt-24 ${isCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-blue-800 to-purple-900 p-5 flex flex-col justify-between transition-all duration-500 text-white shadow-xl rounded-tr-lg`}
     >
-      <div className="flex flex-col items-start">
-        <ul className="space-y-4">
-          {navItems.map((item) => (
-            <li key={item.label}>
-              <Link
-                to={item.path}
-                className={`flex items-center hover:bg-blue-700 hover:bg-opacity-20 p-2 rounded-lg transition-colors duration-200 ease-in-out ${
-                  isCollapsed ? 'justify-center' : ''
-                }`}
-              >
-                <item.icon className="mr-2" size={18} />
-                {!isCollapsed && (
-                  <span className="transition-opacity duration-300 ease-in-out">
-                    {item.label}
-                  </span>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="space-y-6">
+        {navItems.map((item) => (
+          <li key={item.label}>
+            <Link
+              to={item.path}
+              className={`flex items-center p-2 rounded-lg transition-colors ${
+                location.pathname === item.path ? 'bg-blue-700' : 'hover:bg-blue-700'
+              }`}
+            >
+              <item.icon className="mr-2" size={18} />
+              {!isCollapsed && <span>{item.label}</span>}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

@@ -1,10 +1,12 @@
-import React from 'react';
-import TopBar from '../TopBar'; // Adjust the path if necessary
+// LansiaDashboard.jsx
+import React, { useState } from 'react';
+import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import DokterList from './DokterList';
-import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
+import LansiaList from './LansiaList'; // Import the list of Lansia
+import Modal from '../Modal'; // For modal handling
+import { useSidebar } from '../../SideBarContext'; // Use sidebar context for collapsible sidebar
 
-const DokterDashboard = () => {
+const LansiaDashboard = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
 
   return (
@@ -17,15 +19,13 @@ const DokterDashboard = () => {
         <SideBar isCollapsed={isSidebarCollapsed} />
 
         {/* Main content area */}
-        <div
-          className={`flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out`}
-        >
-          <h1 className="text-3xl font-bold mb-4">Dokter Dashboard</h1>
-          <DokterList/>
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out">
+          <h1 className="text-3xl font-bold mb-4">Lansia Dashboard</h1>
+          <LansiaList />
         </div>
       </div>
     </div>
   );
 };
 
-export default DokterDashboard;
+export default LansiaDashboard;
