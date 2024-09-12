@@ -5,7 +5,7 @@ const router = express.Router();
 const Pengguna = require('../models/pengguna');
 const OrangTua = require('../models/orangtua');
 const Wali = require('../models/wali');
-const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -158,7 +158,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 });
 
 // Delete a Pengguna by ID (only for admins)
-router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const user = await Pengguna.findByPk(req.params.id);
         if (user) {

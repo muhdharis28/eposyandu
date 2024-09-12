@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const Pendidikan = require('../models/pendidikan'); // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware'); // Import the middleware
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import the middleware
 
 // Create a new Pendidikan (Admin Only)
-router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const newPendidikan = await Pendidikan.create({ nama });
@@ -39,7 +39,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 });
 
 // Update a Pendidikan by ID (Admin Only)
-router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const pendidikan = await Pendidikan.findByPk(req.params.id);
@@ -56,7 +56,7 @@ router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) =
 });
 
 // Delete a Pendidikan by ID (Admin Only)
-router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const pendidikan = await Pendidikan.findByPk(req.params.id);
         if (pendidikan) {

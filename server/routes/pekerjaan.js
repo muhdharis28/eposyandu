@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Pekerjaan = require('../models/pekerjaan');  // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware');  // Import the middleware
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');  // Import the middleware
 
 // Create a new Pekerjaan (Protected route, requires authentication)
 router.post('/', authenticateToken, async (req, res) => {
@@ -56,7 +56,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
 });
 
 // Delete a Pekerjaan by ID (Protected route, requires authentication and 'admin' role authorization)
-router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const pekerjaan = await Pekerjaan.findByPk(req.params.id);
         if (pekerjaan) {

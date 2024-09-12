@@ -3,6 +3,7 @@ const express = require('express');
 const router = express.Router();
 const Dokumentasi = require('../models/dokumentasi');
 const multer = require('multer');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import middleware
 
 // Configure Multer for file uploads
 const upload = multer({ dest: 'uploads/' });
@@ -35,9 +36,8 @@ router.get('/:id', async (req, res) => {
 });
 
 // POST new dokumentasi
-router.post('/', upload.single('foto'), async (req, res) => {
-  const { judul, deskripsi, tanggal } = req.body;
-  const foto = req.file ? `/uploads/${req.file.filename}` : null;
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+  const { judul, deskripsi, tanggal, foto } = req.body;
 
   try {
     const newDokumentasi = await Dokumentasi.create({
@@ -54,10 +54,9 @@ router.post('/', upload.single('foto'), async (req, res) => {
 });
 
 // PUT update dokumentasi by ID
-router.put('/:id', upload.single('foto'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
-  const { judul, deskripsi, tanggal } = req.body;
-  const foto = req.file ? req.file.path : null;
+  const { judul, deskripsi, tanggal, foto } = req.body;
 
   try {
     const dokumentasi = await Dokumentasi.findByPk(id);
@@ -79,7 +78,7 @@ router.put('/:id', upload.single('foto'), async (req, res) => {
 });
 
 // DELETE dokumentasi by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
   try {
     const dokumentasi = await Dokumentasi.findByPk(id);

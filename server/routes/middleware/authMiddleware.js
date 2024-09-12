@@ -23,9 +23,9 @@ const authenticateToken = (req, res, next) => {
 };
 
 // Middleware for role-based authorization
-const authorizeRole = (role) => {
+const authorizeRoles = (...roles) => {
     return (req, res, next) => {
-        if (!req.user || req.user.role !== role) {
+        if (!req.user || !roles.includes(req.user.role)) {
             return res.status(403).json({ error: 'Access denied' });
         }
         next();
@@ -35,5 +35,5 @@ const authorizeRole = (role) => {
 // Export both middleware functions
 module.exports = {
     authenticateToken,
-    authorizeRole
+    authorizeRoles
 };

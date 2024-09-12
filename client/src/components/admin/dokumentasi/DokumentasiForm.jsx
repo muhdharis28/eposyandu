@@ -47,20 +47,18 @@ const DokumentasiForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append('judul', dokumentasi.judul);
-    formData.append('deskripsi', dokumentasi.deskripsi);
-    formData.append('tanggal', dokumentasi.tanggal);
-
-    if (file) {
-      formData.append('foto', file); // Append the file only if it's provided
-    }
+    const dokumentasiToSubmit = { ...dokumentasi };
 
     try {
+      const uploadedFilePath = await uploadFile();
+      if (uploadedFilePath) {
+        dokumentasiToSubmit.foto = uploadedFilePath;
+      }
+      console.log(dokumentasiToSubmit)
       if (id) {
-        await updateDokumentasi(id, formData); // Assuming updateDokumentasi is configured to handle FormData
+        await updateDokumentasi(id, dokumentasiToSubmit);
       } else {
-        await createDokumentasi(formData); // Assuming createDokumentasi is configured to handle FormData
+        await createDokumentasi(dokumentasiToSubmit);
       }
       navigate('/dokumentasi');
     } catch (error) {
@@ -79,6 +77,23 @@ const DokumentasiForm = () => {
     setFile(selectedFile);
     const previewUrl = URL.createObjectURL(selectedFile);
     setPreviewUrl(previewUrl);
+  };
+
+  const uploadFile = async () => {
+    if (!file) return null;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formData);
+      const filePath = `/uploads/${response.data.fileName}`;
+      setUploadedFileUrl(`${import.meta.env.VITE_API_URL}${filePath}`);
+      return filePath;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setError('Failed to upload file');
+      return null;
+    }
   };
 
   const handlePreviewClick = () => {

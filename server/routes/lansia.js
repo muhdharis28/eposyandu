@@ -3,10 +3,10 @@
 const express = require('express');
 const router = express.Router();
 const Lansia = require('../models/lansia'); // Adjust the path as needed
-const { authenticateToken, authorizeRole } = require('./middleware/authMiddleware'); // Import the middleware
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import the middleware
 
 // Create a new Lansia (Admin Only)
-router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const {
             no_kk_lansia,
@@ -87,7 +87,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 });
 
 // Update a Lansia by ID (Admin Only)
-router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const {
             no_kk_lansia,
@@ -148,7 +148,7 @@ router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) =
 });
 
 // Delete a Lansia by ID (Admin Only)
-router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const lansia = await Lansia.findByPk(req.params.id);
         if (lansia) {
