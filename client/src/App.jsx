@@ -24,12 +24,16 @@ import PenggunaForm from './components/admin/pengguna/PenggunaForm';
 import PenggunaDashboard from './components/admin/pengguna/PenggunaDashboard';
 import LansiaForm from './components/admin/lansia/LansiaForm';
 import LansiaDashboard from './components/admin/lansia/LansiaDashboard';
+import LansiaDetail from './components/admin/lansia/LansiaDetail';
 import BayiForm from './components/admin/bayi/BayiForm';
 import BayiDashboard from './components/admin/bayi/BayiDashboard';
 import BayiDetail from './components/admin/bayi/BayiDetail';
 import OrangTuaForm from './components/admin/orangtua/OrangTuaForm';
 import OrangTuaDashboard from './components/admin/orangtua/OrangTuaDashboard';
 import OrangTuaDetail from './components/admin/orangtua/OrangTuaDetail';
+import WaliForm from './components/admin/wali/WaliForm';
+import WaliDashboard from './components/admin/wali/WaliDashboard';
+import WaliDetail from './components/admin/wali/WaliDetail';
 import KaderDashboard from './components/kader/KaderDashboard'; // Example path
 import UserDashboard from './components/user/UserDashboard'; // Example path
 import { SidebarProvider } from './components/SideBarContext';
@@ -71,7 +75,8 @@ const App = () => (
           <Route path="/pengguna/:id/edit" element={<PenggunaForm />} />
           <Route path="/lansia" element={<LansiaDashboard />} />
           <Route path="/lansia/baru" element={<LansiaForm />} />
-          <Route path="/lansia/:id/edit" element={<LansiaForm />} />
+          <Route path="/lansia/edit/:id" element={<LansiaForm />} />
+          <Route path="/lansia/:id" element={<LansiaDetail />} />
           <Route path="/balita" element={<BayiDashboard />} />
           <Route path="/balita/baru" element={<BayiForm />} />
           <Route path="/balita/edit/:id" element={<BayiForm />} />
@@ -80,6 +85,10 @@ const App = () => (
           <Route path="/orangtua/baru" element={<OrangTuaForm />} />
           <Route path="/orangtua/edit/:id" element={<OrangTuaForm />} />
           <Route path="/orangtua/:id" element={<OrangTuaDetail />} />
+          <Route path="/wali" element={<WaliDashboard />} />
+          <Route path="/wali/baru" element={<WaliForm />} />
+          <Route path="/wali/edit/:id" element={<WaliForm />} />
+          <Route path="/wali/:id" element={<WaliDetail />} />
         </Route>
 
         <Route element={<ProtectedRoute role="kader" />}>

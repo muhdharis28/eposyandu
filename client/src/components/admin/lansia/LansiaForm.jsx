@@ -4,6 +4,8 @@ import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 import { createLansia, updateLansia, getLansiaById } from './LansiaService'; // API service
 import { useNavigate, useParams } from 'react-router-dom';
+import { getWali } from '../wali/WaliService';
+import axios from 'axios';
 
 const LansiaForm = () => {
   const { id } = useParams(); // For detecting if editing
@@ -32,12 +34,48 @@ const LansiaForm = () => {
 
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state management
   const navigate = useNavigate(); // For navigation
+  const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
+  const [pendidikanOptions, setPendidikanOptions] = useState([]);
+  const [waliList, setWaliList] = useState([]);
 
   useEffect(() => {
     if (id) {
       loadLansia(); // Load data if editing
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchPekerjaan = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
+        setPekerjaanOptions(response.data);
+      } catch (error) {
+        console.error('Failed to fetch Pekerjaan data:', error);
+      }
+    };
+
+    const fetchWali = async () => {
+      try {
+        const result = await getWali(); // Fetch Wali data from the backend
+        setWaliList(result.data); // Store the Wali list in state
+      } catch (error) {
+        console.error('Failed to fetch wali data:', error);
+      }
+    };
+
+    const fetchPendidikan = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
+        setPendidikanOptions(response.data);
+      } catch (error) {
+        console.error('Failed to fetch Pendidikan data:', error);
+      }
+    };
+
+    fetchPekerjaan();
+    fetchPendidikan();
+    fetchWali();
+  }, []);
 
   const loadLansia = async () => {
     try {
@@ -106,6 +144,24 @@ const LansiaForm = () => {
               </div>
 
               <div className="mb-4">
+                <label className="block text-gray-700">Wali</label>
+                <select
+                  name="wali"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.wali}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Pilih Wali</option>
+                  {waliList.map((wali) => (
+                    <option key={wali.id} value={wali.id}>
+                      {wali.nama_wali}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-4">
                 <label className="block text-gray-700">NIK</label>
                 <input
                   type="text"
@@ -165,6 +221,10 @@ const LansiaForm = () => {
                   required
                 />
               </div>
+
+              <button type="submit" className="text-white bg-blue-500 px-4 py-2 rounded">
+                {id ? 'Update' : 'Tambah'}
+              </button>
             </div>
 
             {/* Right Column */}
@@ -209,33 +269,39 @@ const LansiaForm = () => {
                 />
               </div>
 
-              {/* Pekerjaan */}
               <div className="mb-4">
                 <label className="block text-gray-700">Pekerjaan</label>
-                <input
-                  type="text"
+                <select
                   name="pekerjaan_lansia"
-                  className="w-full p-2 border border-gray-300 rounded"
                   value={formData.pekerjaan_lansia}
                   onChange={handleChange}
-                />
+                  className="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="">Pilih Pekerjaan Lansia</option>
+                  {pekerjaanOptions.map((pekerjaan) => (
+                    <option key={pekerjaan.id} value={pekerjaan.id}>
+                      {pekerjaan.nama}
+                    </option>
+                  ))}
+                </select>
               </div>
-
-              {/* Pendidikan */}
+              
               <div className="mb-4">
                 <label className="block text-gray-700">Pendidikan</label>
-                <input
-                  type="text"
+                <select
                   name="pendidikan_lansia"
-                  className="w-full p-2 border border-gray-300 rounded"
                   value={formData.pendidikan_lansia}
                   onChange={handleChange}
-                />
+                  className="w-full p-2 border border-gray-300 rounded"
+                >
+                  <option value="">Pilih Pendidikan Lansia</option>
+                  {pendidikanOptions.map((pendidikan) => (
+                    <option key={pendidikan.id} value={pendidikan.id}>
+                      {pendidikan.nama}
+                    </option>
+                  ))}
+                </select>
               </div>
-
-              <button type="submit" className="text-white bg-blue-500 px-4 py-2 rounded">
-                {id ? 'Update' : 'Tambah'}
-              </button>
             </div>
           </form>
         </div>
