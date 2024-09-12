@@ -10,7 +10,7 @@ router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => 
         const newPendidikan = await Pendidikan.create({ nama });
         res.status(201).json(newPendidikan);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
         const pendidikans = await Pendidikan.findAll();
         res.status(200).json(pendidikans);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -34,7 +34,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
             res.status(404).json({ error: 'Pendidikan not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -51,7 +51,7 @@ router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) =
             res.status(404).json({ error: 'Pendidikan not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -66,7 +66,7 @@ router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res
             res.status(404).json({ error: 'Pendidikan not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 

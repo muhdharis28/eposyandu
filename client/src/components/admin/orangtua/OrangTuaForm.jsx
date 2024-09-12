@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import TopBar from '../TopBar'; // Adjust the path if necessary
+import SideBar from '../SideBar';
+import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
+import { createOrangTua, updateOrangTua, getOrangTuaById } from './OrangTuaService'; // Service functions
+import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL params
 import axios from 'axios';
 
 const OrangtuaForm = () => {
+  const { id } = useParams(); // Get ID if it's an edit form
   const [formData, setFormData] = useState({
     no_kk: '',
     nik_ibu: '',
@@ -41,25 +47,48 @@ const OrangtuaForm = () => {
     pekerjaan_ayah: '',
     pendidikan_ayah: '',
   });
-
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state management
+  const navigate = useNavigate(); // For navigation
   const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
   const [pendidikanOptions, setPendidikanOptions] = useState([]);
 
   useEffect(() => {
-    // Fetch pekerjaan and pendidikan options
-    const fetchOptions = async () => {
+    if (id) {
+      loadOrangtua(); // Load orangtua data if editing
+    }
+  }, [id]);
+
+  useEffect(() => {
+    const fetchPekerjaan = async () => {
       try {
-        const pekerjaanResponse = await axios.get('/api/pekerjaan');
-        setPekerjaanOptions(pekerjaanResponse.data);
-        const pendidikanResponse = await axios.get('/api/pendidikan');
-        setPendidikanOptions(pendidikanResponse.data);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
+        setPekerjaanOptions(response.data);
       } catch (error) {
-        console.error('Error fetching options:', error);
+        console.error('Failed to fetch Pekerjaan data:', error);
       }
     };
 
-    fetchOptions();
+    const fetchPendidikan = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
+        setPendidikanOptions(response.data);
+      } catch (error) {
+        console.error('Failed to fetch Pendidikan data:', error);
+      }
+    };
+
+    fetchPekerjaan();
+    fetchPendidikan();
   }, []);
+
+  const loadOrangtua = async () => {
+    try {
+      const result = await getOrangTuaById(id); // Fetch orangtua data by ID
+      setFormData(result.data); // Set form data based on response
+    } catch (error) {
+      console.error('Failed to load orangtua data:', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -72,18 +101,36 @@ const OrangtuaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/orangtua', formData);
-      alert('Data submitted successfully!');
+      if (id) {
+        await updateOrangTua(id, formData); // Update orangtua data
+      } else {
+        await createOrangTua(formData); // Create new orangtua data
+      }
+      navigate('/orangtua'); // Navigate back to orangtua list
     } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('Failed to submit data.');
+      console.error('Error submitting orangtua data:', error);
     }
   };
 
+  const handleBackToList = () => {
+    navigate('/orangtua'); // Navigate back to orangtua list
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-4 text-center">Form Data Orang Tua</h1>
-      <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="h-screen flex flex-col">
+      <TopBar onToggle={toggleSidebar} className="w-full" />
+      <div className="flex flex-grow transition-all duration-500 ease-in-out">
+        <SideBar isCollapsed={isSidebarCollapsed} />
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
+          <nav className="text-sm text-gray-600 mb-4">
+            <button onClick={handleBackToList} className="text-blue-500 hover:underline">
+              &lt; Kembali ke Daftar Orangtua
+            </button>
+          </nav>
+
+          <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Orangtua' : 'Tambah Orangtua'}</h2>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
         {/* Data Ibu Section */}
         <div className="p-4 border border-gray-200 rounded-md">
           <h2 className="text-xl font-semibold mb-3 text-blue-600">Data Ibu</h2>
@@ -448,6 +495,8 @@ const OrangtuaForm = () => {
           Submit
         </button>
       </form>
+        </div>
+      </div>
     </div>
   );
 };

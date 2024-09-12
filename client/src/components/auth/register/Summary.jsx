@@ -26,7 +26,7 @@ const Summary = () => {
         </div>
         {/* Optional Image or Illustration Section */}
         <div className="flex-1 bg-blue-800 p-10 hidden md:flex items-center justify-center">
-          <h1 className="text-white text-4xl font-bold">E-Posyandu Bintan</h1>
+          <h1 className="text-white text-4xl font-bold">E-Posyandu Tanjungpinang</h1>
         </div>
       </div>
     </div>

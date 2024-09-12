@@ -1,10 +1,10 @@
 import React from 'react';
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
-import BayiList from './BayiList';
+import DokumentasiList from './DokumentasiList';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 
-const BayiDashboard = () => {
+const DokumentasiDashboard = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
 
   return (
@@ -20,12 +20,12 @@ const BayiDashboard = () => {
         <div
           className={`flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out`}
         >
-          <h1 className="text-3xl font-bold mb-4">Balita Dashboard</h1>
-          <BayiList/>
+          <h1 className="text-3xl font-bold mb-4">Dokumentasi Dashboard</h1>
+          <DokumentasiList/>
         </div>
       </div>
     </div>
   );
 };
 
-export default BayiDashboard;
+export default DokumentasiDashboard;

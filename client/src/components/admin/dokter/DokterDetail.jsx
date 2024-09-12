@@ -39,7 +39,7 @@ const DokterDetail = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col mt-16">
+    <div className="h-screen flex flex-col">
       {/* TopBar with toggle button for sidebar */}
       <TopBar onToggle={toggleSidebar} className="w-full" />
 
@@ -48,7 +48,7 @@ const DokterDetail = () => {
         <SideBar isCollapsed={isSidebarCollapsed} />
 
         {/* Main content area */}
-        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out">
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
           <nav className="text-sm text-gray-600 mb-4">
             <button
               onClick={handleBackToList}

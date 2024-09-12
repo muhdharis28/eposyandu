@@ -1,23 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { createJob, updateJob, getJobs } from './PekerjaanService';
+import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
+import { createJob, updateJob, getJobById } from './PekerjaanService'; // API services
+import TopBar from '../TopBar'; // Adjust the path as necessary
+import SideBar from '../SideBar';
+import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management
 
-const PekerjaanForm = ({ id, onClose, refreshList }) => {
+const PekerjaanForm = () => {
+  const { id } = useParams(); // Get the ID from URL params
   const [nama, setNama] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // For navigation
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state
 
   useEffect(() => {
     if (id) {
-      loadJob();
+      loadJob(); // Load job data if editing
     }
   }, [id]);
 
   const loadJob = async () => {
     try {
-      const result = await getJobs();
-      const job = result.data.find((job) => job.id === id);
-      if (job) {
-        setNama(job.nama);
-      }
+      const result = await getJobById(id); // Fetch job data by ID
+      const job = result.data;
+      setNama(job.nama);
     } catch (error) {
+      setError('Failed to load job data.');
       console.error('Failed to load job data:', error);
     }
   };
@@ -30,54 +37,78 @@ const PekerjaanForm = ({ id, onClose, refreshList }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Alert if the user is not authorized
     if (!isUserAuthorized()) {
       alert('You are not authorized to perform this action.');
       return; // Prevent submission
     }
 
     const job = { nama };
+
     try {
       if (id) {
-        await updateJob(id, job);
+        await updateJob(id, job); // Update job if editing
       } else {
-        await createJob(job);
+        await createJob(job); // Create new job if no ID is provided
       }
-      refreshList(); // Refresh the list after adding or updating a job
-      onClose(); // Close the form and go back to the list
+
+      navigate('/pekerjaan'); // Navigate back to job list
     } catch (error) {
-      console.error('Error submitting job:', error);
+      setError('Failed to save job data.');
+      console.error('Error saving job:', error);
     }
   };
 
+  const handleBackToList = () => {
+    navigate('/pekerjaan'); // Navigate back to the list
+  };
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Pekerjaan' : 'Tambah Pekerjaan'}</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700">Nama Pekerjaan</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={nama}
-            onChange={(e) => setNama(e.target.value)}
-            required
-          />
+    <div className="h-screen flex flex-col">
+      <TopBar onToggle={toggleSidebar} className="w-full" />
+      <div className="flex flex-grow transition-all duration-500 ease-in-out">
+        <SideBar isCollapsed={isSidebarCollapsed} />
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
+          {/* Breadcrumb */}
+          <nav className="text-sm text-gray-600 mb-4">
+            <button onClick={handleBackToList} className="text-blue-500 hover:underline">
+              &lt; Kembali ke Daftar Pekerjaan
+            </button>
+          </nav>
+
+          <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Pekerjaan' : 'Tambah Pekerjaan'}</h2>
+
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
+          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+            <div className="col-span-1">
+              <div className="mb-4">
+                <label className="block text-gray-700">Nama Pekerjaan</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="text-white bg-blue-500 px-4 py-2 rounded"
+              >
+                {id ? 'Update' : 'Tambah'}
+              </button>
+              <button
+                type="button"
+                onClick={handleBackToList}
+                className="text-gray-700 px-4 py-2 ml-4 rounded"
+              >
+                Batal
+              </button>
+            </div>
+          </form>
         </div>
-        <button 
-          type="submit" 
-          className="text-white bg-blue-500 px-4 py-2 rounded"
-        >
-          {id ? 'Update' : 'Tambah'}
-        </button>
-        <button 
-          type="button" 
-          onClick={onClose} 
-          className="text-gray-700 px-4 py-2 ml-4 rounded"
-        >
-          Batal
-        </button>
-      </form>
+      </div>
     </div>
   );
 };

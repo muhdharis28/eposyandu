@@ -15,7 +15,7 @@ router.post('/', async (req, res) => {
         });
         res.status(201).json(newBalita);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -25,7 +25,7 @@ router.get('/', async (req, res) => {
         const balitas = await Balita.findAll();
         res.status(200).json(balitas);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -39,7 +39,7 @@ router.get('/:id', async (req, res) => {
             res.status(404).json({ error: 'Balita not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -52,24 +52,24 @@ router.put('/:id', async (req, res) => {
         } = req.body;
         const balita = await Balita.findByPk(req.params.id);
         if (balita) {
-            balita.nama = nama_balita;
+            balita.nama_balita = nama_balita;
             balita.orangtua = orangtua;
-            balita.nik = nik_balita;
-            balita.jenis_kelamin = jenis_kelamin_balita;
-            balita.tempat_lahir = tempat_lahir_balita;
-            balita.tanggal_lahir = tanggal_lahir_balita;
-            balita.berat_badan_awal = berat_badan_awal_balita;
-            balita.tinggi_badan_awal = tinggi_badan_awal_balita;
-            balita.riwayat_penyakit = riwayat_penyakit_balita;
-            balita.riwayat_kelahiran = riwayat_kelahiran_balita;
-            balita.keterangan = keterangan_balita;
+            balita.nama_balita = nama_balita;
+            balita.jenis_kelamin_balita = jenis_kelamin_balita;
+            balita.tempat_lahir_balita = tempat_lahir_balita;
+            balita.tanggal_lahir_balita = tanggal_lahir_balita;
+            balita.berat_badan_awal_balita = berat_badan_awal_balita;
+            balita.tinggi_badan_awal_balita = tinggi_badan_awal_balita;
+            balita.riwayat_penyakit_balita = riwayat_penyakit_balita;
+            balita.riwayat_kelahiran_balita = riwayat_kelahiran_balita;
+            balita.keterangan_balita = keterangan_balita;
             await balita.save();
             res.status(200).json(balita);
         } else {
             res.status(404).json({ error: 'Balita not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -84,7 +84,7 @@ router.delete('/:id', async (req, res) => {
             res.status(404).json({ error: 'Balita not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 

@@ -30,6 +30,7 @@ app.use('/api/pendidikan', require('./routes/pendidikan'));
 app.use('/api/perkembangan-balita', require('./routes/perkembangan_balita'));
 app.use('/api/wali', require('./routes/wali'));
 app.use('/api/stats', require('./routes/stats'));
+app.use('/api/dokumentasi', require('./routes/dokumentasi'));
 
 const server = app.listen(port, () => console.log(`running server on port ${port}`));
 

@@ -25,7 +25,7 @@ router.post('/', async (req, res) => {
         });
         res.status(201).json(newOrangTua);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
         const orangTuas = await OrangTua.findAll();
         res.status(200).json(orangTuas);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
             res.status(404).json({ error: 'OrangTua not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -110,7 +110,7 @@ router.put('/:id', async (req, res) => {
             res.status(404).json({ error: 'OrangTua not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -125,7 +125,7 @@ router.delete('/:id', async (req, res) => {
             res.status(404).json({ error: 'OrangTua not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 

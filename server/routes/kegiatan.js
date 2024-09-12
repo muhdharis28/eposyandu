@@ -10,7 +10,7 @@ router.post('/', authenticateToken, authorizeRole('admin'), async (req, res) => 
         const newKegiatan = await Kegiatan.create({ nama, tanggal, jenis, deskripsi });
         res.status(201).json(newKegiatan);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -20,7 +20,7 @@ router.get('/', async (req, res) => {
         const kegiatans = await Kegiatan.findAll();
         res.status(200).json(kegiatans);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -34,7 +34,7 @@ router.get('/:id', async (req, res) => {
             res.status(404).json({ error: 'Kegiatan not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -54,7 +54,7 @@ router.put('/:id', authenticateToken, authorizeRole('admin'), async (req, res) =
             res.status(404).json({ error: 'Kegiatan not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -69,7 +69,7 @@ router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res
             res.status(404).json({ error: 'Kegiatan not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 

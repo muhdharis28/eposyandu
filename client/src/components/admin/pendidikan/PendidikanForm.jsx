@@ -1,87 +1,114 @@
 import React, { useState, useEffect } from 'react';
-import { createPendidikan, updatePendidikan, getPendidikan } from './PendidikanService';
+import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
+import { createPendidikan, updatePendidikan, getPendidikanById } from './PendidikanService'; // API services
+import TopBar from '../TopBar'; // Adjust the path as necessary
+import SideBar from '../SideBar';
+import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management
 
-const PendidikanForm = ({ id, onClose, refreshList }) => {
-  const [nama, setNama] = useState(''); // State for 'nama' input
-  const [error, setError] = useState(null); // State for error messages
+const PendidikanForm = () => {
+  const { id } = useParams(); // Get the ID from URL params
+  const [nama, setNama] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // For navigation
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state
 
   useEffect(() => {
     if (id) {
-      loadPendidikan(); // Load pendidikan data when editing
+      loadJob(); // Load job data if editing
     }
   }, [id]);
 
-  const loadPendidikan = async () => {
+  const loadJob = async () => {
     try {
-      const result = await getPendidikan();
-      const pendidikan = result.data.find((pendidikan) => pendidikan.id === id);
-      if (pendidikan) {
-        setNama(pendidikan.nama);
-      }
+      const result = await getPendidikanById(id); // Fetch job data by ID
+      const job = result.data;
+      setNama(job.nama);
     } catch (error) {
-      setError('Failed to load pendidikan data'); // Set error message
-      console.error('Failed to load pendidikan data:', error);
+      setError('Failed to load job data.');
+      console.error('Failed to load job data:', error);
     }
   };
 
   const isUserAuthorized = () => {
     const userRole = localStorage.getItem('role'); // Assuming roles are stored in local storage
-    return userRole === 'admin'; // Only admin can edit or add pendidikan
+    return userRole === 'admin'; // Only admin can edit or add jobs
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Alert if the user is not authorized
     if (!isUserAuthorized()) {
       alert('You are not authorized to perform this action.');
       return; // Prevent submission
     }
 
-    const pendidikan = { nama };
+    const job = { nama };
+
     try {
       if (id) {
-        await updatePendidikan(id, pendidikan); // Update existing pendidikan
+        await updatePendidikan(id, job); // Update job if editing
       } else {
-        await createPendidikan(pendidikan); // Create new pendidikan
+        await createPendidikan(job); // Create new job if no ID is provided
       }
-      refreshList(); // Refresh the list after adding or updating a pendidikan
-      onClose(); // Close the form
+
+      navigate('/pendidikan'); // Navigate back to job list
     } catch (error) {
-      setError('Failed to save pendidikan'); // Handle errors
-      console.error('Error saving pendidikan:', error);
+      setError('Failed to save job data.');
+      console.error('Error saving job:', error);
     }
   };
 
+  const handleBackToList = () => {
+    navigate('/pendidikan'); // Navigate back to the list
+  };
+
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Pendidikan' : 'Tambah Pendidikan'}</h2>
-      {error && <p className="text-red-500">{error}</p>} {/* Display error message */}
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
-          <label className="block text-gray-700">Nama Pendidikan</label>
-          <input
-            type="text"
-            className="w-full p-2 border border-gray-300 rounded"
-            value={nama}
-            onChange={(e) => setNama(e.target.value)}
-            required
-          />
+    <div className="h-screen flex flex-col">
+      <TopBar onToggle={toggleSidebar} className="w-full" />
+      <div className="flex flex-grow transition-all duration-500 ease-in-out">
+        <SideBar isCollapsed={isSidebarCollapsed} />
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
+          {/* Breadcrumb */}
+          <nav className="text-sm text-gray-600 mb-4">
+            <button onClick={handleBackToList} className="text-blue-500 hover:underline">
+              &lt; Kembali ke Daftar Pendidikan
+            </button>
+          </nav>
+
+          <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Pendidikan' : 'Tambah Pendidikan'}</h2>
+
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+
+          <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
+            <div className="col-span-1">
+              <div className="mb-4">
+                <label className="block text-gray-700">Nama Pendidikan</label>
+                <input
+                  type="text"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  required
+                />
+              </div>
+
+              <button
+                type="submit"
+                className="text-white bg-blue-500 px-4 py-2 rounded"
+              >
+                {id ? 'Update' : 'Tambah'}
+              </button>
+              <button
+                type="button"
+                onClick={handleBackToList}
+                className="text-gray-700 px-4 py-2 ml-4 rounded"
+              >
+                Batal
+              </button>
+            </div>
+          </form>
         </div>
-        <button 
-          type="submit" 
-          className="text-white bg-blue-500 px-4 py-2 rounded"
-        >
-          {id ? 'Update' : 'Tambah'}
-        </button>
-        <button 
-          type="button" 
-          onClick={onClose} 
-          className="text-gray-700 px-4 py-2 ml-4 rounded"
-        >
-          Batal
-        </button>
-      </form>
+      </div>
     </div>
   );
 };

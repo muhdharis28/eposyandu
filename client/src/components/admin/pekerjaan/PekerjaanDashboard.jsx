@@ -1,51 +1,26 @@
-import React, { useState } from 'react';
-import TopBar from '../TopBar';
-import SideBar from '../SideBar';
-import PekerjaanList from './PekerjaanList';
-import PekerjaanForm from './PekerjaanForm';
-import Modal from '../Modal';
-import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
+import React from 'react';
+import TopBar from '../TopBar'; // Adjust the path to your TopBar component
+import SideBar from '../SideBar'; // Adjust the path to your SideBar component
+import PekerjaanList from './PekerjaanList'; // Import the Pekerjaan list component
+import { useSidebar } from '../../SideBarContext'; // Import the sidebar context for collapse/expand functionality
 
 const PekerjaanDashboard = () => {
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context
-
-  const [editingPekerjaanId, setEditingPekerjaanId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-
-  const handleEditPekerjaan = (id) => {
-    setEditingPekerjaanId(id);
-    setShowForm(true);
-  };
-
-  const handleAddPekerjaan = () => {
-    setEditingPekerjaanId(null);
-    setShowForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setShowForm(false);
-  };
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
 
   return (
     <div className="h-screen flex flex-col">
+      {/* TopBar with sidebar toggle button */}
       <TopBar onToggle={toggleSidebar} className="w-full" />
 
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
+        {/* Sidebar with collapsible functionality */}
         <SideBar isCollapsed={isSidebarCollapsed} />
 
-        <div
-          className={`flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out`}
-        >
+        {/* Main content area */}
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out">
           <h1 className="text-3xl font-bold mb-4">Pekerjaan Dashboard</h1>
-          <PekerjaanList
-            onEditPekerjaan={handleEditPekerjaan}
-            onAddPekerjaan={handleAddPekerjaan}
-          />
-          {showForm && (
-            <Modal onClose={handleCloseForm}>
-              <PekerjaanForm id={editingPekerjaanId} onClose={handleCloseForm} />
-            </Modal>
-          )}
+          {/* Render the list of Pekerjaan */}
+          <PekerjaanList />
         </div>
       </div>
     </div>

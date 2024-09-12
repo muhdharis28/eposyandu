@@ -2,18 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { getJobs, deleteJob } from './PekerjaanService';
-import PekerjaanForm from './PekerjaanForm';
-import PekerjaanDetail from './PekerjaanDetail';
+import { InputText } from 'primereact/inputtext'; // For search input
+import { useNavigate } from 'react-router-dom'; // For navigation
+import { getJobs, deleteJob } from './PekerjaanService'; // Your API services
 
 const PekerjaanList = () => {
   const [jobs, setJobs] = useState([]);
-  const [editingJobId, setEditingJobId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
-  const [selectedJob, setSelectedJob] = useState(null);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState(''); // For global filtering
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // Initialize navigation
 
   useEffect(() => {
     loadJobs();
@@ -22,9 +19,11 @@ const PekerjaanList = () => {
   const loadJobs = async () => {
     try {
       const result = await getJobs();
-      setJobs(Array.isArray(result.data) ? result.data : []);
+      const data = result.data;
+      setJobs(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error fetching pekerjaan data:', error);
+      setError('Failed to load pekerjaan data or unauthorized.');
+      console.error('Failed to load pekerjaan data:', error);
     }
   };
 
@@ -33,21 +32,11 @@ const PekerjaanList = () => {
   };
 
   const handleAddPekerjaan = () => {
-    setEditingJobId(null);
-    setShowForm(true);
-    setShowDetail(false);
+    navigate('/pekerjaan/baru'); // Navigate to the create pekerjaan form
   };
 
   const handleEditPekerjaan = (id) => {
-    setEditingJobId(id);
-    setShowForm(true);
-    setShowDetail(false);
-  };
-
-  const handleViewDetail = (job) => {
-    setSelectedJob(job);
-    setShowDetail(true);
-    setShowForm(false);
+    navigate(`/pekerjaan/edit/${id}`); // Navigate to the edit pekerjaan form
   };
 
   const handleDelete = async (id) => {
@@ -57,23 +46,18 @@ const PekerjaanList = () => {
         await deleteJob(id);
         refreshList();
       } catch (error) {
-        console.error('Error deleting pekerjaan:', error);
+        setError('Failed to delete pekerjaan or unauthorized.');
+        console.error('Failed to delete pekerjaan:', error);
       }
     }
   };
 
-  const handleCloseForm = () => {
-    setShowForm(false);
-    setEditingJobId(null);
-  };
-
-  const handleCloseDetail = () => {
-    setShowDetail(false);
-    setSelectedJob(null);
+  const handleViewDetail = (id) => {
+    navigate(`/pekerjaan/${id}`); // Navigate to the detail page
   };
 
   const onGlobalFilterChange = (e) => {
-    setGlobalFilter(e.target.value);
+    setGlobalFilter(e.target.value); // Update filter state
   };
 
   const renderHeader = () => {
@@ -94,9 +78,9 @@ const PekerjaanList = () => {
       <div className="flex justify-end gap-2">
         <Button
           label="Detail"
-          icon="pi pi-info-circle"
-          className="p-button-text bg-green-500 text-white hover:bg-green-600 px-3 py-2"
-          onClick={() => handleViewDetail(rowData)}
+          icon="pi pi-eye"
+          className="p-button-text bg-blue-400 text-white hover:bg-blue-500 px-3 py-2"
+          onClick={() => handleViewDetail(rowData.id)}
         />
         <Button
           label="Edit"
@@ -118,59 +102,35 @@ const PekerjaanList = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Data Master Pekerjaan</h2>
-        {!showForm && !showDetail && (
-          <Button
-            label="Tambah Pekerjaan"
-            icon="pi pi-plus"
-            className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
-            onClick={handleAddPekerjaan}
-          />
-        )}
+        <Button
+          label="Tambah Pekerjaan"
+          icon="pi pi-plus"
+          className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
+          onClick={handleAddPekerjaan}
+        />
       </div>
 
-      {showForm ? (
-        <div className="mb-4">
-          <Button
-            label="Back to List"
-            className="mb-4 p-button-secondary"
-            onClick={handleCloseForm}
-          />
-          <PekerjaanForm
-            id={editingJobId}
-            onClose={handleCloseForm}
-            refreshList={refreshList}
-          />
-        </div>
-      ) : showDetail ? (
-        <div className="mb-4">
-          <Button
-            label="Back to List"
-            className="mb-4 p-button-secondary"
-            onClick={handleCloseDetail}
-          />
-          <PekerjaanDetail job={selectedJob} />
-        </div>
-      ) : (
-        <DataTable
-          value={jobs}
-          paginator
-          rows={3}
-          globalFilter={globalFilter}
-          emptyMessage="No pekerjaan found."
-          header={renderHeader()}
-        >
-          <Column
-            field="id"
-            header="No"
-            body={(rowData, options) => options.rowIndex + 1}
-          />
-          <Column field="nama" header="Nama Pekerjaan" />
-          <Column
-            body={actionBodyTemplate}
-            style={{ textAlign: 'center' }}
-          />
-        </DataTable>
-      )}
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+
+      <DataTable
+        value={jobs}
+        paginator
+        rows={10}
+        globalFilter={globalFilter}
+        emptyMessage="No pekerjaan found."
+        header={renderHeader()}
+      >
+        <Column
+          field="id"
+          header="No"
+          body={(rowData, options) => options.rowIndex + 1}
+        />
+        <Column field="nama" header="Nama Pekerjaan" />
+        <Column
+          body={actionBodyTemplate}
+          style={{ textAlign: 'center' }}
+        />
+      </DataTable>
     </div>
   );
 };

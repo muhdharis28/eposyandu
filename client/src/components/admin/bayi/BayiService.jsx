@@ -1,19 +1,28 @@
-import axios from 'axios';
+import api from '../../../api'; // Import the Axios instance
 
-const API_URL = '/api/balita'; // Ensure this matches the route defined on the server
+const API_URL = '/balita'; // Use the correct relative path for bayi API
 
-export const getBayi = async () => {
-  return await axios.get(API_URL);
+// Fetch all bayi
+export const getBayi = () => {
+  return api.get(API_URL); // Authenticated request via interceptor
 };
 
-export const createBayi = async (data) => {
-  return await axios.post(API_URL, data);
+// Create a new bayi
+export const createBayi = (bayi) => {
+  return api.post(API_URL, bayi); // Authenticated request via interceptor
 };
 
-export const updateBayi = async (id, data) => {
-  return await axios.put(`${API_URL}/${id}`, data);
+// Update bayi by id
+export const updateBayi = (id, bayi) => {
+  return api.put(`${API_URL}/${id}`, bayi); // Authenticated request via interceptor
 };
 
-export const deleteBayi = async (id) => {
-  return await axios.delete(`${API_URL}/${id}`);
+// Delete bayi by id
+export const deleteBayi = (id) => {
+  return api.delete(`${API_URL}/${id}`); // Authenticated request via interceptor
+};
+
+// Fetch bayi details by id
+export const getBayiById = (id) => {
+  return api.get(`${API_URL}/${id}`); // Authenticated request via interceptor
 };

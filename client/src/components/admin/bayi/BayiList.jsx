@@ -2,42 +2,62 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext';
-import { getBayi, deleteBayi } from './BayiService';
+import { InputText } from 'primereact/inputtext'; // For search functionality
+import { useNavigate } from 'react-router-dom'; // For navigation
+import { getBayi, deleteBayi } from './BayiService'; // API services
 
-const BayiList = ({ onEditBayi, onAddBayi, onViewDetail }) => {
+const BayiList = () => {
   const [bayiList, setBayiList] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState(''); // State for global search
+  const [error, setError] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate for routing
 
   useEffect(() => {
-    loadBayi();
+    loadBayi(); // Fetch bayi data when the component loads
   }, []);
 
   const loadBayi = async () => {
     try {
       const result = await getBayi();
-      setBayiList(Array.isArray(result.data) ? result.data : []);
+      const data = result.data;
+      setBayiList(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error('Error fetching bayi data:', error);
+      setError('Failed to load bayi data.');
+      console.error('Failed to load bayi data:', error);
     }
   };
 
+  const refreshList = () => {
+    loadBayi(); // Refresh bayi data after an action
+  };
+
+  const handleAddBayi = () => {
+    navigate('/balita/baru'); // Navigate to add bayi form
+  };
+
+  const handleEditBayi = (id) => {
+    navigate(`/balita/edit/${id}`); // Navigate to edit bayi form
+  };
+
+  const handleViewDetail = (id) => {
+    navigate(`/balita/${id}`); // Navigate to view bayi detail
+  };
+
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      'Apakah Anda yakin ingin menghapus data bayi ini?'
-    );
+    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus data balita ini?');
     if (confirmDelete) {
       try {
         await deleteBayi(id);
-        loadBayi();
+        refreshList(); // Refresh list after deletion
       } catch (error) {
-        console.error('Error deleting bayi:', error);
+        setError('Failed to delete bayi.');
+        console.error('Failed to delete bayi:', error);
       }
     }
   };
 
   const onGlobalFilterChange = (e) => {
-    setGlobalFilter(e.target.value);
+    setGlobalFilter(e.target.value); // Update global filter state
   };
 
   const renderHeader = () => (
@@ -56,14 +76,14 @@ const BayiList = ({ onEditBayi, onAddBayi, onViewDetail }) => {
       <Button
         label="Detail"
         icon="pi pi-eye"
-        className="p-button-text bg-gray-500 text-white hover:bg-gray-600 px-3 py-2"
-        onClick={() => onViewDetail(rowData.id)}
+        className="p-button-text bg-blue-400 text-white hover:bg-blue-500 px-3 py-2"
+        onClick={() => handleViewDetail(rowData.id)}
       />
       <Button
         label="Edit"
         icon="pi pi-pencil"
         className="p-button-text bg-blue-500 text-white hover:bg-blue-600 px-3 py-2"
-        onClick={() => onEditBayi(rowData.id)}
+        onClick={() => handleEditBayi(rowData.id)}
       />
       <Button
         label="Delete"
@@ -82,24 +102,24 @@ const BayiList = ({ onEditBayi, onAddBayi, onViewDetail }) => {
           label="Tambah Bayi"
           icon="pi pi-plus"
           className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
-          onClick={onAddBayi}
+          onClick={handleAddBayi}
         />
       </div>
+
+      {error && <p className="text-red-500 mb-4">{error}</p>}
 
       <DataTable
         value={bayiList}
         paginator
-        rows={5}
+        rows={10}
         globalFilter={globalFilter}
         emptyMessage="No bayi data found."
         header={renderHeader()}
       >
-        <Column
-          field="id"
-          header="No"
-          body={(rowData, options) => options.rowIndex + 1}
-        />
+        <Column field="id" header="No" body={(rowData, options) => options.rowIndex + 1} />
         <Column field="nama" header="Nama Bayi" />
+        <Column field="nik" header="NIK" />
+        <Column field="tanggal_lahir" header="Tanggal Lahir" />
         <Column body={actionBodyTemplate} style={{ textAlign: 'center' }} />
       </DataTable>
     </div>

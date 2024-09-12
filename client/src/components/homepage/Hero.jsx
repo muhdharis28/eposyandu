@@ -7,10 +7,10 @@ const Hero = () => (
     <div className="container mx-auto flex flex-col md:flex-row items-center">
       <div className="md:w-1/2 text-left md:pr-10 lg:pr-16">
         <h2 className="text-5xl font-bold text-gray-900 leading-tight mb-4">
-          Selamat Datang Di Website <span className="text-blue-600">ePosyandu Bintan</span>
+          Selamat Datang Di Website <span className="text-blue-600">ePosyandu Tanjungpinang</span>
         </h2>
         <p className="text-gray-700 mt-4 leading-relaxed mb-6">
-          Website posyandu Bintan menyediakan informasi kesehatan meliputi data balita, ibu hamil, dokumentasi kegiatan dan jadwal kesehatan.
+          Website posyandu Tanjungpinang menyediakan informasi kesehatan meliputi data balita, ibu hamil, dokumentasi kegiatan dan jadwal kesehatan.
         </p>
       </div>
       <div className="md:w-1/2 mt-10 md:mt-0 lg:mt-0 relative flex justify-center items-center">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaHome, FaCalendarAlt, FaCamera } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import logo from '@/assets/posyandu.png';
 
 const Header = () => {
   const token = localStorage.getItem('token');
@@ -15,14 +16,27 @@ const Header = () => {
     dashboardLink = "/user-dashboard";
   }
 
+  // Reusable Button Style
+  const buttonStyle =
+    "px-6 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105 hover:-translate-y-1";
+  
+  const dashboardButtonStyle =
+    "bg-white text-blue-600 " + buttonStyle + " hover:bg-gray-100";
+  
+  const registerButtonStyle =
+    "bg-white text-blue-600 " + buttonStyle + " hover:bg-gray-100";
+  
+  const loginButtonStyle =
+    "bg-white text-blue-600 " + buttonStyle + " hover:bg-gray-100";
+
   return (
     <header className="bg-gradient-to-r from-blue-600 to-blue-400 p-6 shadow-lg">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <div className="bg-white h-12 w-12 rounded-full flex items-center justify-center shadow-lg mr-3">
-            <span className="text-blue-600 font-bold">LOGO</span>
+            <img src={logo} className="h-10" alt="ePosyandu Tanjungpinang Logo" />
           </div>
-          <h1 className="text-2xl font-bold text-white">ePosyandu Bintan</h1>
+          <h1 className="text-2xl font-bold text-white">ePosyandu Tanjungpinang</h1>
         </div>
         <nav className="flex items-center space-x-6">
           <a href="#home" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
@@ -38,15 +52,15 @@ const Header = () => {
             <span>Dokumentasi</span>
           </a>
           {token ? (
-            <Link to={dashboardLink} className="bg-white text-blue-600 px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition duration-300 transform hover:scale-105 hover:-translate-y-1">
+            <Link to={dashboardLink} className={dashboardButtonStyle}>
               DASHBOARD
             </Link>
           ) : (
             <>
-              <Link to="/register" className="bg-white text-blue-600 px-6 py-2 rounded-full shadow-md hover:bg-gray-100 transition duration-300 transform hover:scale-105 hover:-translate-y-1">
+              <Link to="/register" className={registerButtonStyle}>
                 DAFTAR
               </Link>
-              <Link to="/login" className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-6 py-2 rounded-full shadow-lg hover:bg-gradient-to-r hover:from-blue-700 hover:to-blue-500 transition duration-300 transform hover:scale-105">
+              <Link to="/login" className={loginButtonStyle}>
                 MASUK
               </Link>
             </>

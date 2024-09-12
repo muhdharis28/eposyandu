@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
         res.status(201).json(newUser);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -64,7 +64,7 @@ router.post('/login', async (req, res) => {
         // Include the user's role and other relevant data in the response
         res.json({ token, role: user.role, userName: user.nama, userEmail: user.email });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -100,7 +100,7 @@ router.get('/', authenticateToken, async (req, res) => {
       res.status(200).json(usersWithRelations);
     } catch (error) {
       console.error('Error fetching pengguna data:', error);
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error });
     }
   });
 
@@ -119,7 +119,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
             res.status(404).json({ error: 'Pengguna not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -153,7 +153,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             res.status(404).json({ error: 'Pengguna not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 
@@ -168,7 +168,7 @@ router.delete('/:id', authenticateToken, authorizeRole('admin'), async (req, res
             res.status(404).json({ error: 'Pengguna not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error });
     }
 });
 

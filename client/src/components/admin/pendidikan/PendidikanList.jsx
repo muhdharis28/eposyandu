@@ -2,87 +2,67 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext'; // Import InputText for search
-import { getPendidikan, deletePendidikan } from './PendidikanService';
-import PendidikanForm from './PendidikanForm'; // Form component for add/edit
-import PendidikanDetail from './PendidikanDetail'; // Detail component for viewing data
+import { InputText } from 'primereact/inputtext'; // For search input
+import { useNavigate } from 'react-router-dom'; // For navigation
+import { getPendidikans, deletePendidikan } from './PendidikanService'; // Your API services
 
 const PendidikanList = () => {
-  const [pendidikanList, setPendidikanList] = useState([]);
-  const [editingPendidikanId, setEditingPendidikanId] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [showDetail, setShowDetail] = useState(false);
-  const [selectedPendidikan, setSelectedPendidikan] = useState(null);
-  const [globalFilter, setGlobalFilter] = useState(''); // State for global filter
+  const [jobs, setJobs] = useState([]);
+  const [globalFilter, setGlobalFilter] = useState(''); // For global filtering
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // Initialize navigation
 
   useEffect(() => {
-    loadPendidikan();
+    loadJobs();
   }, []);
 
-  const loadPendidikan = async () => {
+  const loadJobs = async () => {
     try {
-      const result = await getPendidikan();
-      setPendidikanList(Array.isArray(result.data) ? result.data : []);
+      const result = await getPendidikans();
+      const data = result.data;
+      setJobs(Array.isArray(data) ? data : []);
     } catch (error) {
-      setError('Error fetching pendidikan data.');
-      console.error('Error fetching pendidikan data:', error);
+      setError('Failed to load pendidikan data or unauthorized.');
+      console.error('Failed to load pendidikan data:', error);
     }
   };
 
   const refreshList = () => {
-    loadPendidikan(); // Reloads the pendidikan list
+    loadJobs();
   };
 
   const handleAddPendidikan = () => {
-    setEditingPendidikanId(null); // Set to null to add a new pendidikan
-    setShowForm(true); // Show form for adding
-    setShowDetail(false); // Hide detail view
+    navigate('/pendidikan/baru'); // Navigate to the create pendidikan form
   };
 
   const handleEditPendidikan = (id) => {
-    setEditingPendidikanId(id); // Set the pendidikan ID to edit
-    setShowForm(true); // Show form for editing
-    setShowDetail(false); // Hide detail view
-  };
-
-  const handleViewDetail = (pendidikan) => {
-    setSelectedPendidikan(pendidikan); // Set the selected pendidikan for detail view
-    setShowDetail(true);
-    setShowForm(false); // Hide form view
+    navigate(`/pendidikan/edit/${id}`); // Navigate to the edit pendidikan form
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus data pendidikan ini?');
+    const confirmDelete = window.confirm('Apakah Anda yakin ingin menghapus pendidikan ini?');
     if (confirmDelete) {
       try {
         await deletePendidikan(id);
-        refreshList(); // Refresh the list after deleting
+        refreshList();
       } catch (error) {
-        setError('Error deleting pendidikan data.');
-        console.error('Error deleting pendidikan data:', error);
+        setError('Failed to delete pendidikan or unauthorized.');
+        console.error('Failed to delete pendidikan:', error);
       }
     }
   };
 
-  const handleCloseForm = () => {
-    setShowForm(false); // Close the form
-    setEditingPendidikanId(null); // Reset editing state
-  };
-
-  const handleCloseDetail = () => {
-    setShowDetail(false); // Close the detail view
-    setSelectedPendidikan(null); // Reset selected pendidikan
+  const handleViewDetail = (id) => {
+    navigate(`/pendidikan/${id}`); // Navigate to the detail page
   };
 
   const onGlobalFilterChange = (e) => {
-    setGlobalFilter(e.target.value); // Update global filter state
+    setGlobalFilter(e.target.value); // Update filter state
   };
 
   const renderHeader = () => {
     return (
       <div className="flex justify-between items-center mb-4">
-        
         <InputText
           value={globalFilter}
           onChange={onGlobalFilterChange}
@@ -93,88 +73,64 @@ const PendidikanList = () => {
     );
   };
 
-  const actionBodyTemplate = (rowData) => (
-    <div className="flex justify-end gap-2">
-      <Button
-        label="Detail"
-        icon="pi pi-info-circle"
-        className="p-button-text text-blue-400 hover:text-blue-500"
-        onClick={() => handleViewDetail(rowData)}
-      />
-      <Button
-        label="Edit"
-        icon="pi pi-pencil"
-        className="p-button-text text-blue-500 hover:text-blue-600"
-        onClick={() => handleEditPendidikan(rowData.id)}
-      />
-      <Button
-        label="Delete"
-        icon="pi pi-trash"
-        className="p-button-text text-red-500 hover:text-red-600"
-        onClick={() => handleDelete(rowData.id)}
-      />
-    </div>
-  );
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <div className="flex justify-end gap-2">
+        <Button
+          label="Detail"
+          icon="pi pi-eye"
+          className="p-button-text bg-blue-400 text-white hover:bg-blue-500 px-3 py-2"
+          onClick={() => handleViewDetail(rowData.id)}
+        />
+        <Button
+          label="Edit"
+          icon="pi pi-pencil"
+          className="p-button-text bg-blue-500 text-white hover:bg-blue-600 px-3 py-2"
+          onClick={() => handleEditPendidikan(rowData.id)}
+        />
+        <Button
+          label="Delete"
+          icon="pi pi-trash"
+          className="p-button-text bg-red-500 text-white hover:bg-red-600 px-3 py-2"
+          onClick={() => handleDelete(rowData.id)}
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Data Master Pendidikan</h2>
-        {!showForm && !showDetail && (
-          <Button
-            label="Tambah Pendidikan"
-            icon="pi pi-plus"
-            className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
-            onClick={handleAddPendidikan}
-          />
-        )}
+        <Button
+          label="Tambah Pendidikan"
+          icon="pi pi-plus"
+          className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
+          onClick={handleAddPendidikan}
+        />
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      {showForm ? (
-        <div className="mb-4">
-          <Button
-            label="Back to List"
-            className="mb-4 p-button-secondary"
-            onClick={handleCloseForm}
-          />
-          <PendidikanForm
-            id={editingPendidikanId}
-            onClose={handleCloseForm}
-            refreshList={refreshList}
-          />
-        </div>
-      ) : showDetail ? (
-        <div className="mb-4">
-          <Button
-            label="Back to List"
-            className="mb-4 p-button-secondary"
-            onClick={handleCloseDetail}
-          />
-          <PendidikanDetail pendidikan={selectedPendidikan} />
-        </div>
-      ) : (
-        <DataTable
-          value={pendidikanList}
-          paginator
-          rows={10}
-          globalFilter={globalFilter}
-          emptyMessage="No pendidikan found."
-          header={renderHeader()}
-        >
-          <Column
-            field="id"
-            header="No"
-            body={(rowData, options) => options.rowIndex + 1}
-          />
-          <Column field="nama" header="Pendidikan" />
-          <Column
-            body={actionBodyTemplate}
-            style={{ textAlign: 'center' }}
-          />
-        </DataTable>
-      )}
+      <DataTable
+        value={jobs}
+        paginator
+        rows={10}
+        globalFilter={globalFilter}
+        emptyMessage="No pendidikan found."
+        header={renderHeader()}
+      >
+        <Column
+          field="id"
+          header="No"
+          body={(rowData, options) => options.rowIndex + 1}
+        />
+        <Column field="nama" header="Nama Pendidikan" />
+        <Column
+          body={actionBodyTemplate}
+          style={{ textAlign: 'center' }}
+        />
+      </DataTable>
     </div>
   );
 };

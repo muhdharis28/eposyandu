@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getBayiById } from './BayiService'; // Assuming you have this API service
+import { getDokumentasiById } from './DokumentasiService'; // Assuming you have this API service
 import TopBar from '../TopBar'; // Adjust the path as necessary
 import SideBar from '../SideBar'; // Adjust the path as necessary
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 
-const BayiDetail = () => {
+const DokumentasiDetail = () => {
   const { id } = useParams();
-  const [bayi, setBayi] = useState(null);
+  const [dokumentasi, setDokumentasi] = useState(null);
   const [error, setError] = useState('');
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadBayiDetail();
+    loadDokumentasiDetail();
   }, [id]);
 
-  const loadBayiDetail = async () => {
+  const loadDokumentasiDetail = async () => {
     try {
-      const result = await getBayiById(id); // API call to get bayi details
-      setBayi(result.data);
+      const result = await getDokumentasiById(id); // API call to get dokumentasi details
+      setDokumentasi(result.data);
     } catch (error) {
-      setError('Failed to load bayi details.');
-      console.error('Failed to load bayi details:', error);
+      setError('Failed to load dokumentasi details.');
+      console.error('Failed to load dokumentasi details:', error);
     }
   };
 
@@ -30,12 +30,12 @@ const BayiDetail = () => {
     return <div className="p-6">{error}</div>;
   }
 
-  if (!bayi) {
+  if (!dokumentasi) {
     return <div className="p-6">Loading...</div>;
   }
 
   const handleBackToList = () => {
-    navigate('/balita'); // Navigate back to the bayi list
+    navigate('/dokumentasi'); // Navigate back to the list
   };
 
   return (
@@ -54,41 +54,29 @@ const BayiDetail = () => {
               onClick={handleBackToList}
               className="text-blue-500 hover:underline"
             >
-              &lt; Kembali ke Daftar Balita
+              &lt; Kembali ke Daftar Dokumentasi
             </button>
           </nav>
 
-          <h2 className="text-2xl font-bold mb-6">Detail Balita</h2>
+          <h2 className="text-2xl font-bold mb-6">Detail Dokumentasi</h2>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-white p-6 rounded shadow">
-            {/* Left Column - Main Baby Information */}
+            {/* Left Column - Main Dokumentasi Information */}
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <img
-                  src="https://via.placeholder.com/150" // Placeholder image, replace with actual image if available
-                  alt={bayi.nama}
-                  className="w-24 h-24 rounded-full object-cover shadow-md"
+                  src={`${import.meta.env.VITE_API_URL}${dokumentasi.foto}` || 'https://via.placeholder.com/150'} // Replace with actual image path
+                  alt={dokumentasi.judul}
+                  className="w-24 h-24 rounded object-cover shadow-md"
                 />
                 <div>
-                  <h3 className="text-xl font-semibold">{bayi.nama}</h3>
-                  <p className="text-gray-500">{bayi.orangtua}</p>
+                  <h3 className="text-xl font-semibold">{dokumentasi.judul}</h3>
+                  <p className="text-gray-500">{dokumentasi.deskripsi}</p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-md">
                 <p className="text-gray-700">
-                  <strong>Tanggal Lahir:</strong> {new Date(bayi.tanggal_lahir).toLocaleDateString()}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Jenis Kelamin:</strong> {bayi.jenis_kelamin === 'l' ? 'Laki-laki' : 'Perempuan'}
-                </p>
-                <p className="text-gray-700">
-                  <strong>NIK:</strong> {bayi.nik}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Berat Badan Awal:</strong> {bayi.berat_badan_awal} kg
-                </p>
-                <p className="text-gray-700">
-                  <strong>Tinggi Badan Awal:</strong> {bayi.tinggi_badan_awal} cm
+                  <strong>Tanggal:</strong> {new Date(dokumentasi.tanggal).toLocaleDateString()}
                 </p>
               </div>
             </div>
@@ -96,22 +84,16 @@ const BayiDetail = () => {
             {/* Right Column - Additional Information or Actions */}
             <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="text-lg font-semibold mb-2">Riwayat</h4>
+                <h4 className="text-lg font-semibold mb-2">Deskripsi</h4>
                 <p className="text-gray-700">
-                  <strong>Riwayat Penyakit:</strong> {bayi.riwayat_penyakit || 'Tidak ada'}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Riwayat Kelahiran:</strong> {bayi.riwayat_kelahiran || 'Tidak ada'}
-                </p>
-                <p className="text-gray-700">
-                  <strong>Keterangan:</strong> {bayi.keterangan || 'Tidak ada'}
+                  {dokumentasi.deskripsi || 'Tidak ada deskripsi tersedia.'}
                 </p>
               </div>
               <button
                 className="w-full text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded"
-                onClick={handleBackToList}
+                onClick={() => alert('Contact or action placeholder')}
               >
-                Tutup
+                Contact/Action
               </button>
             </div>
           </div>
@@ -121,4 +103,4 @@ const BayiDetail = () => {
   );
 };
 
-export default BayiDetail;
+export default DokumentasiDetail;

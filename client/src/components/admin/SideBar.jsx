@@ -1,7 +1,17 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom'; // Import useLocation for active route
 import {
-  FaHome, FaUserMd, FaBriefcase, FaGraduationCap, FaCalendarAlt, FaFileAlt, FaCog, FaUserFriends, FaBaby
+  FaHome,
+  FaUserMd,
+  FaBriefcase,
+  FaGraduationCap,
+  FaCalendarAlt,
+  FaFileAlt,
+  FaCog,
+  FaUserFriends,
+  FaBaby,
+  FaUsers,
+  FaCamera
 } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
@@ -13,12 +23,13 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },
     { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },
     { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },
-    { icon: FaFileAlt, label: 'Laporan', path: '/report' },
-    { icon: FaCog, label: 'Pengaturan', path: '/settings' },
     { icon: FaUserFriends, label: 'Lansia', path: '/lansia' },
     { icon: FaBaby, label: 'Balita', path: '/balita' },
-    { icon: FaBaby, label: 'OrangTua', path: '/orangtua' },
-    { icon: FaBaby, label: 'Pengguna', path: '/pengguna' },
+    { icon: FaUsers, label: 'Orang Tua', path: '/orangtua' },
+    { icon: FaUsers, label: 'Pengguna', path: '/pengguna' },
+    { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' },
+    { icon: FaFileAlt, label: 'Laporan', path: '/report' },
+    { icon: FaCog, label: 'Pengaturan', path: '/settings' },
   ];
 
   return (

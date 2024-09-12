@@ -48,7 +48,7 @@ const Register = ({ formData, setFormData, navigate }) => {
         <div className="w-1/2 bg-blue-800 text-white flex flex-col justify-center items-center p-8">
           <h1 className="text-3xl font-bold mb-4">Selamat Datang Kembali!</h1>
           <p className="text-center mb-6">
-            Untuk Kembali Mengakses E-Posyandu Bintan, Silakan Masuk Menggunakan Data Pribadi Anda.
+            Untuk Kembali Mengakses E-Posyandu Tanjungpinang, Silakan Masuk Menggunakan Data Pribadi Anda.
           </p>
           <Link to="/login" className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded">
             Masuk

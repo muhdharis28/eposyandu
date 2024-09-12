@@ -18,7 +18,7 @@ Balita.init({
         }
     },
     nik_balita: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         allowNull: false,
         unique: true,
     },
