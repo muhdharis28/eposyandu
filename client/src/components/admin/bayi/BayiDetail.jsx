@@ -70,25 +70,32 @@ const BayiDetail = () => {
                   className="w-24 h-24 rounded-full object-cover shadow-md"
                 />
                 <div>
-                  <h3 className="text-xl font-semibold">{bayi.nama}</h3>
-                  <p className="text-gray-500">{bayi.orangtua}</p>
+                  <h3 className="text-xl font-semibold">{bayi.nama_balita}</h3>
+                  <div className="flex items-center">
+                    <label className="font-semibold text-gray-700 mr-2">Ayah:</label>
+                    <p className="text-gray-500">{bayi.orangtuaDetail ? bayi.orangtuaDetail.nama_ayah : 'N/A'}</p>
+                  </div>
+                  <div className="flex items-center">
+                    <label className="font-semibold text-gray-700 mr-2">Ibu:</label>
+                    <p className="text-gray-500">{bayi.orangtuaDetail ? bayi.orangtuaDetail.nama_ibu : 'N/A'}</p>
+                  </div>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-md">
                 <p className="text-gray-700">
-                  <strong>Tanggal Lahir:</strong> {new Date(bayi.tanggal_lahir).toLocaleDateString()}
+                  <strong>Tanggal Lahir:</strong> {new Date(bayi.tanggal_lahir_balita).toLocaleDateString()}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Jenis Kelamin:</strong> {bayi.jenis_kelamin === 'l' ? 'Laki-laki' : 'Perempuan'}
+                  <strong>Jenis Kelamin:</strong> {bayi.jenis_kelamin_balita === 'l' ? 'Laki-laki' : 'Perempuan'}
                 </p>
                 <p className="text-gray-700">
-                  <strong>NIK:</strong> {bayi.nik}
+                  <strong>NIK:</strong> {bayi.nik_balita}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Berat Badan Awal:</strong> {bayi.berat_badan_awal} kg
+                  <strong>Berat Badan Awal:</strong> {bayi.berat_badan_awal_balita} kg
                 </p>
                 <p className="text-gray-700">
-                  <strong>Tinggi Badan Awal:</strong> {bayi.tinggi_badan_awal} cm
+                  <strong>Tinggi Badan Awal:</strong> {bayi.tinggi_badan_awal_balita} cm
                 </p>
               </div>
             </div>
@@ -98,13 +105,13 @@ const BayiDetail = () => {
               <div className="bg-gray-50 p-4 rounded-md">
                 <h4 className="text-lg font-semibold mb-2">Riwayat</h4>
                 <p className="text-gray-700">
-                  <strong>Riwayat Penyakit:</strong> {bayi.riwayat_penyakit || 'Tidak ada'}
+                  <strong>Riwayat Penyakit:</strong> {bayi.riwayat_penyakit_balita || 'Tidak ada'}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Riwayat Kelahiran:</strong> {bayi.riwayat_kelahiran || 'Tidak ada'}
+                  <strong>Riwayat Kelahiran:</strong> {bayi.riwayat_kelahiran_balita || 'Tidak ada'}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Keterangan:</strong> {bayi.keterangan || 'Tidak ada'}
+                  <strong>Keterangan:</strong> {bayi.keterangan_balita || 'Tidak ada'}
                 </p>
               </div>
               <button

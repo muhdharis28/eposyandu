@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const PemeriksaanLansia = require('../models/pemeriksaan_lansia');  // Adjust the path as needed
+const PemeriksaanLansia = require('../models/pemeriksaan_lansia');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new PemeriksaanLansia
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             lansia, tanggal_kunjungan, berat_badan, tinggi_badan, lingkar_perut, tekanan_darah, 
@@ -21,8 +21,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all PemeriksaanLansias
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const pemeriksaanLansias = await PemeriksaanLansia.findAll();
         res.status(200).json(pemeriksaanLansias);
@@ -31,8 +30,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single PemeriksaanLansia by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id);
         if (pemeriksaanLansia) {
@@ -45,8 +43,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a PemeriksaanLansia by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             lansia, tanggal_kunjungan, berat_badan, tinggi_badan, lingkar_perut, tekanan_darah, 
@@ -80,8 +77,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a PemeriksaanLansia by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id);
         if (pemeriksaanLansia) {

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const Balita = require('../models/balita');  // Adjust the path as needed
+const Balita = require('../models/balita');
+const OrangTua = require('../models/orangtua');
+const { authenticateToken } = require('./middleware/authMiddleware');
 
-// Create a new Balita
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     try {
         const {
             nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
@@ -19,20 +20,30 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all Balitas
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
-        const balitas = await Balita.findAll();
+        const balitas = await Balita.findAll({
+            include: [{
+                model: OrangTua,
+                as: 'orangtuaDetail',
+                attributes: ['id', 'nama_ayah', 'nama_ibu'],
+              }]
+        });
         res.status(200).json(balitas);
     } catch (error) {
         res.status(500).json({ error: error });
     }
 });
 
-// Read a single Balita by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const balita = await Balita.findByPk(req.params.id);
+        const balita = await Balita.findByPk(req.params.id, {
+            include: [{
+                model: OrangTua,
+                as: 'orangtuaDetail',
+                attributes: ['id', 'nama_ayah', 'nama_ibu'],
+              }]
+        });
         if (balita) {
             res.status(200).json(balita);
         } else {
@@ -43,8 +54,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a Balita by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
             nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
@@ -54,7 +64,7 @@ router.put('/:id', async (req, res) => {
         if (balita) {
             balita.nama_balita = nama_balita;
             balita.orangtua = orangtua;
-            balita.nama_balita = nama_balita;
+            balita.nik_balita = nik_balita;
             balita.jenis_kelamin_balita = jenis_kelamin_balita;
             balita.tempat_lahir_balita = tempat_lahir_balita;
             balita.tanggal_lahir_balita = tanggal_lahir_balita;
@@ -73,8 +83,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a Balita by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const balita = await Balita.findByPk(req.params.id);
         if (balita) {

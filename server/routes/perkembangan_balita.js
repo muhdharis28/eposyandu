@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const PerkembanganBalita = require('../models/perkembangan_balita');  // Adjust the path as needed
+const PerkembanganBalita = require('../models/perkembangan_balita');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new PerkembanganBalita
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
@@ -19,8 +19,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all PerkembanganBalitas
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const perkembanganBalitas = await PerkembanganBalita.findAll();
         res.status(200).json(perkembanganBalitas);
@@ -29,8 +28,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single PerkembanganBalita by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
         if (perkembanganBalita) {
@@ -43,8 +41,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a PerkembanganBalita by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
@@ -73,8 +70,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a PerkembanganBalita by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
         if (perkembanganBalita) {

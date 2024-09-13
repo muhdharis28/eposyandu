@@ -117,9 +117,11 @@ const BayiList = () => {
         header={renderHeader()}
       >
         <Column field="id" header="No" body={(rowData, options) => options.rowIndex + 1} />
-        <Column field="nama" header="Nama Bayi" />
-        <Column field="nik" header="NIK" />
-        <Column field="tanggal_lahir" header="Tanggal Lahir" />
+        <Column field="nama_balita" header="Nama Bayi" />
+        <Column field="nik_balita" header="NIK" />
+        <Column field="orangtuaDetail.nama_ayah" header="Ayah" />
+        <Column field="orangtuaDetail.nama_ibu" header="Ibu" />
+        <Column field="tanggal_lahir_balita" header="Tanggal Lahir" />
         <Column body={actionBodyTemplate} style={{ textAlign: 'center' }} />
       </DataTable>
     </div>

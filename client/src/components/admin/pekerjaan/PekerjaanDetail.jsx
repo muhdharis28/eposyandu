@@ -59,16 +59,15 @@ const PekerjaanDetail = () => {
             </button>
           </nav>
 
-          <h2 className="text-2xl font-bold mb-6">Detail Pekerjaan</h2>
-
-          {/* Grid layout for the detail view */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-white p-6 rounded shadow">
-            {/* Left Column - Main Pekerjaan Information */}
-            <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-md">
-                <p className="text-gray-700">
-                  <strong>Nama Pekerjaan:</strong> {pekerjaan.nama}
-                </p>
+          <div className="bg-white p-8 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold mb-6">Detail Pekerjaan</h2>
+            <div className="grid grid-cols-2 gap-6">
+              {/* Left Column */}
+              <div className="col-span-1">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-700">Nama Pekerjaan</h3>
+                  <p className="text-gray-600">{pekerjaan.nama}</p>
+                </div>
               </div>
             </div>
           </div>

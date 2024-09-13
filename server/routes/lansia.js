@@ -1,12 +1,12 @@
-// routes/lansiaRoutes.js
-
 const express = require('express');
 const router = express.Router();
-const Lansia = require('../models/lansia'); // Adjust the path as needed
-const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import the middleware
+const Lansia = require('../models/lansia');
+const Wali = require('../models/wali');
+const Pendidikan = require('../models/pendidikan');
+const Pekerjaan = require('../models/pekerjaan');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Lansia (Admin Only)
-router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             no_kk_lansia,
@@ -62,20 +62,40 @@ router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) =>
     }
 });
 
-// Read all Lansias (Authenticated Users)
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const lansias = await Lansia.findAll();
+        const lansias = await Lansia.findAll({
+            include: [{
+              model: Wali,
+              as: 'waliDetail',
+              attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
+            }]
+          });
         res.status(200).json(lansias);
     } catch (error) {
         res.status(500).json({ error: error });
     }
 });
 
-// Read a single Lansia by ID (Authenticated Users)
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const lansia = await Lansia.findByPk(req.params.id);
+        const lansia = await Lansia.findByPk(req.params.id, {
+            include: [{
+              model: Wali,
+              as: 'waliDetail',
+              attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
+            },
+            {
+                model: Pekerjaan,
+                as: 'pekerjaan',
+                attributes: ['id', 'nama'],
+            },
+            {
+                model: Pendidikan,
+                as: 'pendidikan',
+                attributes: ['id', 'nama'],
+            }]
+        });
         if (lansia) {
             res.status(200).json(lansia);
         } else {
@@ -86,8 +106,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Update a Lansia by ID (Admin Only)
-router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             no_kk_lansia,
@@ -147,8 +166,7 @@ router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) 
     }
 });
 
-// Delete a Lansia by ID (Admin Only)
-router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const lansia = await Lansia.findByPk(req.params.id);
         if (lansia) {

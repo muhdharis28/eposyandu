@@ -105,4 +105,7 @@ Lansia.init({
     modelName: 'Lansia'
 });
 
+Lansia.belongsTo(Wali, { as: 'waliDetail', foreignKey: 'wali' });
+Lansia.belongsTo(Pendidikan, { as: 'pendidikan', foreignKey: 'pendidikan_lansia' });
+Lansia.belongsTo(Pekerjaan, { as: 'pekerjaan', foreignKey: 'pekerjaan_lansia' });
 module.exports = Lansia;

@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Pekerjaan = require('../models/pekerjaan');  // Adjust the path as needed
-const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');  // Import the middleware
+const Pekerjaan = require('../models/pekerjaan');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Pekerjaan (Protected route, requires authentication)
-router.post('/', authenticateToken, async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const newPekerjaan = await Pekerjaan.create({ nama });
@@ -14,7 +13,6 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 });
 
-// Read all Pekerjaans (Protected route, requires authentication)
 router.get('/', async (req, res) => {
     try {
         const pekerjaans = await Pekerjaan.findAll();
@@ -24,8 +22,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single Pekerjaan by ID (Protected route, requires authentication)
-router.get('/:id', authenticateToken, async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const pekerjaan = await Pekerjaan.findByPk(req.params.id);
         if (pekerjaan) {
@@ -38,8 +35,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Update a Pekerjaan by ID (Protected route, requires authentication)
-router.put('/:id', authenticateToken, async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
         const pekerjaan = await Pekerjaan.findByPk(req.params.id);
@@ -55,7 +51,6 @@ router.put('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Delete a Pekerjaan by ID (Protected route, requires authentication and 'admin' role authorization)
 router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const pekerjaan = await Pekerjaan.findByPk(req.params.id);

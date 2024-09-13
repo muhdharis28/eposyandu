@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api'; // Import the Axios instance, adjust the path as necessary
+
+const API_URL = '/stats'; // Define the endpoint for pengguna
 
 const Dashboard = () => {
   const [stats, setStats] = useState([]);
@@ -9,7 +11,8 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/stats`);
+        const response = await api.get(API_URL);
+        console.log(response)
         setStats(response.data);
         setLoading(false);
       } catch (err) {

@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Kegiatan = require('../models/kegiatan');  // Adjust the path as needed
-const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import the middleware
+const Kegiatan = require('../models/kegiatan');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Kegiatan (Admin Only)
-router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const { nama, tanggal, jenis, deskripsi } = req.body;
         const newKegiatan = await Kegiatan.create({ nama, tanggal, jenis, deskripsi });
@@ -14,7 +13,6 @@ router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) =>
     }
 });
 
-// Read all Kegiatans (Authenticated Users)
 router.get('/', async (req, res) => {
     try {
         const kegiatans = await Kegiatan.findAll();
@@ -24,7 +22,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single Kegiatan by ID (Authenticated Users)
 router.get('/:id', async (req, res) => {
     try {
         const kegiatan = await Kegiatan.findByPk(req.params.id);
@@ -38,8 +35,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a Kegiatan by ID (Admin Only)
-router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const { nama, tanggal, jenis, deskripsi } = req.body;
         const kegiatan = await Kegiatan.findByPk(req.params.id);
@@ -58,8 +54,7 @@ router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) 
     }
 });
 
-// Delete a Kegiatan by ID (Admin Only)
-router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const kegiatan = await Kegiatan.findByPk(req.params.id);
         if (kegiatan) {

@@ -209,7 +209,6 @@ const LansiaForm = () => {
                 />
               </div>
 
-              {/* Alamat KTP Fields */}
               <div className="mb-4">
                 <label className="block text-gray-700">Alamat KTP</label>
                 <input
@@ -217,6 +216,54 @@ const LansiaForm = () => {
                   name="alamat_ktp_lansia"
                   className="w-full p-2 border border-gray-300 rounded"
                   value={formData.alamat_ktp_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Kelurahan KTP</label>
+                <input
+                  type="text"
+                  name="kelurahan_ktp_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.kelurahan_ktp_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Kecamatan KTP</label>
+                <input
+                  type="text"
+                  name="kecamatan_ktp_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.kecamatan_ktp_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Kota KTP</label>
+                <input
+                  type="text"
+                  name="kota_ktp_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.kota_ktp_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Provinsi KTP</label>
+                <input
+                  type="text"
+                  name="provinsi_ktp_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.provinsi_ktp_lansia}
                   onChange={handleChange}
                   required
                 />
@@ -301,6 +348,66 @@ const LansiaForm = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Alamat Domisili</label>
+                <input
+                  type="text"
+                  name="alamat_domisili_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.alamat_domisili_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Kelurahan Domisili</label>
+                <input
+                  type="text"
+                  name="kelurahan_domisili_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.kelurahan_domisili_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Kecamatan Domisili</label>
+                <input
+                  type="text"
+                  name="kecamatan_domisili_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.kecamatan_domisili_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Kota Domisili</label>
+                <input
+                  type="text"
+                  name="kota_domisili_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.kota_domisili_lansia}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Provinsi Domisili</label>
+                <input
+                  type="text"
+                  name="provinsi_domisili_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.provinsi_domisili_lansia}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
           </form>

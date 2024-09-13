@@ -2,6 +2,7 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../db.config');
 const Pendidikan = require('./pendidikan');
 const Pekerjaan = require('./pekerjaan');
+const Pengguna = require('./pengguna');
 
 class OrangTua extends Model {}
 

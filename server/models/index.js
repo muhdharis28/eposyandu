@@ -10,17 +10,16 @@ const Pengguna = require('./pengguna');
 const PerkembanganBalita = require('./perkembangan_balita');
 const Wali = require('./wali');
 
-// Define associations for OrangTua
-OrangTua.hasMany(Balita, { foreignKey: 'id_orangtua' });
-Balita.belongsTo(OrangTua, { foreignKey: 'id_orangtua' });
+// OrangTua
+OrangTua.hasMany(Pengguna, { foreignKey: 'orangtua', as: 'pengguna' });
+Pengguna.belongsTo(OrangTua, { foreignKey: 'orangtua', as: 'orangTuaDetail' });
 
-// Association between OrangTua and Pengguna
-OrangTua.hasMany(Pengguna, { foreignKey: 'orangtua' });
-Pengguna.belongsTo(OrangTua, { foreignKey: 'orangtua' });
+// Wali
+Wali.hasMany(Pengguna, { foreignKey: 'wali', as: 'pengguna' });
+Pengguna.belongsTo(Wali, { foreignKey: 'wali', as: 'waliDetail' });
 
 // Associations for Wali
 Wali.hasMany(Lansia, { foreignKey: 'wali' });
-Lansia.belongsTo(Wali, { foreignKey: 'wali' });
 
 // Define associations for Pekerjaan
 Pekerjaan.hasOne(Lansia, { foreignKey: 'pekerjaan' });
@@ -49,9 +48,6 @@ PemeriksaanLansia.belongsTo(Pengguna, { foreignKey: 'kader' });
 
 Dokter.hasMany(PemeriksaanLansia, { foreignKey: 'dokter' });
 PemeriksaanLansia.belongsTo(Dokter, { foreignKey: 'dokter' });
-
-Wali.hasMany(Pengguna, { foreignKey: 'wali' });
-Pengguna.belongsTo(Wali, { foreignKey: 'wali' });
 
 Balita.hasMany(PerkembanganBalita, { foreignKey: 'balita' });
 PerkembanganBalita.belongsTo(Balita, { foreignKey: 'balita' });

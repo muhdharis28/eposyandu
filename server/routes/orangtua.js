@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const OrangTua = require('../models/orangtua');  // Adjust the path as needed
+const OrangTua = require('../models/orangtua');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new OrangTua
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             no_kk, nik_ibu, nama_ibu, tempat_lahir_ibu, tanggal_lahir_ibu, alamat_ktp_ibu, kelurahan_ktp_ibu,
@@ -29,8 +29,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all OrangTuas
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const orangTuas = await OrangTua.findAll();
         res.status(200).json(orangTuas);
@@ -39,8 +38,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single OrangTua by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const orangTua = await OrangTua.findByPk(req.params.id);
         if (orangTua) {
@@ -53,8 +51,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update an OrangTua by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             no_kk, nik_ibu, nama_ibu, tempat_lahir_ibu, tanggal_lahir_ibu, alamat_ktp_ibu, kelurahan_ktp_ibu,
@@ -114,8 +111,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete an OrangTua by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const orangTua = await OrangTua.findByPk(req.params.id);
         if (orangTua) {

@@ -215,6 +215,16 @@ const BayiForm = () => {
               </div>
 
               <div className="mb-4">
+                <label className="block text-gray-700">Riwayat Kelahiran</label>
+                <textarea
+                  name="riwayat_kelahiran_balita"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.riwayat_kelahiran_balita}
+                  onChange={handleChange}
+                />
+              </div>
+
+              <div className="mb-4">
                 <label className="block text-gray-700">Keterangan</label>
                 <textarea
                   name="keterangan_balita"

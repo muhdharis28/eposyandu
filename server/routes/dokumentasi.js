@@ -1,14 +1,8 @@
-// routes/dokumentasi.js
 const express = require('express');
 const router = express.Router();
 const Dokumentasi = require('../models/dokumentasi');
-const multer = require('multer');
-const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import middleware
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Configure Multer for file uploads
-const upload = multer({ dest: 'uploads/' });
-
-// GET all dokumentasi
 router.get('/', async (req, res) => {
   try {
     const dokumentasiList = await Dokumentasi.findAll();
@@ -19,7 +13,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET a single dokumentasi by ID
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
@@ -35,7 +28,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST new dokumentasi
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { judul, deskripsi, tanggal, foto } = req.body;
 
@@ -53,7 +45,6 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
   }
 });
 
-// PUT update dokumentasi by ID
 router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
   const { judul, deskripsi, tanggal, foto } = req.body;
@@ -77,7 +68,6 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
   }
 });
 
-// DELETE dokumentasi by ID
 router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
   try {

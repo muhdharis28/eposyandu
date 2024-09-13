@@ -125,7 +125,10 @@ const OrangtuaList = () => {
           header="No"
           body={(rowData, options) => options.rowIndex + 1}
         />
-        <Column field="nama" header="Nama Orangtua" />
+        <Column field="nama_ayah" header="Nama Ayah" />
+        <Column field="nik_ayah" header="NIK Ayah" />
+        <Column field="nama_ibu" header="Nama Ibu" />
+        <Column field="nik_ibu" header="NIK Ibu" />
         <Column body={actionBodyTemplate} style={{ textAlign: 'center' }} />
       </DataTable>
     </div>

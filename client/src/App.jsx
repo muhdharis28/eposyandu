@@ -22,6 +22,7 @@ import KegiatanForm from './components/admin/kegiatan/KegiatanForm';
 import KegiatanDetail from './components/admin/kegiatan/KegiatanDetail'; // Example path
 import PenggunaForm from './components/admin/pengguna/PenggunaForm';
 import PenggunaDashboard from './components/admin/pengguna/PenggunaDashboard';
+import PenggunaDetail from './components/admin/pengguna/PenggunaDetail';
 import LansiaForm from './components/admin/lansia/LansiaForm';
 import LansiaDashboard from './components/admin/lansia/LansiaDashboard';
 import LansiaDetail from './components/admin/lansia/LansiaDetail';
@@ -34,6 +35,9 @@ import OrangTuaDetail from './components/admin/orangtua/OrangTuaDetail';
 import WaliForm from './components/admin/wali/WaliForm';
 import WaliDashboard from './components/admin/wali/WaliDashboard';
 import WaliDetail from './components/admin/wali/WaliDetail';
+import PemeriksaanLansiaForm from './components/admin/pemeriksaan_lansia/PemeriksaanLansiaForm';
+import PemeriksaanLansiaDashboard from './components/admin/pemeriksaan_lansia/PemeriksaanLansiaDashboard';
+import PemeriksaanLansiaDetail from './components/admin/pemeriksaan_lansia/PemeriksaanLansiaDetail';
 import KaderDashboard from './components/kader/KaderDashboard'; // Example path
 import UserDashboard from './components/user/UserDashboard'; // Example path
 import { SidebarProvider } from './components/SideBarContext';
@@ -72,7 +76,8 @@ const App = () => (
           <Route path="/dokumentasi/:id" element={<DokumentasiDetail />} />
           <Route path="/pengguna" element={<PenggunaDashboard />} />
           <Route path="/pengguna/baru" element={<PenggunaForm />} />
-          <Route path="/pengguna/:id/edit" element={<PenggunaForm />} />
+          <Route path="/pengguna/edit/:id" element={<PenggunaForm />} />
+          <Route path="/pengguna/:id" element={<PenggunaDetail />} />
           <Route path="/lansia" element={<LansiaDashboard />} />
           <Route path="/lansia/baru" element={<LansiaForm />} />
           <Route path="/lansia/edit/:id" element={<LansiaForm />} />
@@ -89,6 +94,10 @@ const App = () => (
           <Route path="/wali/baru" element={<WaliForm />} />
           <Route path="/wali/edit/:id" element={<WaliForm />} />
           <Route path="/wali/:id" element={<WaliDetail />} />
+          <Route path="/pemeriksaan-lansia" element={<PemeriksaanLansiaDashboard />} />
+          <Route path="/pemeriksaan-lansia/baru" element={<PemeriksaanLansiaForm />} />
+          <Route path="/pemeriksaan-lansia/edit/:id" element={<PemeriksaanLansiaForm />} />
+          <Route path="/pemeriksaan-lansia/:id" element={<PemeriksaanLansiaDetail />} />
         </Route>
 
         <Route element={<ProtectedRoute role="kader" />}>

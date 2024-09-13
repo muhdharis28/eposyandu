@@ -56,4 +56,7 @@ Pengguna.init({
     modelName: 'Pengguna'
 });
 
+Pengguna.belongsTo(OrangTua, { foreignKey: 'orangtua', as: 'orangTuaDetail' });
+Pengguna.belongsTo(Wali, { foreignKey: 'wali', as: 'waliDetail' });
+
 module.exports = Pengguna;

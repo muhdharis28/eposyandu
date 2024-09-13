@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const Wali = require('../models/wali');  // Adjust the path as needed
+const Wali = require('../models/wali');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Wali
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
@@ -21,8 +21,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Read all Walis
-router.get('/', async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     try {
         const walis = await Wali.findAll();
         res.status(200).json(walis);
@@ -31,8 +30,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Read a single Wali by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const wali = await Wali.findByPk(req.params.id);
         if (wali) {
@@ -45,8 +43,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Update a Wali by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
@@ -85,8 +82,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// Delete a Wali by ID
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const wali = await Wali.findByPk(req.params.id);
         if (wali) {

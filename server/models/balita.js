@@ -54,4 +54,6 @@ Balita.init({
     modelName: 'Balita'
 });
 
+Balita.belongsTo(OrangTua, { as: 'orangtuaDetail', foreignKey: 'orangtua' });
+
 module.exports = Balita;

@@ -1,10 +1,8 @@
-// dokter.js
 const express = require('express');
 const router = express.Router();
-const Dokter = require('../models/dokter');  // Adjust the path as needed
-const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware'); // Import middleware
+const Dokter = require('../models/dokter');
+const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Dokter (authenticated and authorized as admin)
 router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
@@ -15,7 +13,6 @@ router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) =>
     }
 });
 
-// Read all Dokters (authenticated)
 router.get('/', authenticateToken, async (req, res) => {
     try {
         const dokters = await Dokter.findAll();
@@ -25,7 +22,6 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
-// Read a single Dokter by ID (authenticated)
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const dokter = await Dokter.findByPk(req.params.id);
@@ -39,7 +35,6 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Update a Dokter by ID (authenticated and authorized as admin)
 router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const { nama } = req.body;
@@ -56,7 +51,6 @@ router.put('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) 
     }
 });
 
-// Delete a Dokter by ID (authenticated and authorized as admin)
 router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
         const dokter = await Dokter.findByPk(req.params.id);

@@ -126,6 +126,7 @@ const WaliList = () => {
           body={(rowData, options) => options.rowIndex + 1}
         />
         <Column field="nama_wali" header="Nama Wali" />
+        <Column field="nik_wali" header="NIK Wali" />
         <Column body={actionBodyTemplate} style={{ textAlign: 'center' }} />
       </DataTable>
     </div>

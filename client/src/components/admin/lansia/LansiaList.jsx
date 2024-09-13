@@ -1,4 +1,3 @@
-// LansiaList.jsx
 import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -126,7 +125,11 @@ const LansiaList = () => {
           header="No"
           body={(rowData, options) => options.rowIndex + 1}
         />
-        <Column field="nama" header="Nama Lansia" />
+        <Column field="nama_lansia" header="Nama Lansia" />
+        {/* Displaying Wali's Nama */}
+        <Column field="waliDetail.nama_wali" header="Nama Wali" />
+        <Column field="tanggal_lahir_lansia" header="Tanggal Lahir Lansia" />
+        <Column field="tempat_lahir_lansia" header="Tempat Lahir Lansia" />
         <Column body={actionBodyTemplate} style={{ textAlign: 'center' }} />
       </DataTable>
     </div>
