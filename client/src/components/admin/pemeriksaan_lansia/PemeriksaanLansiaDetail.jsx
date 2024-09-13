@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPemeriksaanLansiaById } from './PemeriksaanLansiaService'; // You need to implement this service method
+import { getPemeriksaanLansiaById } from './PemeriksaanLansiaService'; // Adjust the service path as needed
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar'; // Adjust the path if necessary
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
@@ -54,10 +54,15 @@ const PemeriksaanLansiaDetail = () => {
 
           <h2 className="text-2xl font-bold mb-6">Detail Pemeriksaan Lansia</h2>
 
+          {/* Overview Section */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 bg-white p-6 rounded shadow">
             {/* Left Column - Main Pemeriksaan Information */}
             <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-gray-800">Informasi Lansia</h3>
               <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-gray-700">
+                  <strong>Nama Lansia:</strong> {pemeriksaanLansia.lansiaDetail?.nama_lansia || 'Tidak ada data'}
+                </p>
                 <p className="text-gray-700">
                   <strong>Tanggal Kunjungan:</strong> {pemeriksaanLansia.tanggal_kunjungan}
                 </p>
@@ -78,8 +83,8 @@ const PemeriksaanLansiaDetail = () => {
 
             {/* Right Column - Additional Health Information */}
             <div className="space-y-4">
+              <h3 className="text-xl font-semibold text-gray-800">Detail Kesehatan Tambahan</h3>
               <div className="bg-gray-50 p-4 rounded-md">
-                <h4 className="text-lg font-semibold mb-2">Additional Health Details</h4>
                 <p className="text-gray-700">
                   <strong>Gula Darah:</strong> {pemeriksaanLansia.gula_darah} mg/dL
                 </p>
@@ -92,8 +97,6 @@ const PemeriksaanLansiaDetail = () => {
                 <p className="text-gray-700">
                   <strong>Kesehatan Mata:</strong> {pemeriksaanLansia.kesehatan_mata} /10
                 </p>
-              </div>
-              <div className="bg-gray-50 p-4 rounded-md">
                 <p className="text-gray-700">
                   <strong>Riwayat Obat:</strong> {pemeriksaanLansia.riwayat_obat || 'Tidak ada'}
                 </p>
@@ -102,6 +105,17 @@ const PemeriksaanLansiaDetail = () => {
                 </p>
                 <p className="text-gray-700">
                   <strong>Keterangan Tambahan:</strong> {pemeriksaanLansia.keterangan || 'Tidak ada'}
+                </p>
+              </div>
+
+              {/* Information on Kader (Pengguna) and Dokter */}
+              <div className="bg-gray-50 p-4 rounded-md">
+                <h4 className="text-lg font-semibold mb-2">Informasi Kader dan Dokter</h4>
+                <p className="text-gray-700">
+                  <strong>Kader (Pengguna):</strong> {pemeriksaanLansia.penggunaDetail?.nama || 'Tidak ada data'}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Dokter:</strong> {pemeriksaanLansia.dokterDetail?.nama || 'Tidak ada data'}
                 </p>
               </div>
             </div>

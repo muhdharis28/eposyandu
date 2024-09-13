@@ -38,6 +38,9 @@ import WaliDetail from './components/admin/wali/WaliDetail';
 import PemeriksaanLansiaForm from './components/admin/pemeriksaan_lansia/PemeriksaanLansiaForm';
 import PemeriksaanLansiaDashboard from './components/admin/pemeriksaan_lansia/PemeriksaanLansiaDashboard';
 import PemeriksaanLansiaDetail from './components/admin/pemeriksaan_lansia/PemeriksaanLansiaDetail';
+import PerkembanganBalitaForm from './components/admin/perkembangan_balita/PerkembanganBalitaForm';
+import PerkembanganBalitaDashboard from './components/admin/perkembangan_balita/PerkembanganBalitaDashboard';
+import PerkembanganBalitaDetail from './components/admin/perkembangan_balita/PerkembanganBalitaDetail';
 import KaderDashboard from './components/kader/KaderDashboard'; // Example path
 import UserDashboard from './components/user/UserDashboard'; // Example path
 import { SidebarProvider } from './components/SideBarContext';
@@ -98,6 +101,10 @@ const App = () => (
           <Route path="/pemeriksaan-lansia/baru" element={<PemeriksaanLansiaForm />} />
           <Route path="/pemeriksaan-lansia/edit/:id" element={<PemeriksaanLansiaForm />} />
           <Route path="/pemeriksaan-lansia/:id" element={<PemeriksaanLansiaDetail />} />
+          <Route path="/perkembangan-balita" element={<PerkembanganBalitaDashboard />} />
+          <Route path="/perkembangan-balita/baru" element={<PerkembanganBalitaForm />} />
+          <Route path="/perkembangan-balita/edit/:id" element={<PerkembanganBalitaForm />} />
+          <Route path="/perkembangan-balita/:id" element={<PerkembanganBalitaDetail />} />
         </Route>
 
         <Route element={<ProtectedRoute role="kader" />}>

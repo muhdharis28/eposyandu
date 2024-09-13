@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const PemeriksaanLansia = require('../models/pemeriksaan_lansia');
+const Lansia = require('../models/lansia');
+const Pengguna = require('../models/pengguna');
+const Dokter = require('../models/dokter');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
@@ -32,7 +35,13 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id);
+        const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id, {
+            include: [
+                { model: Lansia, as: 'lansiaDetail', attributes: ['id', 'nama_lansia'], },
+                { model: Pengguna, as: 'penggunaDetail', attributes: ['id', 'nama'], },
+                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'], },
+            ]
+        });
         if (pemeriksaanLansia) {
             res.status(200).json(pemeriksaanLansia);
         } else {

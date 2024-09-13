@@ -36,6 +36,10 @@ Lansia.init({
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
+    jenis_kelamin_lansia: {
+        type: DataTypes.ENUM('l','p'),
+        allowNull: false,
+    },
     alamat_ktp_lansia: {
         type: DataTypes.STRING,
         allowNull: false,

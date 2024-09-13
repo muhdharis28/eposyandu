@@ -116,7 +116,12 @@ const PemeriksaanLansiaForm = () => {
 
         {/* Main content area */}
         <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
-            <h1 className="text-2xl font-bold mb-4 text-center">{id ? 'Edit Pemeriksaan Lansia' : 'Tambah Pemeriksaan Lansia'}</h1>
+            <nav className="text-sm text-gray-600 mb-4">
+                <button onClick={handleBackToList} className="text-blue-500 hover:underline">
+                &lt; Kembali ke Daftar Pengguna
+                </button>
+            </nav>
+            <h1 className="text-2xl font-bold mb-4">{id ? 'Edit Pemeriksaan Lansia' : 'Tambah Pemeriksaan Lansia'}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <label className="block">
@@ -286,7 +291,6 @@ const PemeriksaanLansiaForm = () => {
                     value={formData.dokter}
                     onChange={handleChange}
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
-                    required
                     >
                     <option value="">Pilih Dokter</option>
                     {dokterOptions.map((dokter) => (

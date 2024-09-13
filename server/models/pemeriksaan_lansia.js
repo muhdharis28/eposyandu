@@ -70,4 +70,8 @@ PemeriksaanLansia.init({
     modelName: 'PemeriksaanLansia'
 });
 
+PemeriksaanLansia.belongsTo(Lansia, { as: 'lansiaDetail', foreignKey: 'lansia' });
+PemeriksaanLansia.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
+PemeriksaanLansia.belongsTo(Dokter, { as: 'dokterDetail', foreignKey: 'dokter' });
+
 module.exports = PemeriksaanLansia;

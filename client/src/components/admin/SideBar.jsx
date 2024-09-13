@@ -28,6 +28,7 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaUsers, label: 'Orang Tua', path: '/orangtua' },
     { icon: FaUsers, label: 'Wali', path: '/wali' },
     { icon: FaUsers, label: 'Pemeriksaan Lansia', path: '/pemeriksaan-lansia' },
+    { icon: FaUsers, label: 'Perkembangan Balita', path: '/perkembangan-balita' },
     { icon: FaUsers, label: 'Pengguna', path: '/pengguna' },
     { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' },
     { icon: FaFileAlt, label: 'Laporan', path: '/report' },

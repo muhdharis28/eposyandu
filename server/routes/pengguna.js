@@ -95,8 +95,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const user = await Pengguna.findByPk(req.params.id, {
             include: [
-                { model: OrangTua, as: 'orangTuaDetail' },
-                { model: Wali, as: 'waliDetail' }
+                { model: OrangTua, as: 'orangTuaDetail', attributes: ['id', 'nama_ayah', 'nama_ibu'], },
+                { model: Wali, as: 'waliDetail', attributes: ['id', 'nama_wali'], }
             ]
         });
         if (user) {

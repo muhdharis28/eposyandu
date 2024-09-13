@@ -15,6 +15,7 @@ const LansiaForm = () => {
     nama_lansia: '',
     tempat_lahir_lansia: '',
     tanggal_lahir_lansia: '',
+    jenis_kelamin_lansia: '',
     alamat_ktp_lansia: '',
     kelurahan_ktp_lansia: '',
     kecamatan_ktp_lansia: '',
@@ -207,6 +208,21 @@ const LansiaForm = () => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Jenis Kelamin</label>
+                <select
+                  name="jenis_kelamin_lansia"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={formData.jenis_kelamin_lansia}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Pilih</option>
+                  <option value="l">Laki-laki</option>
+                  <option value="p">Perempuan</option>
+                </select>
               </div>
 
               <div className="mb-4">

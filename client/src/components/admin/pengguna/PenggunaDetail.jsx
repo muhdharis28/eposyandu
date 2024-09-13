@@ -21,6 +21,7 @@ const PenggunaDetail = () => {
   const loadPenggunaDetail = async () => {
     try {
       const result = await getPenggunaById(id); // Fetch pengguna details by ID
+      console.log(result.data)
       setPengguna(result.data); // Set fetched data to state
     } catch (error) {
       setError('Failed to load pengguna details.'); // Handle errors
@@ -80,8 +81,18 @@ const PenggunaDetail = () => {
                 <DetailItem label="No. HP" value={pengguna.no_hp} />
                 <DetailItem label="No. KK" value={pengguna.no_kk} />
                 <DetailItem label="No. KTP" value={pengguna.no_ktp} />
-                <DetailItem label="Orang Tua" value={pengguna.orangTuaDetail.nama_ayah} />
-                <DetailItem label="Wali" value={pengguna.wali.nama_wali} />
+                <DetailItem 
+                  label="Orang Tua" 
+                  value={
+                    pengguna.orangTuaDetail 
+                      ? `${pengguna.orangTuaDetail.nama_ayah} & ${pengguna.orangTuaDetail.nama_ibu}` 
+                      : '-'
+                  }
+                />
+                <DetailItem 
+                  label="Wali" 
+                  value={pengguna.waliDetail ? pengguna.waliDetail.nama_wali : '-'} 
+                />
               </div>
 
               {/* Right Column: Image Previews */}
