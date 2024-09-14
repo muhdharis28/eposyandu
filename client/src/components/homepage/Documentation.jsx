@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Slider from 'react-slick'; // Import the Slider component
+import 'slick-carousel/slick/slick.css'; 
+import 'slick-carousel/slick/slick-theme.css';
 
 const Documentation = () => {
   const [documentation, setDocumentation] = useState([]);
@@ -31,6 +34,38 @@ const Documentation = () => {
     setSelectedDoc(null); // Clear the selected documentation to close the modal
   };
 
+  // Slick slider settings
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4, // Show 4 images at once
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 3,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+          slidesToScroll: 1,
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
+
   // Handle loading and error states
   if (loading) {
     return <p className="text-center text-lg">Loading...</p>;
@@ -41,53 +76,51 @@ const Documentation = () => {
   }
 
   return (
-    <section id="dokumentasi" className="py-20 bg-gray-50">
+    <section id="dokumentasi" className="py-20 bg-gradient-to-b from-blue-600 to-[#008EB3]">
       <div className="container mx-auto text-center px-6 md:px-12">
-        <h2 className="text-4xl font-bold text-blue-600 mb-6">Dokumentasi</h2>
-        <p className="text-gray-700 text-lg mb-8">
-          Foto dokumentasi kegiatan ePosyandu Tanjungpinang.
-        </p>
-        <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-6">
+        <h2 className="text-4xl font-extrabold text-white mb-12">Dokumentasi</h2>
+
+        {/* Slider for Documentation */}
+        <Slider {...sliderSettings}>
           {documentation.map((doc) => (
             <div
               key={doc.id}
-              className="relative mb-6 break-inside-avoid cursor-pointer"
+              className="p-4"
               onClick={() => openModal(doc)} // Open modal on click
             >
-              <img
-                src={`${import.meta.env.VITE_API_URL}${doc.foto}`} // Assuming 'foto' contains the image path
-                alt={doc.judul} // Using the title of the documentation as the alt text
-                className="w-full h-auto object-cover rounded-lg shadow-lg"
-              />
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center text-white text-xl font-bold transition duration-300">
-                {doc.judul}
+              <div className="relative group overflow-hidden rounded-lg shadow-lg cursor-pointer">
+                <img
+                  src={`${import.meta.env.VITE_API_URL}${doc.foto}`} // Assuming 'foto' contains the image path
+                  alt={doc.judul} // Using the title of the documentation as the alt text
+                  className="w-full h-64 object-cover transform transition-transform duration-300 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 flex items-center justify-center text-white text-xl font-bold transition-opacity duration-300">
+                  <span className="opacity-0 group-hover:opacity-100">{doc.judul}</span>
+                </div>
               </div>
             </div>
           ))}
-        </div>
+        </Slider>
 
         {/* Modal for showing details */}
         {selectedDoc && (
           <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-            <div className="relative bg-white p-8 rounded-lg shadow-lg w-96 max-w-full">
-              <button
-                className="absolute top-2 right-2 text-white text-2xl"
-                onClick={closeModal}
-              >
-                &times;
-              </button>
-              <img
-                src={`${import.meta.env.VITE_API_URL}${selectedDoc.foto}`}
-                alt={selectedDoc.judul}
-                className="w-full h-auto object-cover rounded-lg mb-4"
-              />
-              <h2 className="text-2xl font-bold mb-2">{selectedDoc.judul}</h2>
+            <div className="relative bg-white p-8 rounded-3xl shadow-2xl w-11/12 max-w-4xl">
+              {/* Centering the image */}
+              <div className="flex justify-center">
+                <img
+                  src={`${import.meta.env.VITE_API_URL}${selectedDoc.foto}`}
+                  alt={selectedDoc.judul}
+                  className="w-[500px] h-auto max-h-[500px] object-contain rounded-xl mb-6 border-2 border-[#008EB3]" // Added border class
+                />
+              </div>
+              <h2 className="text-3xl font-extrabold text-[#008EB3] mb-4">{selectedDoc.judul}</h2>
               <p className="text-gray-700 mb-4">{selectedDoc.deskripsi}</p>
-              <p className="text-gray-500">
+              <p className="text-gray-500 mb-4">
                 <strong>Tanggal:</strong> {new Date(selectedDoc.tanggal).toLocaleDateString()}
               </p>
               <button
-                className="mt-6 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold rounded-full shadow-md hover:shadow-lg transform transition hover:scale-105"
+                className="mt-4 px-6 py-2 bg-gradient-to-r from-[#008EB3] to-blue-500 text-white font-semibold rounded-full shadow-md hover:shadow-lg transform transition hover:scale-105"
                 onClick={closeModal}
               >
                 Tutup

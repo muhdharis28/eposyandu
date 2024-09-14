@@ -5,7 +5,6 @@ import axios from 'axios';
 const DataDiriIbu = ({ formData, updateFormData }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  // const formData = location.state?.formData || {}; // Retrieve formData from location state
 
   const [errors, setErrors] = useState({});
   const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
@@ -15,7 +14,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
   useEffect(() => {
     const fetchPekerjaan = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`);
         setPekerjaanOptions(response.data);
       } catch (error) {
         console.error('Failed to fetch Pekerjaan data:', error);
@@ -24,7 +23,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
 
     const fetchPendidikan = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`);
         setPendidikanOptions(response.data);
       } catch (error) {
         console.error('Failed to fetch Pendidikan data:', error);
@@ -73,75 +72,37 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
       formErrors.no_hp_ibu = 'No HP Ibu must be a valid number';
     }
 
-    if (!formData.alamat_ktp_ibu) {
-      formErrors.alamat_ktp_ibu = 'Alamat KTP Ibu is required';
-    }
-
-    if (!formData.kelurahan_ktp_ibu) {
-      formErrors.kelurahan_ktp_ibu = 'Kelurahan KTP Ibu is required';
-    }
-
-    if (!formData.kecamatan_ktp_ibu) {
-      formErrors.kecamatan_ktp_ibu = 'Kecamatan KTP Ibu is required';
-    }
-
-    if (!formData.kota_ktp_ibu) {
-      formErrors.kota_ktp_ibu = 'Kota KTP Ibu is required';
-    }
-
-    if (!formData.provinsi_ktp_ibu) {
-      formErrors.provinsi_ktp_ibu = 'Provinsi KTP Ibu is required';
-    }
-
-    if (!formData.alamat_domisili_ibu) {
-      formErrors.alamat_domisili_ibu = 'Alamat Domisili Ibu is required';
-    }
-
-    if (!formData.kelurahan_domisili_ibu) {
-      formErrors.kelurahan_domisili_ibu = 'Kelurahan Domisili Ibu is required';
-    }
-
-    if (!formData.kecamatan_domisili_ibu) {
-      formErrors.kecamatan_domisili_ibu = 'Kecamatan Domisili Ibu is required';
-    }
-
-    if (!formData.kota_domisili_ibu) {
-      formErrors.kota_domisili_ibu = 'Kota Domisili Ibu is required';
-    }
-
-    if (!formData.provinsi_domisili_ibu) {
-      formErrors.provinsi_domisili_ibu = 'Provinsi Domisili Ibu is required';
-    }
-
-    if (!formData.pekerjaan_ibu) {
-      formErrors.pekerjaan_ibu = 'Pekerjaan Ibu is required';
-    }
-
-    if (!formData.pendidikan_ibu) {
-      formErrors.pendidikan_ibu = 'Pendidikan Ibu is required';
-    }
-
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
   };
 
   const handleNext = () => {
-    // if (validateForm()) {
-    //   navigate('/register/data-diri-ayah', { state: { formData } }); // Pass formData to the next component
-    // }
-    navigate('/register/data-diri-ayah', { state: { formData } }); // Pass formData to the next component
+    if (validateForm()) {
+      navigate('/register/data-diri-ayah', { state: { formData } });
+    }
   };
 
   const handleBack = () => {
-    navigate('/register/details', { state: { formData } }); // Pass formData back to the previous component
+    navigate('/register/details', { state: { formData } });
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 overflow-y-auto py-10">
-      <div className="flex flex-col w-full max-w-5xl shadow-lg bg-white p-4">
-        <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-2/3 flex flex-col justify-between pr-4">
-            <h1 className="text-3xl font-bold mb-4 text-blue-800">Data Diri Ibu</h1>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center py-10">
+      <div className="flex flex-col w-full max-w-6xl shadow-xl rounded-3xl bg-white border-2 border-gray-300 overflow-hidden">
+        <div className="flex flex-col w-full md:flex-row">
+          {/* Left Form Section */}
+          <div className="w-full md:w-3/3 p-8 bg-white text-blue-800">
+            <div className="flex items-center justify-between w-full mb-12">
+              <h1 className="text-4xl font-bold" style={{ color: '#008EB3' }}>
+                Data Diri Ibu
+              </h1>
+              <button
+                onClick={handleBack}
+                className="text-blue-600 hover:underline text-lg"
+              >
+                ← Kembali
+              </button>
+            </div>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Form Fields */}
               <div className="mb-4">
@@ -152,7 +113,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.nik_ibu}
                   onChange={handleInputChange}
                   placeholder="NIK Ibu"
-                  className={`w-full p-2 border ${errors.nik_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.nik_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.nik_ibu && <p className="text-red-500 text-sm mt-1">{errors.nik_ibu}</p>}
               </div>
@@ -164,7 +125,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.nama_ibu}
                   onChange={handleInputChange}
                   placeholder="Nama Ibu"
-                  className={`w-full p-2 border ${errors.nama_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.nama_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.nama_ibu && <p className="text-red-500 text-sm mt-1">{errors.nama_ibu}</p>}
               </div>
@@ -176,7 +137,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.tempat_lahir_ibu}
                   onChange={handleInputChange}
                   placeholder="Tempat Lahir"
-                  className={`w-full p-2 border ${errors.tempat_lahir_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.tempat_lahir_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.tempat_lahir_ibu && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir_ibu}</p>}
               </div>
@@ -187,7 +148,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   name="tanggal_lahir_ibu"
                   value={formData.tanggal_lahir_ibu}
                   onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.tanggal_lahir_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.tanggal_lahir_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.tanggal_lahir_ibu && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir_ibu}</p>}
               </div>
@@ -199,7 +160,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.email_ibu}
                   onChange={handleInputChange}
                   placeholder="Email"
-                  className={`w-full p-2 border ${errors.email_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.email_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.email_ibu && <p className="text-red-500 text-sm mt-1">{errors.email_ibu}</p>}
               </div>
@@ -211,7 +172,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.no_hp_ibu}
                   onChange={handleInputChange}
                   placeholder="No HP Ibu"
-                  className={`w-full p-2 border ${errors.no_hp_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.no_hp_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.no_hp_ibu && <p className="text-red-500 text-sm mt-1">{errors.no_hp_ibu}</p>}
               </div>
@@ -223,7 +184,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.alamat_ktp_ibu}
                   onChange={handleInputChange}
                   placeholder="Alamat KTP"
-                  className={`w-full p-2 border ${errors.alamat_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.alamat_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.alamat_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_ktp_ibu}</p>}
               </div>
@@ -235,7 +196,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.kelurahan_ktp_ibu}
                   onChange={handleInputChange}
                   placeholder="Kelurahan KTP"
-                  className={`w-full p-2 border ${errors.kelurahan_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kelurahan_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kelurahan_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_ktp_ibu}</p>}
               </div>
@@ -247,7 +208,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.kecamatan_ktp_ibu}
                   onChange={handleInputChange}
                   placeholder="Kecamatan KTP"
-                  className={`w-full p-2 border ${errors.kecamatan_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kecamatan_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kecamatan_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_ktp_ibu}</p>}
               </div>
@@ -259,7 +220,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.kota_ktp_ibu}
                   onChange={handleInputChange}
                   placeholder="Kota KTP"
-                  className={`w-full p-2 border ${errors.kota_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kota_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kota_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.kota_ktp_ibu}</p>}
               </div>
@@ -271,7 +232,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.provinsi_ktp_ibu}
                   onChange={handleInputChange}
                   placeholder="Provinsi KTP"
-                  className={`w-full p-2 border ${errors.provinsi_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.provinsi_ktp_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.provinsi_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.provinsi_ktp_ibu}</p>}
               </div>
@@ -283,7 +244,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.alamat_domisili_ibu}
                   onChange={handleInputChange}
                   placeholder="Alamat Domisili"
-                  className={`w-full p-2 border ${errors.alamat_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.alamat_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.alamat_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_domisili_ibu}</p>}
               </div>
@@ -295,7 +256,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.kelurahan_domisili_ibu}
                   onChange={handleInputChange}
                   placeholder="Kelurahan Domisili"
-                  className={`w-full p-2 border ${errors.kelurahan_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kelurahan_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kelurahan_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_domisili_ibu}</p>}
               </div>
@@ -307,7 +268,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.kecamatan_domisili_ibu}
                   onChange={handleInputChange}
                   placeholder="Kecamatan Domisili"
-                  className={`w-full p-2 border ${errors.kecamatan_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kecamatan_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kecamatan_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_domisili_ibu}</p>}
               </div>
@@ -319,7 +280,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.kota_domisili_ibu}
                   onChange={handleInputChange}
                   placeholder="Kota Domisili"
-                  className={`w-full p-2 border ${errors.kota_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kota_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kota_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.kota_domisili_ibu}</p>}
               </div>
@@ -331,7 +292,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   value={formData.provinsi_domisili_ibu}
                   onChange={handleInputChange}
                   placeholder="Provinsi Domisili"
-                  className={`w-full p-2 border ${errors.provinsi_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.provinsi_domisili_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.provinsi_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.provinsi_domisili_ibu}</p>}
               </div>
@@ -341,7 +302,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   name="pekerjaan_ibu"
                   value={formData.pekerjaan_ibu}
                   onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.pekerjaan_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.pekerjaan_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 >
                   <option value="">Pilih Pekerjaan Ibu</option>
                   {pekerjaanOptions.map((pekerjaan) => (
@@ -358,7 +319,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                   name="pendidikan_ibu"
                   value={formData.pendidikan_ibu}
                   onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.pendidikan_ibu ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.pendidikan_ibu ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 >
                   <option value="">Pilih Pendidikan Ibu</option>
                   {pendidikanOptions.map((pendidikan) => (
@@ -370,26 +331,22 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
                 {errors.pendidikan_ibu && <p className="text-red-500 text-sm mt-1">{errors.pendidikan_ibu}</p>}
               </div>
             </form>
-            <div className="flex space-x-4 mt-4">
-              <button
-                type="button"
-                onClick={handleBack}
-                className="w-full bg-gray-400 hover:bg-gray-500 text-white py-3 rounded"
-              >
-                Back
-              </button>
+            <div className="flex space-x-4 mt-6">
               <button
                 type="button"
                 onClick={handleNext}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded"
+                className="w-full py-3 rounded-full shadow-lg transition duration-300"
+                style={{ backgroundColor: '#008EB3', color: 'white' }}
               >
                 Selanjutnya
               </button>
             </div>
           </div>
+
+          {/* Right Image Section */}
           <div className="w-full md:w-1/3 flex justify-center items-center mt-4 md:mt-0">
             <img
-              src="/path-to-your-ibu-image.png"
+              src={image}
               alt="Ibu Illustration"
               className="max-w-full"
             />

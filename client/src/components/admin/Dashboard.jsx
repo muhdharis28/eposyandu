@@ -8,19 +8,19 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await api.get(API_URL);
-        console.log(response)
-        setStats(response.data);
-        setLoading(false);
-      } catch (err) {
-        setError('Failed to fetch stats');
-        setLoading(false);
-      }
-    };
+  const fetchStats = async () => {
+    try {
+      const response = await api.get(API_URL);
+      console.log(response)
+      setStats(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch stats');
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchStats();
   }, []);
 
@@ -36,7 +36,6 @@ const Dashboard = () => {
     <div className="p-6 min-h-screen mt-12">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
-        <input type="text" placeholder="Search..." className="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (

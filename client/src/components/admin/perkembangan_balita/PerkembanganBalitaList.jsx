@@ -121,7 +121,7 @@ const PerkembanganBalitaList = () => {
         header={renderHeader()}
       >
         <Column field="id" header="No" body={(rowData, options) => options.rowIndex + 1} />
-        <Column field="balita.nama_balita" header="Nama Balita" />
+        <Column field="balitaDetail.nama_balita" header="Nama Balita" />
         <Column field="tanggal_kunjungan" header="Tanggal Kunjungan" />
         <Column field="berat_badan" header="Berat Badan (kg)" />
         <Column field="tinggi_badan" header="Tinggi Badan (cm)" />

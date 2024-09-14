@@ -120,7 +120,7 @@ const PemeriksaanLansiaList = () => {
           header="No"
           body={(rowData, options) => options.rowIndex + 1}
         />
-        <Column field="lansia.nama_lansia" header="Nama Lansia" />
+        <Column field="lansiaDetail.nama_lansia" header="Nama Lansia" />
         <Column field="tanggal_kunjungan" header="Tanggal Kunjungan" />
         <Column field="berat_badan" header="Berat Badan" />
         <Column field="tinggi_badan" header="Tinggi Badan" />

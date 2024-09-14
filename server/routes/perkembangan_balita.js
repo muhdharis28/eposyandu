@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const PerkembanganBalita = require('../models/perkembangan_balita');
+const Balita = require('../models/balita');
+const Pengguna = require('../models/pengguna');
+const Dokter = require('../models/dokter');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
@@ -21,7 +24,13 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const perkembanganBalitas = await PerkembanganBalita.findAll();
+        const perkembanganBalitas = await PerkembanganBalita.findAll({
+            include: [
+                { model: Balita, as: 'balitaDetail', attributes: ['id', 'nama_balita'], },
+                { model: Pengguna, as: 'penggunaDetail', attributes: ['id', 'nama'], },
+                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'], },
+            ]
+        });
         res.status(200).json(perkembanganBalitas);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -30,7 +39,13 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
+        const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id, {
+            include: [
+                { model: Balita, as: 'balitaDetail', attributes: ['id', 'nama_balita'], },
+                { model: Pengguna, as: 'penggunaDetail', attributes: ['id', 'nama'], },
+                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'], },
+            ]
+        });
         if (perkembanganBalita) {
             res.status(200).json(perkembanganBalita);
         } else {

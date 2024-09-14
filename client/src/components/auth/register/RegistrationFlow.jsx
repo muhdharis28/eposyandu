@@ -14,6 +14,8 @@ const RegistrationFlow = () => {
         kata_sandi: '',
         no_ktp: '',
         no_kk: '',
+        no_hp: '',
+        role: 'user',
         foto_kk: null,
         nik_ibu: '',
         nama_ibu: '',

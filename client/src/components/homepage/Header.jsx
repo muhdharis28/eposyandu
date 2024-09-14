@@ -16,57 +16,70 @@ const Header = () => {
     dashboardLink = "/user-dashboard";
   }
 
-  // Reusable Button Style
+  // Reusable Button Style with the new color #008EB3
   const buttonStyle =
     "px-6 py-2 rounded-full shadow-md transition duration-300 transform hover:scale-105 hover:-translate-y-1";
-  
+
   const dashboardButtonStyle =
-    "bg-white text-blue-600 " + buttonStyle + " hover:bg-gray-100";
-  
+    `bg-[#008EB3] text-white ${buttonStyle} hover:bg-white hover:text-[#008EB3] border-2 border-white`;
+
   const registerButtonStyle =
-    "bg-white text-blue-600 " + buttonStyle + " hover:bg-gray-100";
-  
+    `bg-[#008EB3] text-white ${buttonStyle} hover:bg-white hover:text-[#008EB3] border-2 border-white`;
+
   const loginButtonStyle =
-    "bg-white text-blue-600 " + buttonStyle + " hover:bg-gray-100";
+    `bg-[#008EB3] text-white ${buttonStyle} hover:bg-white hover:text-[#008EB3] border-2 border-white`;
 
   return (
-    <header className="bg-gradient-to-r from-blue-600 to-blue-400 p-6 shadow-lg">
+    <header className="bg-gradient-to-r from-[#008EB3] to-[#008EB3] p-6 shadow-xl">
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center">
-          <div className="bg-white h-12 w-12 rounded-full flex items-center justify-center shadow-lg mr-3">
+          <div className="bg-white h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg mr-4">
             <img src={logo} className="h-10" alt="ePosyandu Tanjungpinang Logo" />
           </div>
-          <h1 className="text-2xl font-bold text-white">ePosyandu Tanjungpinang</h1>
+          <h1 className="text-xl font-extrabold text-white tracking-tight">
+            ePosyandu Tanjungpinang
+          </h1>
         </div>
-        <nav className="flex items-center space-x-6">
-          <a href="#home" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
-            <FaHome className="text-lg" />
-            <span>Beranda</span>
-          </a>
-          <a href="#jadwal" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
-            <FaCalendarAlt className="text-lg" />
-            <span>Jadwal Kegiatan</span>
-          </a>
-          <a href="#dokumentasi" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
-            <FaCamera className="text-lg" />
-            <span>Dokumentasi</span>
-          </a>
-          {token ? (
-            <Link to={dashboardLink} className={dashboardButtonStyle}>
-              DASHBOARD
-            </Link>
-          ) : (
-            <>
-              <Link to="/register" className={registerButtonStyle}>
-                DAFTAR
+        <div className="flex justify-between items-center">
+          {/* Primary Navigation (Home, Jadwal, Dokumentasi) */}
+          <nav className="flex items-center space-x-6 mr-5">
+            <a href="#home" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
+              <FaHome className="text-xl" />
+              <span className="text-lg">Beranda</span>
+            </a>
+
+            <a href="#jadwal" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
+              <FaCalendarAlt className="text-xl" />
+              <span className="text-lg">Jadwal Kegiatan</span>
+            </a>
+
+            <a href="#dokumentasi" className="text-white flex items-center space-x-2 hover:text-gray-200 transition duration-300">
+              <FaCamera className="text-xl" />
+              <span className="text-lg">Dokumentasi</span>
+            </a>
+          </nav>
+
+          {/* User Action Navigation (Dashboard, Register, Login) */}
+          <nav className="flex items-center space-x-3">
+            {token ? (
+              <Link to={dashboardLink} className={`${dashboardButtonStyle} ml-12`}>
+                DASHBOARD
               </Link>
-              <Link to="/login" className={loginButtonStyle}>
-                MASUK
-              </Link>
-            </>
-          )}
-        </nav>
+            ) : (
+              <>
+                <Link to="/register" className={`${registerButtonStyle} ml-12`}>
+                  DAFTAR
+                </Link>
+                <Link to="/login" className={`${loginButtonStyle} ml-4`}>
+                  MASUK
+                </Link>
+              </>
+            )}
+          </nav>
+        </div>
       </div>
+      {/* Separation line between the header and the content below */}
+      <hr className="border-t-1 border-gray-300 mt-6" />
     </header>
   );
 };

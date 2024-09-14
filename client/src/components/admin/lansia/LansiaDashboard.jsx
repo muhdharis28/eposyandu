@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import LansiaList from './LansiaList'; // Import the list of Lansia
-import Modal from '../Modal'; // For modal handling
 import { useSidebar } from '../../SideBarContext'; // Use sidebar context for collapsible sidebar
 
 const LansiaDashboard = () => {

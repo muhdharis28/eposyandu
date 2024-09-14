@@ -1,33 +1,32 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios, { formToJSON } from 'axios';
+import axios from 'axios';
 
 const DataDiriAyah = ({ formData, updateFormData }) => {
   const location = useLocation();
   const navigate = useNavigate();
-  // const formData = location.state?.formData || {}; // Retrieve formData from location state
 
   const [errors, setErrors] = useState({});
-  const [pekerjaanOptions, setPekerjaanOptions] = useState([]); // Initialize as an empty array
-  const [pendidikanOptions, setPendidikanOptions] = useState([]); // Initialize as an empty array
+  const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
+  const [pendidikanOptions, setPendidikanOptions] = useState([]);
 
   // Fetch data for Pekerjaan and Pendidikan
   useEffect(() => {
     const fetchPekerjaan = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
-        setPekerjaanOptions(response.data); // Assuming the response data is an array
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`);
+        setPekerjaanOptions(response.data);
       } catch (error) {
-        setPekerjaanOptions([]); // Fallback to an empty array
+        setPekerjaanOptions([]);
       }
     };
 
     const fetchPendidikan = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
-        setPendidikanOptions(response.data); // Assuming the response data is an array
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`);
+        setPendidikanOptions(response.data);
       } catch (error) {
-        setPendidikanOptions([]); // Fallback to an empty array
+        setPendidikanOptions([]);
       }
     };
 
@@ -73,64 +72,18 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
       formErrors.no_hp_ayah = 'No HP Ayah must be a valid number';
     }
 
-    if (!formData.alamat_ktp_ayah) {
-      formErrors.alamat_ktp_ayah = 'Alamat KTP Ayah is required';
-    }
-
-    if (!formData.kelurahan_ktp_ayah) {
-      formErrors.kelurahan_ktp_ayah = 'Kelurahan KTP Ayah is required';
-    }
-
-    if (!formData.kecamatan_ktp_ayah) {
-      formErrors.kecamatan_ktp_ayah = 'Kecamatan KTP Ayah is required';
-    }
-
-    if (!formData.kota_ktp_ayah) {
-      formErrors.kota_ktp_ayah = 'Kota KTP Ayah is required';
-    }
-
-    if (!formData.provinsi_ktp_ayah) {
-      formErrors.provinsi_ktp_ayah = 'Provinsi KTP Ayah is required';
-    }
-
-    if (!formData.alamat_domisili_ayah) {
-      formErrors.alamat_domisili_ayah = 'Alamat Domisili Ayah is required';
-    }
-
-    if (!formData.kelurahan_domisili_ayah) {
-      formErrors.kelurahan_domisili_ayah = 'Kelurahan Domisili Ayah is required';
-    }
-
-    if (!formData.kecamatan_domisili_ayah) {
-      formErrors.kecamatan_domisili_ayah = 'Kecamatan Domisili Ayah is required';
-    }
-
-    if (!formData.kota_domisili_ayah) {
-      formErrors.kota_domisili_ayah = 'Kota Domisili Ayah is required';
-    }
-
-    if (!formData.provinsi_domisili_ayah) {
-      formErrors.provinsi_domisili_ayah = 'Provinsi Domisili Ayah is required';
-    }
-
-    if (!formData.pekerjaan_ayah) {
-      formErrors.pekerjaan_ayah = 'Pekerjaan Ayah is required';
-    }
-
-    if (!formData.pendidikan_ayah) {
-      formErrors.pendidikan_ayah = 'Pendidikan Ayah is required';
-    }
-
     setErrors(formErrors);
     return Object.keys(formErrors).length === 0;
   };
 
   const handleNext = async () => {
+    if (!validateForm()) {
+      return; // If validation fails, stop execution
+    }
     const confirmed = window.confirm('Apakah data yang anda masukkan sudah benar?');
     if (!confirmed) return;
     const fieldsToConvert = [
-      'nik_ayah', 'nik_ibu', 'pekerjaan_ibu', 'pendidikan_ibu', 'pekerjaan_ayah', 'pendidikan_ayah',
-      'no_kk', 'no_hp_ibu', 'no_hp_ayah', 'no_kk', 'no_ktp'
+      'pekerjaan_ibu', 'pendidikan_ibu', 'pekerjaan_ayah', 'pendidikan_ayah'
     ];
     try {
       
@@ -139,27 +92,22 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
           formData[field] = parseInt(formData[field], 10);
         }
       });
-
       // Validate pekerjaan_ibu
       if (!formData.pekerjaan_ibu || !pekerjaanOptions.some(p => p.id === formData.pekerjaan_ibu)) {
         throw new Error('Invalid pekerjaan_ibu selected.');
       }
-
       // Validate pendidikan_ibu
       if (!formData.pendidikan_ibu || !pendidikanOptions.some(p => p.id === formData.pendidikan_ibu)) {
         throw new Error('Invalid pendidikan_ibu selected.');
       }
-
       // Validate pekerjaan_ayah
       if (!formData.pekerjaan_ayah || !pekerjaanOptions.some(p => p.id === formData.pekerjaan_ayah)) {
         throw new Error('Invalid pekerjaan_ibu selected.');
       }
-
       // Validate pendidikan_ayah
       if (!formData.pendidikan_ayah || !pendidikanOptions.some(p => p.id === formData.pendidikan_ayah)) {
         throw new Error('Invalid pendidikan_ayah selected.');
       }
-
       // Store OrangTua data
       const orangTuaResponse = await axios.post(`${import.meta.env.VITE_API_URL}/api/orangtua`, {
         no_kk: formData.no_kk,
@@ -200,17 +148,21 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
         pekerjaan_ayah: formData.pekerjaan_ayah,
         pendidikan_ayah: formData.pendidikan_ayah,
       });
-      console.log('ffffffffffffffff', formData)
+      
+      const uploadedFilePath = await uploadFile();
+      if (uploadedFilePath) {
+        updateFormData({ ['foto_kk']: uploadedFilePath });
+      }
       // Store Pengguna data and associate with OrangTua
       await axios.post(`${import.meta.env.VITE_API_URL}/api/pengguna`, {
         nama: formData.nama,
         email: formData.email,
         kata_sandi: formData.kata_sandi, // Ensure this is hashed in the backend
         role: 'user', // Adjust as needed
-        // no_hp: formData.no_hp_ayah, // or use no_hp_ibu if desired
+        no_hp: formData.no_hp, 
         no_kk: formData.no_kk,
         no_ktp: formData.no_ktp,
-        // foto_kk: formData.foto_kk,
+        foto_kk: formData.foto_kk,
         orangtua: orangTuaResponse.data.id, // Use the ID returned from the OrangTua creation
       });
 
@@ -221,16 +173,43 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
     }
   };
 
+  const uploadFile = async () => {
+    if (!formData.foto_kk) return null;
+    const formDataOrtu = new FormData();
+    formDataOrtu.append('file', formData.foto_kk);
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formDataOrtu);
+      const filePath = `/uploads/${response.data.fileName}`;
+      return filePath;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setErrors('Failed to upload file');
+      return null;
+    }
+  };
+
   const handleBack = () => {
-    navigate('/register/data-diri-ibu', { state: { formData } }); // Pass formData back to the previous component
+    navigate('/register/data-diri-ibu', { state: { formData } });
   };
 
   return (
-    <div className="flex justify-center items-center bg-gray-100 overflow-y-auto py-10">
-      <div className="flex flex-col w-full max-w-5xl shadow-lg bg-white p-4">
-        <div className="flex flex-col md:flex-row">
-          <div className="w-full md:w-2/3 flex flex-col justify-between pr-4">
-            <h1 className="text-3xl font-bold mb-4 text-blue-800">Data Diri Ayah</h1>
+    <div className="min-h-screen bg-gray-100 flex justify-center items-center py-10">
+      <div className="flex flex-col w-full max-w-6xl shadow-xl rounded-3xl bg-white border-2 border-gray-300 overflow-hidden">
+        <div className="flex flex-col w-full md:flex-row">
+          {/* Left Form Section */}
+          <div className="w-full md:w-3/3 p-8 bg-white text-blue-800">
+            <div className="flex items-center justify-between w-full mb-12">
+              <h1 className="text-4xl font-bold" style={{ color: '#008EB3' }}>
+                Data Diri Ayah
+              </h1>
+              <button
+                onClick={handleBack}
+                className="text-blue-600 hover:underline text-lg"
+              >
+                ← Kembali
+              </button>
+            </div>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Form Fields */}
               <div className="mb-4">
@@ -241,7 +220,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.nik_ayah}
                   onChange={handleInputChange}
                   placeholder="NIK Ayah"
-                  className={`w-full p-2 border ${errors.nik_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.nik_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.nik_ayah && <p className="text-red-500 text-sm mt-1">{errors.nik_ayah}</p>}
               </div>
@@ -253,7 +232,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.nama_ayah}
                   onChange={handleInputChange}
                   placeholder="Nama Ayah"
-                  className={`w-full p-2 border ${errors.nama_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.nama_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.nama_ayah && <p className="text-red-500 text-sm mt-1">{errors.nama_ayah}</p>}
               </div>
@@ -265,7 +244,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.tempat_lahir_ayah}
                   onChange={handleInputChange}
                   placeholder="Tempat Lahir"
-                  className={`w-full p-2 border ${errors.tempat_lahir_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.tempat_lahir_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.tempat_lahir_ayah && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir_ayah}</p>}
               </div>
@@ -276,7 +255,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   name="tanggal_lahir_ayah"
                   value={formData.tanggal_lahir_ayah}
                   onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.tanggal_lahir_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.tanggal_lahir_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.tanggal_lahir_ayah && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir_ayah}</p>}
               </div>
@@ -288,7 +267,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.no_hp_ayah}
                   onChange={handleInputChange}
                   placeholder="No KTP"
-                  className={`w-full p-2 border ${errors.no_hp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.no_hp_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.no_hp_ayah && <p className="text-red-500 text-sm mt-1">{errors.no_hp_ayah}</p>}
               </div>
@@ -300,7 +279,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.email_ayah}
                   onChange={handleInputChange}
                   placeholder="Email"
-                  className={`w-full p-2 border ${errors.email_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.email_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.email_ayah && <p className="text-red-500 text-sm mt-1">{errors.email_ayah}</p>}
               </div>
@@ -312,7 +291,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.alamat_ktp_ayah}
                   onChange={handleInputChange}
                   placeholder="Alamat KTP"
-                  className={`w-full p-2 border ${errors.alamat_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.alamat_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.alamat_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.alamat_ktp_ayah}</p>}
               </div>
@@ -324,7 +303,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.kelurahan_ktp_ayah}
                   onChange={handleInputChange}
                   placeholder="Kelurahan KTP"
-                  className={`w-full p-2 border ${errors.kelurahan_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kelurahan_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kelurahan_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_ktp_ayah}</p>}
               </div>
@@ -336,7 +315,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.kecamatan_ktp_ayah}
                   onChange={handleInputChange}
                   placeholder="Kecamatan KTP"
-                  className={`w-full p-2 border ${errors.kecamatan_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kecamatan_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kecamatan_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_ktp_ayah}</p>}
               </div>
@@ -348,7 +327,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.kota_ktp_ayah}
                   onChange={handleInputChange}
                   placeholder="Kota KTP"
-                  className={`w-full p-2 border ${errors.kota_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kota_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kota_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.kota_ktp_ayah}</p>}
               </div>
@@ -360,7 +339,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.provinsi_ktp_ayah}
                   onChange={handleInputChange}
                   placeholder="Provinsi KTP"
-                  className={`w-full p-2 border ${errors.provinsi_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.provinsi_ktp_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.provinsi_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.provinsi_ktp_ayah}</p>}
               </div>
@@ -372,7 +351,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.alamat_domisili_ayah}
                   onChange={handleInputChange}
                   placeholder="Alamat Domisili"
-                  className={`w-full p-2 border ${errors.alamat_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.alamat_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.alamat_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.alamat_domisili_ayah}</p>}
               </div>
@@ -384,7 +363,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.kelurahan_domisili_ayah}
                   onChange={handleInputChange}
                   placeholder="Kelurahan Domisili"
-                  className={`w-full p-2 border ${errors.kelurahan_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kelurahan_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kelurahan_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_domisili_ayah}</p>}
               </div>
@@ -396,7 +375,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.kecamatan_domisili_ayah}
                   onChange={handleInputChange}
                   placeholder="Kecamatan Domisili"
-                  className={`w-full p-2 border ${errors.kecamatan_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kecamatan_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kecamatan_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_domisili_ayah}</p>}
               </div>
@@ -408,7 +387,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.kota_domisili_ayah}
                   onChange={handleInputChange}
                   placeholder="Kota Domisili"
-                  className={`w-full p-2 border ${errors.kota_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.kota_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.kota_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.kota_domisili_ayah}</p>}
               </div>
@@ -420,7 +399,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   value={formData.provinsi_domisili_ayah}
                   onChange={handleInputChange}
                   placeholder="Provinsi Domisili"
-                  className={`w-full p-2 border ${errors.provinsi_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.provinsi_domisili_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 />
                 {errors.provinsi_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.provinsi_domisili_ayah}</p>}
               </div>
@@ -430,7 +409,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   name="pekerjaan_ayah"
                   value={formData.pekerjaan_ayah}
                   onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.pekerjaan_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.pekerjaan_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 >
                   <option value="">Pilih Pekerjaan Ayah</option>
                   {pekerjaanOptions.map((pekerjaan) => (
@@ -447,7 +426,7 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                   name="pendidikan_ayah"
                   value={formData.pendidikan_ayah}
                   onChange={handleInputChange}
-                  className={`w-full p-2 border ${errors.pendidikan_ayah ? 'border-red-500' : 'border-gray-300'} rounded`}
+                  className={`w-full py-3 px-6 border ${errors.pendidikan_ayah ? 'border-red-500' : 'border-gray-300'} rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300`}
                 >
                   <option value="">Pilih Pendidikan Ayah</option>
                   {pendidikanOptions.map((pendidikan) => (
@@ -459,29 +438,24 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
                 {errors.pendidikan_ayah && <p className="text-red-500 text-sm mt-1">{errors.pendidikan_ayah}</p>}
               </div>
             </form>
-            <div className="flex space-x-4 mt-4">
+            <div className="flex space-x-4 mt-6">
               <button
                 type="button"
                 onClick={handleBack}
-                className="w-full bg-gray-400 hover:bg-gray-500 text-white py-3 rounded"
+                className="w-full py-3 rounded-full shadow-lg transition duration-300"
+                style={{ backgroundColor: '#008EB3', color: 'white' }}
               >
-                Back
+                Kembali
               </button>
               <button
                 type="button"
                 onClick={handleNext}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded"
+                className="w-full py-3 rounded-full shadow-lg transition duration-300"
+                style={{ backgroundColor: '#008EB3', color: 'white' }}
               >
                 Selanjutnya
               </button>
             </div>
-          </div>
-          <div className="w-full md:w-1/3 flex justify-center items-center mt-4 md:mt-0">
-            <img
-              src="/path-to-your-ayah-image.png"
-              alt="Ayah Illustration"
-              className="max-w-full"
-            />
           </div>
         </div>
       </div>

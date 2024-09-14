@@ -74,7 +74,7 @@ Wali.init({
         allowNull: false,
     },
     no_hp_wali: {
-        type: DataTypes.BIGINT
+        type: DataTypes.STRING
     },
     email_wali: {
         type: DataTypes.STRING

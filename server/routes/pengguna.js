@@ -41,19 +41,19 @@ router.post('/', async (req, res) => {
 // Login route
 router.post('/login', async (req, res) => {
     try {
-        const { email, kata_sandi } = req.body;
-        const user = await Pengguna.findOne({ where: { email } });
+        const { no_hp, kata_sandi } = req.body;
+        const user = await Pengguna.findOne({ where: { no_hp } });
         if (!user) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid No Handphone or Password' });
         }
 
         const isPasswordValid = await bcrypt.compare(kata_sandi, user.kata_sandi);
         if (!isPasswordValid) {
-            return res.status(401).json({ error: 'Invalid email or password' });
+            return res.status(401).json({ error: 'Invalid No Handphone or Password' });
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, role: user.role, userName: user.nama, userEmail: user.email });
+        res.json({ token, role: user.role, userName: user.nama, userNoHp: user.no_hp });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -106,6 +106,38 @@ router.get('/:id', authenticateToken, async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error });
+    }
+});
+
+router.post('/check-phone', async (req, res) => {
+    try {
+        const { no_hp } = req.body;
+        const user = await Pengguna.findOne({ where: { no_hp } });
+        if (user) {
+            // If the user with this phone number exists, return exists: true
+            return res.status(200).json({ exists: true });
+        }
+        // Otherwise, return exists: false
+        res.status(200).json({ exists: false });
+    } catch (error) {
+        console.error('Error checking phone number:', error);
+        res.status(500).json({ error: 'Failed to check phone number' });
+    }
+});
+
+router.post('/check-nik', async (req, res) => {
+    try {
+        const { no_ktp } = req.body;
+        const user = await Pengguna.findOne({ where: { no_ktp } });
+        if (user) {
+            // If the user with this phone number exists, return exists: true
+            return res.status(200).json({ exists: true });
+        }
+        // Otherwise, return exists: false
+        res.status(200).json({ exists: false });
+    } catch (error) {
+        console.error('Error checking phone number:', error);
+        res.status(500).json({ error: 'Failed to check phone number' });
     }
 });
 

@@ -1,34 +1,51 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '../../api'; // Import the Axios instance, adjust the path as necessary
+
+const API_URL = '/stats'; // Define the endpoint for pengguna
 
 const Dashboard = () => {
-  const stats = [
-    { label: 'User', value: 18, icon: '👤', bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
-    { label: 'Kegiatan', value: 132, icon: '📅', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
-    { label: 'Kader', value: 4, icon: '👩‍⚕️', bgColor: 'bg-pink-100', textColor: 'text-pink-700' },
-    { label: 'Orangtua', value: 3, icon: '🧑‍🤝‍🧑', bgColor: 'bg-green-100', textColor: 'text-green-700' },
-    { label: 'Bayi', value: 5, icon: '👶', bgColor: 'bg-yellow-100', textColor: 'text-yellow-700' },
-    { label: 'Lansia', value: 4, icon: '👵', bgColor: 'bg-teal-100', textColor: 'text-teal-700' }
-  ];
+  const [stats, setStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchStats = async () => {
+    try {
+      const response = await api.get(API_URL);
+      console.log(response)
+      setStats(response.data);
+      setLoading(false);
+    } catch (err) {
+      setError('Failed to fetch stats');
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-64">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="flex items-center justify-center h-64 text-red-600">{error}</div>;
+  }
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Dashboard</h2>
-        <input
-          type="text"
-          placeholder="Cari..."
-          className="p-2 border border-gray-300 rounded"
-        />
+    <div className="p-6 min-h-screen mt-12">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (
-          <div key={stat.label} className={`${stat.bgColor} p-4 rounded-lg`}>
-            <div className="flex items-center justify-between">
+          <div key={stat.label} className="p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition">
+            <div className="flex justify-between items-center">
               <div>
-                <h3 className={`text-xl font-bold ${stat.textColor}`}>{stat.value}</h3>
-                <p className="text-gray-500">{stat.label}</p>
+                <h3 className="text-3xl font-bold">{stat.value}</h3>
+                <p className="text-gray-600">{stat.label}</p>
               </div>
-              <div className={`text-3xl ${stat.textColor}`}>{stat.icon}</div>
+              <div className="text-4xl">{stat.icon}</div>
             </div>
           </div>
         ))}

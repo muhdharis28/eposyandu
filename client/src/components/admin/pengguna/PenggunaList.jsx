@@ -122,7 +122,7 @@ const PenggunaList = () => {
           body={(rowData, options) => options.rowIndex + 1}
         />
         <Column field="nama" header="Nama Pengguna" />
-        <Column field="email" header="Email" />
+        <Column field="no_hp" header="No HP" />
         <Column
           body={actionBodyTemplate}
           style={{ textAlign: 'center' }}

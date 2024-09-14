@@ -81,7 +81,7 @@ Lansia.init({
         allowNull: false,
     },
     no_hp_lansia: {
-        type: DataTypes.BIGINT
+        type: DataTypes.STRING
     },
     email_lansia: {
         type: DataTypes.STRING

@@ -23,7 +23,7 @@ Pengguna.init({
         type: DataTypes.ENUM('admin', 'kader', 'user')
     },
     no_hp: {
-        type: DataTypes.BIGINT,
+        type: DataTypes.STRING,
         unique: true,
     },
     no_kk: {

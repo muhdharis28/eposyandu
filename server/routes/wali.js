@@ -3,7 +3,7 @@ const router = express.Router();
 const Wali = require('../models/wali');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,

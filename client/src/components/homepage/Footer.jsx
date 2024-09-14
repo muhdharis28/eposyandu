@@ -2,12 +2,15 @@ import React from 'react';
 import logo from '@/assets/posyandu.png';
 
 const Footer = () => (
-  <footer className="bg-gradient-to-r from-blue-900 via-blue-700 to-blue-600 text-white rounded-lg shadow-lg ">
+  <footer className="bg-gradient-to-b from-[#008EB3] to-[#008EB3] text-white shadow-lg pt-10 px-6">
+    <hr className="border-t-1 border-gray-300 mb-5" />
     <div className="w-full max-w-screen-xl mx-auto p-6 md:py-8">
       <div className="sm:flex sm:items-center sm:justify-between">
         <a href="#" className="flex items-center mb-4 sm:mb-0 space-x-4">
-          <img src={logo} className="h-10" alt="ePosyandu Tanjungpinang Logo" />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap">ePosyandu Tanjungpinang</span>
+          <div className="bg-white h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg">
+            <img src={logo} className="h-10" alt="ePosyandu Tanjungpinang Logo" />
+          </div>
+          <span className="self-center text-xl font-semibold whitespace-nowrap">ePosyandu Tanjungpinang</span>
         </a>
         <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-200 sm:mb-0">
           <li>

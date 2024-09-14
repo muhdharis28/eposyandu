@@ -26,7 +26,13 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const pemeriksaanLansias = await PemeriksaanLansia.findAll();
+        const pemeriksaanLansias = await PemeriksaanLansia.findAll({
+            include: [
+                { model: Lansia, as: 'lansiaDetail', attributes: ['id', 'nama_lansia'], },
+                { model: Pengguna, as: 'penggunaDetail', attributes: ['id', 'nama'], },
+                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'], },
+            ]
+        });
         res.status(200).json(pemeriksaanLansias);
     } catch (error) {
         res.status(500).json({ error: error });

@@ -92,13 +92,13 @@ const PerkembanganBalitaDetail = () => {
               </div>
               <div className="bg-gray-50 p-4 rounded-md">
                 <p className="text-gray-700">
-                  <strong>Kader:</strong> {perkembanganBalita.kader ? perkembanganBalita.kader.nama : 'Tidak ada'}
+                  <strong>Kader:</strong> {perkembanganBalita.penggunaDetail ? perkembanganBalita.penggunaDetail.nama : 'Tidak ada'}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Dokter:</strong> {perkembanganBalita.dokter ? perkembanganBalita.dokter.nama : 'Tidak ada'}
+                  <strong>Dokter:</strong> {perkembanganBalita.dokterDetail ? perkembanganBalita.dokterDetail.nama : 'Tidak ada'}
                 </p>
                 <p className="text-gray-700">
-                  <strong>Balita:</strong> {perkembanganBalita.balita ? perkembanganBalita.balita.nama_balita : 'Tidak ada'}
+                  <strong>Balita:</strong> {perkembanganBalita.balitaDetail ? perkembanganBalita.balitaDetail.nama_balita : 'Tidak ada'}
                 </p>
               </div>
             </div>
