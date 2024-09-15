@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getBayiById } from '../../BayiService'; // Assuming you have this service for bayi data
-import { getPerkembanganByBalitaId } from '../../PerkembanganBalitaService'; // Service to get pemeriksaan details
+import { getPerkembanganByBalitaId } from '../../PerkembanganBalitaService'; // Service to get perkembangan details
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
 import { FaUser, FaPhone, FaEnvelope, FaTransgender, FaHome, FaCalendar, FaTimes } from 'react-icons/fa';
-import Modal from 'react-modal'; // Modal for pemeriksaan pop-up
+import Modal from 'react-modal'; // Modal for perkembangan pop-up
 
 // Custom styles for the Modal pop-up
 Modal.setAppElement('#root');
 
 const BayiDetail = () => {
   const { id } = useParams(); // Get the bayi ID from the URL
-  const [bayi, setBayi] = useState(null);
+  const [balita, setBalita] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [pemeriksaanList, setPemeriksaanList] = useState([]);
+  const [perkembanganList, setPerkembanganList] = useState([]);
   const [modalIsOpen, setModalIsOpen] = useState(false); // State for modal open/close
-  const [selectedPemeriksaan, setSelectedPemeriksaan] = useState(null); // Store selected pemeriksaan details
+  const [selectedPerkembangan, setSelectedPerkembangan] = useState(null); // Store selected perkembangan details
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
@@ -25,13 +25,13 @@ const BayiDetail = () => {
     const fetchBayiDetail = async () => {
       try {
         const response = await getBayiById(id);
-        setBayi(response.data);
+        setBalita(response.data);
 
-        // Fetch Pemeriksaan Bayi data
-        const pemeriksaanResponse = await getPerkembanganByBalitaId(id);
-        setPemeriksaanList(pemeriksaanResponse.data);
+        // Fetch Perkembangan Bayi data
+        const perkembanganResponse = await getPerkembanganByBalitaId(id);
+        setPerkembanganList(perkembanganResponse.data);
       } catch (error) {
-        console.error('Error fetching bayi or pemeriksaan details:', error);
+        console.error('Error fetching bayi or perkembangan details:', error);
       } finally {
         setIsLoading(false);
       }
@@ -40,14 +40,14 @@ const BayiDetail = () => {
     fetchBayiDetail();
   }, [id]);
 
-  const openModal = (pemeriksaan) => {
-    setSelectedPemeriksaan(pemeriksaan);
+  const openModal = (perkembangan) => {
+    setSelectedPerkembangan(perkembangan);
     setModalIsOpen(true);
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
-    setSelectedPemeriksaan(null);
+    setSelectedPerkembangan(null);
   };
 
   const customModalStyles = {
@@ -88,57 +88,45 @@ const BayiDetail = () => {
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Detail Bayi</h1>
 
-            {bayi ? (
+            {balita ? (
               <div className="space-y-4">
                 {/* Bayi details */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex items-center">
                     <FaUser className="text-blue-500 mr-3" />
-                    <strong className="mr-2">Nama:</strong> {bayi.nama_bayi}
+                    <strong className="mr-2">Nama:</strong> {balita.nama_balita}
                   </div>
                   <div className="flex items-center">
                     <FaCalendar className="text-blue-500 mr-3" />
-                    <strong className="mr-2">Tanggal Lahir:</strong> {new Date(bayi.tanggal_lahir_bayi).toLocaleDateString()}
-                  </div>
-                  <div className="flex items-center">
-                    <FaPhone className="text-blue-500 mr-3" />
-                    <strong className="mr-2">No HP:</strong> {bayi.no_hp_bayi}
-                  </div>
-                  <div className="flex items-center">
-                    <FaEnvelope className="text-blue-500 mr-3" />
-                    <strong className="mr-2">Email:</strong> {bayi.email_bayi || 'N/A'}
+                    <strong className="mr-2">Tanggal Lahir:</strong> {new Date(balita.tanggal_lahir_balita).toLocaleDateString()}
                   </div>
                   <div className="flex items-center">
                     <FaTransgender className="text-blue-500 mr-3" />
-                    <strong className="mr-2">Jenis Kelamin:</strong> {bayi.jenis_kelamin_bayi === 'l' ? 'Laki-laki' : 'Perempuan'}
-                  </div>
-                  <div className="flex items-center">
-                    <FaHome className="text-blue-500 mr-3" />
-                    <strong className="mr-2">Alamat:</strong> {bayi.alamat_ktp_bayi} / {bayi.alamat_domisili_bayi}
+                    <strong className="mr-2">Jenis Kelamin:</strong> {balita.jenis_kelamin_balita === 'l' ? 'Laki-laki' : 'Perempuan'}
                   </div>
                   <div className="flex items-center">
                     <FaCalendar className="text-blue-500 mr-3" />
-                    <strong className="mr-2">NIK:</strong> {bayi.nik_bayi}
+                    <strong className="mr-2">NIK:</strong> {balita.nik_balita}
                   </div>
                 </div>
 
-                {/* Pemeriksaan Bayi Section */}
-                <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Pemeriksaan Bayi</h2>
-                {pemeriksaanList.length > 0 ? (
+                {/* Perkembangan Bayi Section */}
+                <h2 className="text-2xl font-bold text-gray-800 mt-8 mb-4">Perkembangan Bayi</h2>
+                {perkembanganList.length > 0 ? (
                   <div className="space-y-4">
-                    {pemeriksaanList.map((pemeriksaan) => (
-                      <div key={pemeriksaan.id} className="bg-blue-50 p-4 rounded-md shadow-md cursor-pointer" onClick={() => openModal(pemeriksaan)}>
+                    {perkembanganList.map((perkembangan) => (
+                      <div key={perkembangan.id} className="bg-blue-50 p-4 rounded-md shadow-md cursor-pointer" onClick={() => openModal(perkembangan)}>
                         <p className="text-lg font-semibold text-blue-700">
-                          <strong>Tanggal Pemeriksaan:</strong> {new Date(pemeriksaan.tanggal_kunjungan).toLocaleDateString()}
+                          <strong>Tanggal Perkembangan:</strong> {new Date(perkembangan.tanggal_kunjungan).toLocaleDateString()}
                         </p>
                         <p className="text-gray-600">
-                          <strong>Hasil Pemeriksaan:</strong> {pemeriksaan.keterangan}
+                          <strong>Hasil Perkembangan:</strong> {perkembangan.keterangan}
                         </p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-red-500">Belum ada pemeriksaan untuk bayi ini.</p>
+                  <p className="text-red-500">Belum ada perkembangan untuk bayi ini.</p>
                 )}
               </div>
             ) : (
@@ -148,28 +136,28 @@ const BayiDetail = () => {
         </div>
       </div>
 
-      {/* Modal for pemeriksaan details */}
-      {selectedPemeriksaan && (
-        <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customModalStyles} contentLabel="Pemeriksaan Details">
+      {/* Modal for perkembangan details */}
+      {selectedPerkembangan && (
+        <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customModalStyles} contentLabel="Perkembangan Details">
           <div className="relative bg-white p-6 ">
             <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={closeModal}>
               <FaTimes className="w-6 h-6" />
             </button>
-            <h2 className="text-2xl font-bold mb-4">Detail Pemeriksaan</h2>
+            <h2 className="text-2xl font-bold mb-4">Detail Perkembangan</h2>
             <p>
-              <strong>Tanggal Pemeriksaan:</strong> {new Date(selectedPemeriksaan.tanggal_kunjungan).toLocaleDateString()}
+              <strong>Tanggal Perkembangan:</strong> {new Date(selectedPerkembangan.tanggal_kunjungan).toLocaleDateString()}
             </p>
             <p>
-              <strong>Kader:</strong> {selectedPemeriksaan.penggunaDetail?.nama || 'Tidak ada data'}
+              <strong>Kader:</strong> {selectedPerkembangan.penggunaDetail?.nama || 'Tidak ada data'}
             </p>
             <p>
-              <strong>Berat Badan:</strong> {selectedPemeriksaan.berat_badan || 'Tidak ada catatan'}
+              <strong>Berat Badan:</strong> {selectedPerkembangan.berat_badan || 'Tidak ada catatan'}
             </p>
             <p>
-              <strong>Tinggi Badan:</strong> {selectedPemeriksaan.tinggi_badan || 'Tidak ada catatan'}
+              <strong>Tinggi Badan:</strong> {selectedPerkembangan.tinggi_badan || 'Tidak ada catatan'}
             </p>
             <p>
-              <strong>Riwayat Penyakit:</strong> {selectedPemeriksaan.riwayat_penyakit || 'Tidak ada catatan'}
+              <strong>Riwayat Penyakit:</strong> {selectedPerkembangan.riwayat_penyakit || 'Tidak ada catatan'}
             </p>
           </div>
         </Modal>

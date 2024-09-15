@@ -19,7 +19,7 @@ PemeriksaanLansia.init({
         allowNull: false,
     },
     berat_badan: {
-        type: DataTypes.INTEGER
+        type: DataTypes.FLOAT
     },
     tinggi_badan: {
         type: DataTypes.INTEGER
@@ -28,19 +28,19 @@ PemeriksaanLansia.init({
         type: DataTypes.INTEGER
     },
     tekanan_darah: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     gula_darah: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     kolestrol: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     asam_urat: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     kesehatan_mata: {
-        type: DataTypes.INTEGER
+        type: DataTypes.STRING
     },
     keterangan: {
         type: DataTypes.STRING

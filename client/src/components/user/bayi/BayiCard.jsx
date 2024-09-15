@@ -25,8 +25,8 @@ const BayiCard = () => {
         const userData = userResponse.data;
         setUser(userData);
 
-        if (userData.wali) {
-          const bayiResponse = await getBayiByOrangtua(userData.wali);
+        if (userData.orangtua) {
+          const bayiResponse = await getBayiByOrangtua(userData.orangtua);
           setBayiData(bayiResponse.data);
         } else {
           setBayiData([]);
@@ -67,7 +67,7 @@ const BayiCard = () => {
               onClick={handleAddBayi}
               disabled={!user?.orangtua} // Disable button if user does not have Orangtua data
               className={`flex items-center px-6 py-2 rounded-lg shadow-md transition-all duration-300 ${
-                user?.wali ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                user?.orangtua ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
               }`}
             >
               <FaPlus className="mr-2" /> Tambah Data Bayi
@@ -93,15 +93,13 @@ const BayiCard = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {bayiData.map((bayi) => (
-                  <Link key={bayi.id} to={`/user-balita/${bayi.id}`}>
+                {bayiData.map((balita) => (
+                  <Link key={balita.id} to={`/user-balita/${balita.id}`}>
                     <div className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
-                      <h4 className="text-lg font-semibold text-gray-800">{bayi.nama_bayi}</h4>
-                      <p className="text-gray-600">Tanggal Lahir: {new Date(bayi.tanggal_lahir_bayi).toLocaleDateString()}</p>
-                      <p className="text-gray-600">Alamat: {bayi.alamat_bayi}</p>
-                      <p className="text-gray-600">Nomor HP: {bayi.no_hp_bayi}</p>
+                      <h4 className="text-lg font-semibold text-gray-800">{balita.nama_balita}</h4>
+                      <p className="text-gray-600">Tanggal Lahir: {new Date(balita.tanggal_lahir_balita).toLocaleDateString()}</p>
                       <p className="text-gray-600">
-                        Jenis Kelamin: {bayi.jenis_kelamin_bayi === 'l' ? 'Laki-laki' : 'Perempuan'}
+                        Jenis Kelamin: {balita.jenis_kelamin_balita === 'l' ? 'Laki-laki' : 'Perempuan'}
                       </p>
                     </div>
                   </Link>

@@ -37,6 +37,31 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/balita/:balita', authenticateToken, async (req, res) => {
+    try {
+        const { balita } = req.params;
+
+        // Fetch all Perkembangan records for the given balitaId
+        const perkembangans = await PerkembanganBalita.findAll({
+            where: { balita }, // Assuming balitaId is the foreign key in your Perkembanganbalita table
+            order: [['tanggal_kunjungan', 'DESC']],
+            include: [
+                { model: Pengguna, as: 'penggunaDetail'},
+                { model: Dokter, as: 'dokterDetail'},
+            ]
+        });
+
+        if (perkembangans.length > 0) {
+            res.status(200).json(perkembangans);
+        } else {
+            res.status(404).json({ message: 'No Perkembangan found for this balita' });
+        }
+    } catch (error) {
+        console.error('Error fetching Perkembangan:', error);
+        res.status(500).json({ error: 'Failed to fetch Perkembangan' });
+    }
+});
+
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id, {
