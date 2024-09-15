@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For search input
 import { useNavigate } from 'react-router-dom'; // For navigation
-import { getJobs, deleteJob } from './PekerjaanService'; // Your API services
+import { getJobs, deleteJob } from '../../PekerjaanService'; // Your API services
 
 const PekerjaanList = () => {
   const [jobs, setJobs] = useState([]);

@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For search functionality
 import { useNavigate } from 'react-router-dom'; // For navigation
-import { getBayi, deleteBayi } from './BayiService'; // API services
+import { getBayi, deleteBayi } from '../../BayiService'; // API services
 
 const BayiList = () => {
   const [bayiList, setBayiList] = useState([]);

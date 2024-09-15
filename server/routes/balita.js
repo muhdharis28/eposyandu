@@ -21,8 +21,13 @@ router.post('/', authenticateToken, async (req, res) => {
 });
 
 router.get('/', authenticateToken, async (req, res) => {
+    const { orangtua } = req.query;  // Get the wali parameter from the query string
+
     try {
+        const filterCondition = orangtua ? { where: { orangtua } } : {};
+
         const balitas = await Balita.findAll({
+            ...filterCondition,
             include: [{
                 model: OrangTua,
                 as: 'orangtuaDetail',

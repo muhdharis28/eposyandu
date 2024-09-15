@@ -53,7 +53,7 @@ router.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, role: user.role, userName: user.nama, userNoHp: user.no_hp });
+        res.json({ token, role: user.role, userName: user.nama, userNoHp: user.no_hp, userId: user.id });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -95,8 +95,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const user = await Pengguna.findByPk(req.params.id, {
             include: [
-                { model: OrangTua, as: 'orangTuaDetail', attributes: ['id', 'nama_ayah', 'nama_ibu'], },
-                { model: Wali, as: 'waliDetail', attributes: ['id', 'nama_wali'], }
+                { model: OrangTua, as: 'orangTuaDetail' },
+                { model: Wali, as: 'waliDetail' }
             ]
         });
         if (user) {

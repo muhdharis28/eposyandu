@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPerkembanganBalitaById } from './PerkembanganBalitaService'; // Fetching the Perkembangan Balita details
+import { getPerkembanganBalitaById } from '../../PerkembanganBalitaService'; // Fetching the Perkembangan Balita details
 import TopBar from '../TopBar'; // Adjust the path as needed
 import SideBar from '../SideBar'; // Adjust the path as needed
 import { useSidebar } from '../../SideBarContext'; // Sidebar context for state

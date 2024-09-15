@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For global filter
 import { useNavigate } from 'react-router-dom'; // For routing
-import { getWali, deleteWali } from './WaliService'; // API service for Wali
+import { getWali, deleteWali } from '../../WaliService'; // API service for Wali
 
 const WaliList = () => {
   const [waliList, setWaliList] = useState([]);

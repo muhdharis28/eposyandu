@@ -1,7 +1,7 @@
 import React from 'react';
 import TopBar from '../TopBar'; // Adjust the path to your TopBar component
 import SideBar from '../SideBar'; // Adjust the path to your SideBar component
-import PemeriksaanLansiaList from './PemeriksaanList'; // Import the PemeriksaanLansia list component
+import PemeriksaanLansiaList from './PemeriksaanLansiaList'; // Import the PemeriksaanLansia list component
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context for collapse/expand functionality
 
 const PemeriksaanLansiaDashboard = () => {

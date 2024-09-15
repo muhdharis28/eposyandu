@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For global filter
 import { useNavigate } from 'react-router-dom'; // For routing
-import { getLansia, deleteLansia } from './LansiaService'; // API service
+import { getLansia, deleteLansia } from '../../LansiaService'; // API service
 
 const LansiaList = () => {
   const [lansiaList, setLansiaList] = useState([]);

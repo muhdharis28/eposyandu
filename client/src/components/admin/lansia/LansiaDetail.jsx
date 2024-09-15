@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getLansiaById } from './LansiaService'; // Assuming you have this API service
+import { getLansiaById } from '../../LansiaService'; // Assuming you have this API service
 import TopBar from '../TopBar'; // Adjust the path as necessary
 import SideBar from '../SideBar'; // Adjust the path as necessary
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context

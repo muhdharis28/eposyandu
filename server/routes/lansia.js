@@ -6,7 +6,7 @@ const Pendidikan = require('../models/pendidikan');
 const Pekerjaan = require('../models/pekerjaan');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     try {
         const {
             no_kk_lansia,
@@ -65,14 +65,21 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
 });
 
 router.get('/', authenticateToken, async (req, res) => {
+    const { wali } = req.query;  // Get the wali parameter from the query string
+
     try {
+        // If wali is provided, filter lansia by wali, else return all lansia
+        const filterCondition = wali ? { where: { wali } } : {};
+
         const lansias = await Lansia.findAll({
+            ...filterCondition,
             include: [{
-              model: Wali,
-              as: 'waliDetail',
-              attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
+                model: Wali,
+                as: 'waliDetail',
+                attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
             }]
-          });
+        });
+        
         res.status(200).json(lansias);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -108,7 +115,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
             no_kk_lansia,
@@ -170,7 +177,7 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
     }
 });
 
-router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const lansia = await Lansia.findByPk(req.params.id);
         if (lansia) {

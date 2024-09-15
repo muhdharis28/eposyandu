@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
-import { createBayi, updateBayi, getBayiById } from './BayiService'; // API services for Bayi
-import { getOrangTua } from '../orangtua/OrangTuaService'; // Service to fetch orangtua data
+import { createBayi, updateBayi, getBayiById } from '../../BayiService'; // API services for Bayi
+import { getOrangTua } from '../../OrangTuaService'; // Service to fetch orangtua data
 import { useNavigate, useParams } from 'react-router-dom';
 
 const BayiForm = () => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
-import { createJob, updateJob, getJobById } from './PekerjaanService'; // API services
+import { createJob, updateJob, getJobById } from '../../PekerjaanService'; // API services
 import TopBar from '../TopBar'; // Adjust the path as necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management

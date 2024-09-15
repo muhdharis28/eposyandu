@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getPenggunaById } from './PenggunaService'; // Service to fetch pengguna by ID
+import { getPenggunaById } from '../../PenggunaService'; // Service to fetch pengguna by ID
 import TopBar from '../TopBar'; // TopBar component
 import SideBar from '../SideBar'; // SideBar component
 import { useSidebar } from '../../SideBarContext'; // Sidebar state management

@@ -1,4 +1,4 @@
-import api from '../../../api'; // Import the Axios instance
+import api from '../api'; // Import the Axios instance
 
 const API_URL = '/pendidikan'; // Base API URL for pendidikan
 

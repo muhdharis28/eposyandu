@@ -43,7 +43,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,

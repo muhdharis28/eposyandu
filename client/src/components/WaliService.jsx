@@ -1,5 +1,5 @@
 // WaliService.js
-import api from '../../../api'; // Import the Axios instance
+import api from '../api'; // Import the Axios instance
 
 const API_URL = '/wali'; // Use relative path since baseURL is already set in api.js
 

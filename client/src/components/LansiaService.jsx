@@ -1,5 +1,5 @@
 // LansiaService.js
-import api from '../../../api'; // Import the Axios instance
+import api from '../api'; // Import the Axios instance
 
 const API_URL = '/lansia'; // Use relative path since baseURL is already set in api.js
 
@@ -21,4 +21,8 @@ export const deleteLansia = (id) => {
 
 export const getLansiaById = (id) => {
   return api.get(`${API_URL}/${id}`); // Authenticated request via interceptor
+};
+
+export const getLansiaByWali = (waliId) => {
+  return api.get(`${API_URL}/?wali=${waliId}`);
 };

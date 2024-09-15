@@ -58,6 +58,31 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/lansia/:lansia', authenticateToken, async (req, res) => {
+    try {
+        const { lansia } = req.params;
+
+        // Fetch all pemeriksaan records for the given lansiaId
+        const pemeriksaans = await PemeriksaanLansia.findAll({
+            where: { lansia }, // Assuming lansiaId is the foreign key in your PemeriksaanLansia table
+            order: [['tanggal_kunjungan', 'DESC']],
+            include: [
+                { model: Pengguna, as: 'penggunaDetail'},
+                { model: Dokter, as: 'dokterDetail'},
+            ]
+        });
+
+        if (pemeriksaans.length > 0) {
+            res.status(200).json(pemeriksaans);
+        } else {
+            res.status(404).json({ message: 'No pemeriksaan found for this Lansia' });
+        }
+    } catch (error) {
+        console.error('Error fetching pemeriksaan:', error);
+        res.status(500).json({ error: 'Failed to fetch pemeriksaan' });
+    }
+});
+
 router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {

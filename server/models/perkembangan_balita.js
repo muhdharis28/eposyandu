@@ -19,7 +19,7 @@ PerkembanganBalita.init({
         allowNull: false,
     },
     berat_badan: {
-        type: DataTypes.INTEGER
+        type: DataTypes.FLOAT
     },
     tinggi_badan: {
         type: DataTypes.INTEGER

@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
-import { createLansia, updateLansia, getLansiaById } from './LansiaService'; // API service
+import { createLansia, updateLansia, getLansiaById } from '../../LansiaService'; // API service
 import { useNavigate, useParams } from 'react-router-dom';
-import { getWali } from '../wali/WaliService';
+import { getWali } from '../../WaliService';
 import axios from 'axios';
 
 const LansiaForm = () => {
@@ -30,7 +30,7 @@ const LansiaForm = () => {
     email_lansia: '',
     pekerjaan_lansia: '',
     pendidikan_lansia: '',
-    status_pernikahan_lansia: 'Menikah', // Default value
+    status_pernikahan_lansia: '', // Default value
   });
 
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state management

@@ -43,6 +43,15 @@ import PerkembanganBalitaDashboard from './components/admin/perkembangan_balita/
 import PerkembanganBalitaDetail from './components/admin/perkembangan_balita/PerkembanganBalitaDetail';
 import KaderDashboard from './components/kader/KaderDashboard'; // Example path
 import UserDashboard from './components/user/UserDashboard'; // Example path
+import Settings from './components/user/settings/Settings'; // Example path
+import LansiaCard from './components/user/lansia/LansiaCard'; // Example path
+import LansiaUserDetail from './components/user/lansia/LansiaDetail'; // Example path
+import LansiaUserAdd from './components/user/lansia/AddLansia'; // Example path
+import LansiaUserEdit from './components/user/lansia/EditLansia'; // Example path
+import BayiCard from './components/user/bayi/BayiCard'; // Example path
+import BayiUserDetail from './components/user/bayi/BayiDetail'; // Example path
+import BayiUserAdd from './components/user/bayi/AddBayi'; // Example path
+import BayiUserEdit from './components/user/bayi/EditBayi'; // Example path
 import { SidebarProvider } from './components/SideBarContext';
 import DataBayi from './components/kader/Bayi/DataBayi';
 
@@ -114,6 +123,15 @@ const App = () => (
 
         <Route element={<ProtectedRoute role="user" />}>
           <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/user-settings" element={<Settings />} />
+          <Route path="/user-lansia" element={<LansiaCard />} />
+          <Route path="/user-lansia/:id" element={<LansiaUserDetail/>} />
+          <Route path="/user-lansia/baru" element={<LansiaUserAdd/>} />
+          <Route path="/user-lansia/edit/:id" element={<LansiaUserEdit/>} />
+          <Route path="/user-balita" element={<BayiCard />} />
+          <Route path="/user-balita/:id" element={<BayiUserDetail/>} />
+          <Route path="/user-balita/baru" element={<BayiUserAdd/>} />
+          <Route path="/user-balita/edit/:id" element={<BayiUserEdit/>} />
         </Route>
       </Routes>
     </Router>

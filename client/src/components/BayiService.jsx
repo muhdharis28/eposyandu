@@ -1,4 +1,4 @@
-import api from '../../../api'; // Import the Axios instance
+import api from '../api'; // Import the Axios instance
 
 const API_URL = '/balita'; // Use the correct relative path for bayi API
 
@@ -26,3 +26,8 @@ export const deleteBayi = (id) => {
 export const getBayiById = (id) => {
   return api.get(`${API_URL}/${id}`); // Authenticated request via interceptor
 };
+
+export const getBayiByOrangtua = (orangtuaId) => {
+  return api.get(`${API_URL}/?orangtua=${orangtuaId}`);
+};
+

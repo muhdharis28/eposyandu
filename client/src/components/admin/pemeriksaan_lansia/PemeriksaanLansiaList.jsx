@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For global filtering
 import { useNavigate } from 'react-router-dom';
-import { getPemeriksaanLansia, deletePemeriksaanLansia } from './PemeriksaanLansiaService'; // You need to implement this service
+import { getPemeriksaanLansia, deletePemeriksaanLansia } from '../../PemeriksaanLansiaService'; // You need to implement this service
 
 const PemeriksaanLansiaList = () => {
   const [pemeriksaanLansiaList, setPemeriksaanLansiaList] = useState([]);

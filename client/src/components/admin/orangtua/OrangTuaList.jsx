@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom'; // For navigation
-import { getOrangTua, deleteOrangTua } from './OrangTuaService'; // Import the necessary services
+import { getOrangTua, deleteOrangTua } from '../../OrangTuaService'; // Import the necessary services
 
 const OrangtuaList = () => {
   const [orangtuaList, setOrangtuaList] = useState([]);

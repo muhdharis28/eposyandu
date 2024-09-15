@@ -1,4 +1,4 @@
-import api from '../../../api'; // Import your configured Axios instance, adjust the path as needed
+import api from '../api'; // Import your configured Axios instance, adjust the path as needed
 
 const API_URL = '/perkembangan-balita'; // Define the endpoint for Perkembangan Balita
 
@@ -25,4 +25,8 @@ export const updatePerkembanganBalita = (id, perkembanganBalita) => {
 // Delete a Perkembangan Balita record by ID
 export const deletePerkembanganBalita = (id) => {
   return api.delete(`${API_URL}/${id}`); // DELETE request to remove a record by ID
+};
+
+export const getPerkembanganByBalitaId = (bayiId) => {
+  return api.get(`${API_URL}/balita/${bayiId}`);
 };

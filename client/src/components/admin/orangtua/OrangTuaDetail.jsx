@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getOrangTuaById } from './OrangTuaService'; // Service to get orangtua details
+import { getOrangTuaById } from '../../OrangTuaService'; // Service to get orangtua details
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Sidebar state

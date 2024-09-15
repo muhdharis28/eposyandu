@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
-import { createOrangTua, updateOrangTua, getOrangTuaById } from './OrangTuaService'; // Service functions
+import { createOrangTua, updateOrangTua, getOrangTuaById } from '../../OrangTuaService'; // Service functions
 import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL params
 import axios from 'axios';
 

@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom';
-import { getPengguna, deletePengguna } from './PenggunaService'; // Replace with the correct service path
+import { getPengguna, deletePengguna } from '../../PenggunaService'; // Replace with the correct service path
 
 const PenggunaList = () => {
   const [penggunaList, setPenggunaList] = useState([]);

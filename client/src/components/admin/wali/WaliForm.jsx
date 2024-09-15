@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createWali, updateWali, getWaliById } from './WaliService'; // Import your WaliService
+import { createWali, updateWali, getWaliById } from '../../WaliService'; // Import your WaliService
 import axios from 'axios';
 import TopBar from '../TopBar'; // Import TopBar component
 import SideBar from '../SideBar'; // Import SideBar component

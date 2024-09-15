@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getWaliById } from './WaliService'; // Import your service for fetching Wali details
-import { getJobById } from '../pekerjaan/PekerjaanService'; // Import Pekerjaan service to fetch name
-import { getPendidikanById } from '../pendidikan/PendidikanService'; // Import Pendidikan service to fetch name
+import { getWaliById } from '../../WaliService'; // Import your service for fetching Wali details
+import { getJobById } from '../../PekerjaanService'; // Import Pekerjaan service to fetch name
+import { getPendidikanById } from '../../PendidikanService'; // Import Pendidikan service to fetch name
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar'; // Adjust the path if necessary
 import { useSidebar } from '../../SideBarContext'; // Use context for sidebar state

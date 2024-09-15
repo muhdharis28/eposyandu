@@ -1,4 +1,4 @@
-import api from '../../../api'; // Import the Axios instance, adjust the path as necessary
+import api from '../api'; // Import the Axios instance, adjust the path as necessary
 
 const API_URL = '/pengguna'; // Define the endpoint for pengguna
 

@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For search input
 import { useNavigate } from 'react-router-dom';
-import { getPerkembanganBalitas, deletePerkembanganBalita } from './PerkembanganBalitaService'; // Import the service for fetching data
+import { getPerkembanganBalitas, deletePerkembanganBalita } from '../../PerkembanganBalitaService'; // Import the service for fetching data
 
 const PerkembanganBalitaList = () => {
   const [perkembanganBalitaList, setPerkembanganBalitaList] = useState([]); // State for list of Perkembangan Balita

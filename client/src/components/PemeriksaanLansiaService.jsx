@@ -1,4 +1,4 @@
-import api from '../../../api'; // Adjust the path to your axios instance
+import api from '../api'; // Adjust the path to your axios instance
 
 const API_URL = '/pemeriksaan-lansia'; // The base endpoint for pemeriksaan lansia
 
@@ -25,4 +25,8 @@ export const updatePemeriksaanLansia = (id, pemeriksaanLansia) => {
 // Delete a pemeriksaan lansia record by ID
 export const deletePemeriksaanLansia = (id) => {
   return api.delete(`${API_URL}/${id}`); // Make DELETE request to remove a record by ID
+};
+
+export const getPemeriksaanByLansiaId = (lansiaId) => {
+  return api.get(`${API_URL}/lansia/${lansiaId}`);
 };
