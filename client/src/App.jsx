@@ -4,22 +4,22 @@ import Homepage from './components/homepage/HomePage';
 import Login from './components/auth/Login';
 import RegistrationFlow from './components/auth/register/RegistrationFlow';
 import ProtectedRoute from './components/auth/ProtectedRoute';
-import AdminDashboard from './components/admin/AdminDashboard'; // Example path
-import PekerjaanForm from './components/admin/pekerjaan/PekerjaanForm'; // Example path
-import PekerjaanDashboard from './components/admin/pekerjaan/PekerjaanDashboard'; // Example path
-import PekerjaanDetail from './components/admin/pekerjaan/PekerjaanDetail'; // Example path
-import PendidikanDashboard from './components/admin/pendidikan/PendidikanDashboard'; // Example path
-import PendidikanForm from './components/admin/pendidikan/PendidikanForm'; // Example path
-import PendidikanDetail from './components/admin/pendidikan/PendidikanDetail'; // Example path
-import DokterDashboard from './components/admin/dokter/DokterDashboard'; // Example path
-import DokterForm from './components/admin/dokter/DokterForm'; // Example path
-import DokterDetail from './components/admin/dokter/DokterDetail'; // Example path
-import DokumentasiDashboard from './components/admin/dokumentasi/DokumentasiDashboard'; // Example path
-import DokumentasiForm from './components/admin/dokumentasi/DokumentasiForm'; // Example path
-import DokumentasiDetail from './components/admin/dokumentasi/DokumentasiDetail'; // Example path
+import AdminDashboard from './components/admin/AdminDashboard';
+import PekerjaanForm from './components/admin/pekerjaan/PekerjaanForm';
+import PekerjaanDashboard from './components/admin/pekerjaan/PekerjaanDashboard';
+import PekerjaanDetail from './components/admin/pekerjaan/PekerjaanDetail';
+import PendidikanDashboard from './components/admin/pendidikan/PendidikanDashboard';
+import PendidikanForm from './components/admin/pendidikan/PendidikanForm';
+import PendidikanDetail from './components/admin/pendidikan/PendidikanDetail';
+import DokterDashboard from './components/admin/dokter/DokterDashboard';
+import DokterForm from './components/admin/dokter/DokterForm';
+import DokterDetail from './components/admin/dokter/DokterDetail';
+import DokumentasiDashboard from './components/admin/dokumentasi/DokumentasiDashboard';
+import DokumentasiForm from './components/admin/dokumentasi/DokumentasiForm';
+import DokumentasiDetail from './components/admin/dokumentasi/DokumentasiDetail';
 import KegiatanDashboard from './components/admin/kegiatan/KegiatanDashboard';
 import KegiatanForm from './components/admin/kegiatan/KegiatanForm';
-import KegiatanDetail from './components/admin/kegiatan/KegiatanDetail'; // Example path
+import KegiatanDetail from './components/admin/kegiatan/KegiatanDetail';
 import PenggunaForm from './components/admin/pengguna/PenggunaForm';
 import PenggunaDashboard from './components/admin/pengguna/PenggunaDashboard';
 import PenggunaDetail from './components/admin/pengguna/PenggunaDetail';
@@ -41,19 +41,22 @@ import PemeriksaanLansiaDetail from './components/admin/pemeriksaan_lansia/Pemer
 import PerkembanganBalitaForm from './components/admin/perkembangan_balita/PerkembanganBalitaForm';
 import PerkembanganBalitaDashboard from './components/admin/perkembangan_balita/PerkembanganBalitaDashboard';
 import PerkembanganBalitaDetail from './components/admin/perkembangan_balita/PerkembanganBalitaDetail';
-import KaderDashboard from './components/kader/KaderDashboard'; // Example path
-import UserDashboard from './components/user/UserDashboard'; // Example path
-import Settings from './components/user/settings/Settings'; // Example path
-import LansiaCard from './components/user/lansia/LansiaCard'; // Example path
-import LansiaUserDetail from './components/user/lansia/LansiaDetail'; // Example path
-import LansiaUserAdd from './components/user/lansia/AddLansia'; // Example path
-import LansiaUserEdit from './components/user/lansia/EditLansia'; // Example path
-import BayiCard from './components/user/bayi/BayiCard'; // Example path
-import BayiUserDetail from './components/user/bayi/BayiDetail'; // Example path
-import BayiUserAdd from './components/user/bayi/AddBayi'; // Example path
-import BayiUserEdit from './components/user/bayi/EditBayi'; // Example path
+import KaderDashboard from './components/kader/KaderDashboard';
+import UserDashboard from './components/user/UserDashboard';
+import Settings from './components/user/settings/Settings';
+import LansiaCard from './components/user/lansia/LansiaCard';
+import LansiaUserDetail from './components/user/lansia/LansiaDetail';
+import LansiaUserAdd from './components/user/lansia/AddLansia';
+import LansiaUserEdit from './components/user/lansia/EditLansia';
+import BayiCard from './components/user/bayi/BayiCard';
+import BayiUserDetail from './components/user/bayi/BayiDetail';
+import BayiUserAdd from './components/user/bayi/AddBayi';
+import BayiUserEdit from './components/user/bayi/EditBayi';
+import LansiaReport from './components/user/report/LansiaReport';
+import BayiReport from './components/user/report/BayiReport';
 import { SidebarProvider } from './components/SideBarContext';
 import DataBayi from './components/kader/Bayi/DataBayi';
+import BalitaReport from './components/user/report/BayiReport';
 
 const App = () => (
   <SidebarProvider>
@@ -123,6 +126,8 @@ const App = () => (
 
         <Route element={<ProtectedRoute role="user" />}>
           <Route path="/user-dashboard" element={<UserDashboard />} />
+          <Route path="/user-report-lansia" element={<LansiaReport />} />
+          <Route path="/user-report-balita" element={<BalitaReport />} />
           <Route path="/user-settings" element={<Settings />} />
           <Route path="/user-lansia" element={<LansiaCard />} />
           <Route path="/user-lansia/:id" element={<LansiaUserDetail/>} />

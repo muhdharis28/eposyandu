@@ -102,4 +102,24 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/reports', authenticateToken, async (req, res) => {
+    try {
+        const totalBalita = await Balita.count(); // Get total number of Balita
+        const averageWeightBalita = await Balita.findAll({
+            attributes: [[Sequelize.fn('AVG', Sequelize.col('berat_badan_awal_balita')), 'average_weight']]
+        });
+        const averageHeightBalita = await Balita.findAll({
+            attributes: [[Sequelize.fn('AVG', Sequelize.col('tinggi_badan_awal_balita')), 'average_height']]
+        });
+
+        res.status(200).json({
+            totalBalita,
+            averageWeightBalita: averageWeightBalita[0].dataValues.average_weight,
+            averageHeightBalita: averageHeightBalita[0].dataValues.average_height
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

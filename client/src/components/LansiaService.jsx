@@ -26,3 +26,7 @@ export const getLansiaById = (id) => {
 export const getLansiaByWali = (waliId) => {
   return api.get(`${API_URL}/?wali=${waliId}`);
 };
+
+export const getLansiaReports = () => {
+  return api.get(`${API_URL}/reports`); // Assuming the reports route is at /lansia/reports
+};

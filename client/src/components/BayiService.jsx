@@ -31,3 +31,6 @@ export const getBayiByOrangtua = (orangtuaId) => {
   return api.get(`${API_URL}/?orangtua=${orangtuaId}`);
 };
 
+export const getBalitaReports = () => {
+  return api.get(`${API_URL}/reports`); // Assuming the reports route is at /balita/reports
+};

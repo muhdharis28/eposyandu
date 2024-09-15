@@ -191,4 +191,24 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/reports', authenticateToken, async (req, res) => {
+    try {
+        const totalLansia = await Lansia.count();  // Get total number of Lansia
+        const averageAgeLansia = await Lansia.findAll({
+            attributes: [[Sequelize.fn('AVG', Sequelize.literal('DATEDIFF(CURDATE(), tanggal_lahir_lansia) / 365')), 'average_age']]
+        });
+        const totalLakiLaki = await Lansia.count({ where: { jenis_kelamin_lansia: 'Laki-laki' } });
+        const totalPerempuan = await Lansia.count({ where: { jenis_kelamin_lansia: 'Perempuan' } });
+
+        res.status(200).json({
+            totalLansia,
+            averageAgeLansia: averageAgeLansia[0].dataValues.average_age,
+            totalLakiLaki,
+            totalPerempuan
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

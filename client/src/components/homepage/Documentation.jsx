@@ -108,10 +108,10 @@ const Documentation = () => {
             <div className="relative bg-white p-8 rounded-3xl shadow-2xl w-11/12 max-w-4xl">
               {/* Centering the image */}
               <div className="flex justify-center">
-                <img
+              <img
                   src={`${import.meta.env.VITE_API_URL}${selectedDoc.foto}`}
                   alt={selectedDoc.judul}
-                  className="w-[500px] h-auto max-h-[500px] object-contain rounded-xl mb-6 border-2 border-[#008EB3]" // Added border class
+                  className="w-full max-w-[300px] h-[300px] object-contain rounded-xl mb-6 border-2 border-[#008EB3]"
                 />
               </div>
               <h2 className="text-3xl font-extrabold text-[#008EB3] mb-4">{selectedDoc.judul}</h2>

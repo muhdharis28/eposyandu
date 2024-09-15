@@ -29,7 +29,7 @@ const TopBar = ({ onToggle, isCollapsed }) => {
     navigate('/login');
   };
 
-  const handleSettings = () => navigate('/settings');
+  const handleSettings = () => navigate('/user-settings');
 
   return (
     <div className="bg-white h-16 flex items-center justify-between pl-4 pr-6 shadow-lg fixed top-0 left-0 w-full z-10">
