@@ -35,7 +35,7 @@ Balita.init({
         allowNull: false,
     },
     berat_badan_awal_balita: {
-        type: DataTypes.INTEGER
+        type: DataTypes.FLOAT
     },
     tinggi_badan_awal_balita: {
         type: DataTypes.INTEGER
