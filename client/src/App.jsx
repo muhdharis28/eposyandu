@@ -127,7 +127,7 @@ const App = () => (
         <Route element={<ProtectedRoute role="user" />}>
           <Route path="/user-dashboard" element={<UserDashboard />} />
           <Route path="/user-report-lansia" element={<LansiaReport />} />
-          <Route path="/user-report-balita" element={<BalitaReport />} />
+          <Route path="/user-report-balita" element={<BayiReport />} />
           <Route path="/user-settings" element={<Settings />} />
           <Route path="/user-lansia" element={<LansiaCard />} />
           <Route path="/user-lansia/:id" element={<LansiaUserDetail/>} />

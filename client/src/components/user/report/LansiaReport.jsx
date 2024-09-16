@@ -7,6 +7,7 @@ const ReportLansia = () => {
   useEffect(() => {
     const fetchReports = async () => {
       const response = await getLansiaReports();
+      console.log('ttttttttttttttttttttt', response.data)
       setReports(response.data);
     };
     fetchReports();
@@ -16,23 +17,23 @@ const ReportLansia = () => {
     <div className="p-6">
       <h1 className="text-2xl font-bold mb-6">Laporan Lansia</h1>
       <table className="table-auto w-full">
-        <thead>
-          <tr>
-            <th className="px-4 py-2">Nama</th>
-            <th className="px-4 py-2">Umur</th>
-            <th className="px-4 py-2">Kesehatan</th>
-            <th className="px-4 py-2">Keluhan</th>
-          </tr>
-        </thead>
         <tbody>
-          {reports.map((report) => (
-            <tr key={report.id}>
-              <td className="border px-4 py-2">{report.nama}</td>
-              <td className="border px-4 py-2">{report.umur}</td>
-              <td className="border px-4 py-2">{report.kesehatan_umum}</td>
-              <td className="border px-4 py-2">{report.keluhan}</td>
-            </tr>
-          ))}
+          <tr>
+            <td className="px-4 py-2 font-bold">Total Lansia</td>
+            <td className="px-4 py-2">{reports.totalLansia}</td>
+          </tr>
+          <tr>
+            <td className="px-4 py-2 font-bold">Average Age</td>
+            <td className="px-4 py-2">{parseFloat(reports.averageAgeLansia).toFixed(2)}</td>
+          </tr>
+          <tr>
+            <td className="px-4 py-2 font-bold">Total Laki-laki</td>
+            <td className="px-4 py-2">{reports.totalLakiLaki}</td>
+          </tr>
+          <tr>
+            <td className="px-4 py-2 font-bold">Total Perempuan</td>
+            <td className="px-4 py-2">{reports.totalPerempuan}</td>
+          </tr>
         </tbody>
       </table>
     </div>

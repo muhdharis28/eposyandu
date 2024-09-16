@@ -5,6 +5,7 @@ const Wali = require('../models/wali');
 const Pendidikan = require('../models/pendidikan');
 const Pekerjaan = require('../models/pekerjaan');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
+const Sequelize = require('sequelize'); 
 
 router.post('/', authenticateToken, async (req, res) => {
     try {
@@ -83,6 +84,25 @@ router.get('/', authenticateToken, async (req, res) => {
         res.status(200).json(lansias);
     } catch (error) {
         res.status(500).json({ error: error });
+    }
+});
+
+router.get('/laporan', async (req, res) => {
+    try {
+        const totalLansia = await Lansia.count();  // Get total number of Lansia
+        const averageAgeLansia = await Lansia.findAll({
+            attributes: [[Sequelize.fn('AVG', Sequelize.literal('DATEDIFF(CURDATE(), tanggal_lahir_lansia) / 365')), 'average_age']]
+        });
+        const totalLakiLaki = await Lansia.count({ where: { jenis_kelamin_lansia: 'l' } });
+        const totalPerempuan = await Lansia.count({ where: { jenis_kelamin_lansia: 'p' } });
+        res.status(200).json({
+            totalLansia,
+            averageAgeLansia: averageAgeLansia[0].dataValues.average_age,
+            totalLakiLaki,
+            totalPerempuan
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 });
 
@@ -188,26 +208,6 @@ router.delete('/:id', authenticateToken, async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error });
-    }
-});
-
-router.get('/reports', authenticateToken, async (req, res) => {
-    try {
-        const totalLansia = await Lansia.count();  // Get total number of Lansia
-        const averageAgeLansia = await Lansia.findAll({
-            attributes: [[Sequelize.fn('AVG', Sequelize.literal('DATEDIFF(CURDATE(), tanggal_lahir_lansia) / 365')), 'average_age']]
-        });
-        const totalLakiLaki = await Lansia.count({ where: { jenis_kelamin_lansia: 'Laki-laki' } });
-        const totalPerempuan = await Lansia.count({ where: { jenis_kelamin_lansia: 'Perempuan' } });
-
-        res.status(200).json({
-            totalLansia,
-            averageAgeLansia: averageAgeLansia[0].dataValues.average_age,
-            totalLakiLaki,
-            totalPerempuan
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
     }
 });
 

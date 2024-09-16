@@ -14,7 +14,7 @@ const SideBar = ({ isCollapsed }) => {
       path: '/report',
       subItems: [
         { icon: FaUsers, label: 'Laporan Lansia', path: '/user-report-lansia' },
-        { icon: FaBaby, label: 'Laporan Balita', path: '/usser-report-balita' }
+        { icon: FaBaby, label: 'Laporan Balita', path: '/user-report-balita' }
       ]
     },
     { icon: FaCog, label: 'Pengaturan', path: '/user-settings' }
