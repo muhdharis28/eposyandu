@@ -299,14 +299,21 @@ const Settings = () => {
             <div className="mt-5 flex space-x-5 px-10">
               {/* Left Side: User Profile Info */}
               <div className="bg-white p-6 rounded-xl shadow-lg w-1/3">
-                <div className="flex flex-col items-center">
-                  <img src={user} alt="User Avatar" className="w-24 h-24 rounded-full mb-4" />
-                  <h2 className="text-xl font-bold">{pengguna.nama}</h2>
-                  <p className="text-gray-500">{pengguna.email}</p>
-                  <span className="mt-2 px-4 py-1 bg-green-200 text-green-800 rounded-full text-sm">
-                    {pengguna.role}
-                  </span>
-                </div>
+              <div className="flex flex-col items-center">
+                <img src={user} alt="User Avatar" className="w-24 h-24 rounded-full mb-4" />
+                <h2 className="text-xl font-bold">{pengguna.nama}</h2>
+                <p className="text-gray-500">{pengguna.email}</p>
+
+                <span
+                  className={`mt-2 px-4 py-1 rounded-full text-sm ${
+                    pengguna.verifikasi
+                      ? 'bg-green-200 text-green-800'
+                      : 'bg-red-200 text-red-800'
+                  }`}
+                >
+                  {pengguna.verifikasi ? 'Terverifikasi' : 'Belum Diverifikasi'}
+                </span>
+              </div>
 
                 {/* Account (Akun) Fields */}
                 <div className="mt-6 space-y-4">

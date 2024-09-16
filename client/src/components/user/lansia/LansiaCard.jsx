@@ -65,9 +65,9 @@ const LansiaCard = () => {
           <div className="flex justify-between items-center mb-6">
             <button
               onClick={handleAddLansia}
-              disabled={!user?.wali} // Disable button if user does not have Orangtua data
+              disabled={!user?.wali || !user?.verifikasi} // Disable button if user does not have Orangtua data
               className={`flex items-center px-6 py-2 rounded-lg shadow-md transition-all duration-300 ${
-                user?.wali ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                user?.wali || !user?.verifikasi ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
               }`}
             >
               <FaPlus className="mr-2" /> Tambah Data Lansia
@@ -84,6 +84,14 @@ const LansiaCard = () => {
             </div>
           )}
 
+          {!user?.verifikasi && (
+            <div className="mb-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
+              <p>
+                Anda harus memverifikasi akun terlebih dahulu sebelum dapat menambah atau mengakses data lansia. Silakan hubungi admin untuk verifikasi.
+              </p>
+            </div>
+          )}
+
           <div className="bg-white p-6 rounded-xl shadow-lg">
             <h3 className="text-xl font-bold text-gray-700 mb-4">Data Lansia</h3>
 
@@ -93,7 +101,9 @@ const LansiaCard = () => {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {lansiaData.map((lansia) => (
+              {lansiaData.map((lansia) => (
+                user?.verifikasi ? (
+                  // If the user is verified, allow clicking on the entire card
                   <Link key={lansia.id} to={`/user-lansia/${lansia.id}`}>
                     <div className="bg-gray-100 p-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
                       <h4 className="text-lg font-semibold text-gray-800">{lansia.nama_lansia}</h4>
@@ -107,16 +117,43 @@ const LansiaCard = () => {
                       </p>
 
                       <div className="flex justify-end mt-4">
-                        <Link to={`/user-lansia/edit/${lansia.id}`}>
-                          <button className="text-blue-500 hover:text-blue-700">
-                            Edit
+                        {/* Only allow editing if user is verified */}
+                        {user?.wali && user?.verifikasi ? (
+                          <Link to={`/user-lansia/edit/${lansia.id}`}>
+                            <button className="text-blue-500 hover:text-blue-700">
+                              Edit
+                            </button>
+                          </Link>
+                        ) : (
+                          <button className="text-gray-500 cursor-not-allowed" disabled>
+                            Tidak Dapat Diakses
                           </button>
-                        </Link>
+                        )}
                       </div>
                     </div>
                   </Link>
-                ))}
-              </div>
+                ) : (
+                  // If the user is not verified, render the card without a link
+                  <div key={lansia.id} className="bg-gray-100 p-6 rounded-lg shadow-md transition-all duration-300 cursor-not-allowed">
+                    <h4 className="text-lg font-semibold text-gray-800">{lansia.nama_lansia}</h4>
+                    <p className="text-gray-600">
+                      Tanggal Lahir: {new Date(lansia.tanggal_lahir_lansia).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-600">Alamat: {lansia.alamat_lansia}</p>
+                    <p className="text-gray-600">Nomor HP: {lansia.no_hp_lansia}</p>
+                    <p className="text-gray-600">
+                      Jenis Kelamin: {lansia.jenis_kelamin_lansia === 'l' ? 'Laki-laki' : 'Perempuan'}
+                    </p>
+
+                    <div className="flex justify-end mt-4">
+                      <button className="text-gray-500 cursor-not-allowed" disabled>
+                        Tidak Dapat Diakses
+                      </button>
+                    </div>
+                  </div>
+                )
+              ))}
+            </div>
             )}
           </div>
         </div>

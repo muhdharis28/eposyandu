@@ -50,7 +50,11 @@ Pengguna.init({
             model: Wali,
             key: 'id'
         }
-    }
+    },
+    verifikasi: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
 }, {
     sequelize,
     modelName: 'Pengguna'
