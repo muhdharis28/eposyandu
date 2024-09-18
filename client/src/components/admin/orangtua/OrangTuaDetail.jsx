@@ -19,6 +19,7 @@ const OrangtuaDetail = () => {
   const loadOrangtuaDetail = async () => {
     try {
       const result = await getOrangTuaById(id); // Fetch orangtua details by ID
+      console.log(result.data)
       setOrangtua(result.data);
     } catch (error) {
       setError('Failed to load orangtua details.');
@@ -58,6 +59,9 @@ const OrangtuaDetail = () => {
             <div className="space-y-4">
               <h3 className="text-xl font-semibold">Informasi Ibu</h3>
               <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-gray-700">
+                  <strong>Posyandu:</strong> {orangtua.posyanduDetail?.nama}
+                </p>
                 <p className="text-gray-700">
                   <strong>No KK:</strong> {orangtua.no_kk}
                 </p>

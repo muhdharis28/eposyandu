@@ -19,6 +19,7 @@ const LansiaDetail = () => {
   const loadLansiaDetail = async () => {
     try {
       const result = await getLansiaById(id); // API call to get lansia details
+      console.log(result.data)
       setLansia(result.data);
     } catch (error) {
       setError('Failed to load lansia details.');
@@ -112,6 +113,8 @@ const LansiaDetail = () => {
                   <h4 className="text-lg font-semibold">Pekerjaan & Pendidikan</h4>
                   <p className="text-gray-700"><strong>Pekerjaan:</strong> {lansia.pekerjaan ? lansia.pekerjaan.nama : 'Tidak ada'}</p>
                   <p className="text-gray-700"><strong>Pendidikan:</strong> {lansia.pendidikan ? lansia.pendidikan.nama : 'Tidak ada'}</p>
+                  <p className="text-gray-500">Kader: {lansia.kaderDetail?.nama}</p>
+                  <p className="text-gray-500">Posyandu: {lansia.kaderDetail?.posyanduDetail?.nama}</p>
                 </div>
                 
                 <button

@@ -36,7 +36,6 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaHeartbeat, label: 'Perkembangan Balita', path: '/perkembangan-balita' },  // Heartbeat for Toddler Development
     { icon: FaUser, label: 'Pengguna', path: '/pengguna' },  // User Icon for Users
     { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' },  // Camera for Documentation
-    { icon: FaCog, label: 'Pengaturan', path: '/settings' },  // Cog for Settings
   ];
 
   return (

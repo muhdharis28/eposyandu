@@ -4,6 +4,8 @@ const Lansia = require('../models/lansia');
 const Wali = require('../models/wali');
 const Pendidikan = require('../models/pendidikan');
 const Pekerjaan = require('../models/pekerjaan');
+const Pengguna = require('../models/pengguna');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 const Sequelize = require('sequelize'); 
 
@@ -32,6 +34,7 @@ router.post('/', authenticateToken, async (req, res) => {
             pekerjaan_lansia,
             pendidikan_lansia,
             status_pernikahan_lansia,
+            kader,
         } = req.body;
 
         const newLansia = await Lansia.create({
@@ -57,6 +60,7 @@ router.post('/', authenticateToken, async (req, res) => {
             pekerjaan_lansia,
             pendidikan_lansia,
             status_pernikahan_lansia,
+            kader,
         });
 
         res.status(201).json(newLansia);
@@ -78,7 +82,8 @@ router.get('/', authenticateToken, async (req, res) => {
                 model: Wali,
                 as: 'waliDetail',
                 attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
-            }]
+            },
+            { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }]
         });
         
         res.status(200).json(lansias);
@@ -123,7 +128,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
                 model: Pendidikan,
                 as: 'pendidikan',
                 attributes: ['id', 'nama'],
-            }]
+            },
+            { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }]
         });
         if (lansia) {
             res.status(200).json(lansia);
@@ -160,6 +166,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             pekerjaan_lansia,
             pendidikan_lansia,
             status_pernikahan_lansia,
+            kader,
         } = req.body;
 
         const lansia = await Lansia.findByPk(req.params.id);
@@ -187,6 +194,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
                 pekerjaan_lansia,
                 pendidikan_lansia,
                 status_pernikahan_lansia,
+                kader,
             });
             res.status(200).json(lansia);
         } else {

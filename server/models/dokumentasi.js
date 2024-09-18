@@ -26,11 +26,11 @@ const Dokumentasi = sequelize.define('Dokumentasi', {
         model: Pengguna,
         key: 'id'
     }
-},
+  },
 }, {
   timestamps: true,
 });
 
-Dokumentasi.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
+Dokumentasi.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
 
 module.exports = Dokumentasi;

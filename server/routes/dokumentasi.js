@@ -1,11 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const Dokumentasi = require('../models/dokumentasi');
+const Pengguna = require('../models/pengguna');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 router.get('/', async (req, res) => {
   try {
-    const dokumentasiList = await Dokumentasi.findAll();
+    const dokumentasiList = await Dokumentasi.findAll({
+      include: [
+        { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }
+      ]
+    });
     res.json(dokumentasiList);
   } catch (error) {
     console.error('Error fetching dokumentasi:', error);
@@ -16,7 +22,11 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   try {
-    const dokumentasi = await Dokumentasi.findByPk(id);
+    const dokumentasi = await Dokumentasi.findByPk(id, {
+      include: [
+        { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }
+      ]
+    });
     if (dokumentasi) {
       res.json(dokumentasi);
     } else {
@@ -29,7 +39,7 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
-  const { judul, deskripsi, tanggal, foto } = req.body;
+  const { judul, deskripsi, tanggal, foto, kader } = req.body;
 
   try {
     const newDokumentasi = await Dokumentasi.create({
@@ -37,6 +47,7 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
       deskripsi,
       foto,
       tanggal,
+      kader
     });
     res.status(201).json(newDokumentasi);
   } catch (error) {
@@ -47,13 +58,14 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
 
 router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
-  const { judul, deskripsi, tanggal, foto } = req.body;
+  const { judul, deskripsi, tanggal, foto, kader } = req.body;
 
   try {
     const dokumentasi = await Dokumentasi.findByPk(id);
     if (dokumentasi) {
       dokumentasi.judul = judul;
       dokumentasi.deskripsi = deskripsi;
+      dokumentasi.kader = kader;
       if (foto) dokumentasi.foto = foto;
       dokumentasi.tanggal = tanggal;
 

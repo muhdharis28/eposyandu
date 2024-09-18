@@ -3,6 +3,7 @@ import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 import { createLansia, updateLansia, getLansiaById } from '../../LansiaService'; // API service
+import { getKader } from '../../PenggunaService'; // Assume this fetches users with the 'kader' role
 import { useNavigate, useParams } from 'react-router-dom';
 import { getWali } from '../../WaliService';
 import axios from 'axios';
@@ -30,7 +31,8 @@ const LansiaForm = () => {
     email_lansia: '',
     pekerjaan_lansia: '',
     pendidikan_lansia: '',
-    status_pernikahan_lansia: '', // Default value
+    status_pernikahan_lansia: '',
+    kader: ''
   });
 
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state management
@@ -38,11 +40,14 @@ const LansiaForm = () => {
   const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
   const [pendidikanOptions, setPendidikanOptions] = useState([]);
   const [waliList, setWaliList] = useState([]);
+  const [kader, setKader] = useState(''); // Store selected kader
+  const [kaderOptions, setKaderOptions] = useState([]); // Store list of kader options
 
   useEffect(() => {
     if (id) {
       loadLansia(); // Load data if editing
     }
+    loadKaders(); // Load kader options
   }, [id]);
 
   useEffect(() => {
@@ -77,6 +82,17 @@ const LansiaForm = () => {
     fetchPendidikan();
     fetchWali();
   }, []);
+
+  const loadKaders = async () => {
+    try {
+      const result = await getKader(); // Fetch kader data (users with the role 'kader')
+      console.log(result.data)
+      setKaderOptions(result.data);
+    } catch (error) {
+      setError('Failed to load kader options.');
+      console.error('Failed to load kader options:', error);
+    }
+  };
 
   const loadLansia = async () => {
     try {
@@ -424,6 +440,22 @@ const LansiaForm = () => {
                   onChange={handleChange}
                   required
                 />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Kader</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={kader}
+                  onChange={(e) => setKader(e.target.value)}
+                  required
+                >
+                  <option value="">Pilih Kader</option>
+                  {kaderOptions.map((kader) => (
+                    <option key={kader.id} value={kader.id}>
+                      {kader.nama} - {kader.posyanduDetail?.nama}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </form>

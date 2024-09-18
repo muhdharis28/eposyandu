@@ -3,6 +3,7 @@ import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
 import { createDokumentasi, updateDokumentasi, getDokumentasiById } from '../../DokumentasiService';
+import { getKader } from '../../PenggunaService'; // Assume this fetches users with the 'kader' role
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'; // Axios to handle the file upload
 
@@ -12,6 +13,7 @@ const DokumentasiForm = () => {
     deskripsi: '',
     tanggal: '',
     foto: null,
+    kader: '',
   });
   const { id } = useParams();
   const [error, setError] = useState(null);
@@ -21,12 +23,25 @@ const DokumentasiForm = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
+  const [kader, setKader] = useState(''); // Store selected kader
+  const [kaderOptions, setKaderOptions] = useState([]); // Store list of kader options
 
   useEffect(() => {
     if (id) {
       loadDokumentasi();
     }
+    loadKaders(); // Load kader options
   }, [id]);
+
+  const loadKaders = async () => {
+    try {
+      const result = await getKader(); // Fetch kader data (users with the role 'kader')
+      setKaderOptions(result.data);
+    } catch (error) {
+      setError('Failed to load kader options.');
+      console.error('Failed to load kader options:', error);
+    }
+  };
 
   const loadDokumentasi = async () => {
     try {
@@ -47,7 +62,7 @@ const DokumentasiForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dokumentasiToSubmit = { ...dokumentasi };
+    const dokumentasiToSubmit = { ...dokumentasi, kader };
 
     try {
       const uploadedFilePath = await uploadFile();
@@ -181,6 +196,23 @@ const DokumentasiForm = () => {
                     />
                   </div>
                 )}
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Kader</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={kader}
+                  onChange={(e) => setKader(e.target.value)}
+                  name="kader"
+                  required
+                >
+                  <option value="">Pilih Kader</option>
+                  {kaderOptions.map((kader) => (
+                    <option key={kader.id} value={kader.id}>
+                      {kader.nama} - {kader.posyanduDetail?.nama}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const OrangTua = require('../models/orangtua');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 router.post('/', async (req, res) => {
@@ -12,7 +13,7 @@ router.post('/', async (req, res) => {
             pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
             kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
             kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-            pendidikan_ayah
+            pendidikan_ayah, posyandu
         } = req.body;
         const newOrangTua = await OrangTua.create({
             no_kk, nik_ibu, nama_ibu, tempat_lahir_ibu, tanggal_lahir_ibu, alamat_ktp_ibu, kelurahan_ktp_ibu,
@@ -21,7 +22,7 @@ router.post('/', async (req, res) => {
             pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
             kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
             kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-            pendidikan_ayah
+            pendidikan_ayah, posyandu
         });
         res.status(201).json(newOrangTua);
     } catch (error) {
@@ -31,7 +32,12 @@ router.post('/', async (req, res) => {
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const orangTuas = await OrangTua.findAll();
+        const orangTuas = await OrangTua.findAll({
+            include: [{
+                model: Posyandu,
+                as: 'posyanduDetail'
+            }]
+        });
         res.status(200).json(orangTuas);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -40,7 +46,12 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const orangTua = await OrangTua.findByPk(req.params.id);
+        const orangTua = await OrangTua.findByPk(req.params.id, {
+            include: [{
+                model: Posyandu,
+                as: 'posyanduDetail'
+            }]
+        });
         if (orangTua) {
             res.status(200).json(orangTua);
         } else {
@@ -60,7 +71,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
             kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
             kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-            pendidikan_ayah
+            pendidikan_ayah, posyandu
         } = req.body;
         const orangTua = await OrangTua.findByPk(req.params.id);
         if (orangTua) {
@@ -101,6 +112,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             orangTua.email_ayah = email_ayah;
             orangTua.pekerjaan_ayah = pekerjaan_ayah;
             orangTua.pendidikan_ayah = pendidikan_ayah;
+            orangTua.posyandu = posyandu;
             await orangTua.save();
             res.status(200).json(orangTua);
         } else {

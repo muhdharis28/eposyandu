@@ -1,4 +1,3 @@
-// KegiatanDetail.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getKegiatanById } from '../../KegiatanService'; // Assume this service fetches kegiatan details
@@ -74,6 +73,10 @@ const KegiatanDetail = () => {
                   <h3 className="text-lg font-semibold text-gray-700">Tanggal</h3>
                   <p className="text-gray-600">{kegiatan.tanggal}</p>
                 </div>
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-700">Kader</h3>
+                  <p className="text-gray-600">{kegiatan.kaderDetail?.nama || 'N/A'}</p>
+                </div>
               </div>
 
               {/* Right Column */}
@@ -85,6 +88,12 @@ const KegiatanDetail = () => {
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-700">Deskripsi</h3>
                   <p className="text-gray-600">{kegiatan.deskripsi}</p>
+                </div>
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-700">Posyandu</h3>
+                  <p className="text-gray-600">
+                    {kegiatan.kaderDetail?.posyanduDetail?.nama || 'N/A'}
+                  </p>
                 </div>
               </div>
             </div>

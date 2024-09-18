@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { createWali, updateWali, getWaliById } from '../../WaliService'; // Import your WaliService
+import { getPosyandus } from '../../PosyanduService'; // Assume this fetches users with the 'kader' role
 import axios from 'axios';
 import TopBar from '../TopBar'; // Import TopBar component
 import SideBar from '../SideBar'; // Import SideBar component
@@ -29,12 +30,14 @@ const WaliForm = () => {
     email_wali: '',
     pekerjaan_wali: '',
     pendidikan_wali: '',
+    posyandu: ''
   });
 
   const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
   const [pendidikanOptions, setPendidikanOptions] = useState([]);
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
   const navigate = useNavigate();
+  const [posyanduOptions, setPosyanduOptions] = useState([]); // Store list of kader options
 
   useEffect(() => {
     if (id) {
@@ -42,7 +45,17 @@ const WaliForm = () => {
     }
     loadPekerjaanOptions();
     loadPendidikanOptions();
+    loadPosyandu(); // Load kader options
   }, [id]);
+
+  const loadPosyandu = async () => {
+    try {
+      const result = await getPosyandus(); // Fetch kader data (users with the role 'kader')
+      setPosyanduOptions(result.data);
+    } catch (error) {
+      console.error('Failed to load kader options:', error);
+    }
+  };
 
   const loadWali = async () => {
     try {
@@ -307,6 +320,19 @@ const WaliForm = () => {
                     <option key={pendidikan.id} value={pendidikan.id}>
                         {pendidikan.nama}
                     </option>
+                    ))}
+                </select>
+                <select
+                    name="posyandu"
+                    value={formData.posyandu}
+                    onChange={handleChange}
+                    className="p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
+                >
+                    <option value="">Pilih Posyandu</option>
+                    {posyanduOptions.map((posyandu) => (
+                      <option key={posyandu.id} value={posyandu.id}>
+                        {posyandu.nama}
+                      </option>
                     ))}
                 </select>
                 </div>

@@ -19,6 +19,7 @@ const BayiDetail = () => {
   const loadBayiDetail = async () => {
     try {
       const result = await getBayiById(id); // API call to get bayi details
+      console.log(result.data)
       setBayi(result.data);
     } catch (error) {
       setError('Failed to load bayi details.');
@@ -112,6 +113,12 @@ const BayiDetail = () => {
                 </p>
                 <p className="text-gray-700">
                   <strong>Keterangan:</strong> {bayi.keterangan_balita || 'Tidak ada'}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Kader:</strong> {bayi.kaderDetail?.nama || 'Tidak ada'}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Posyandu:</strong> {bayi.kaderDetail?.posyanduDetail?.nama || 'Tidak ada'}
                 </p>
               </div>
               <button

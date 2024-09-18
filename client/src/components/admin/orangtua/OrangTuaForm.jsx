@@ -3,6 +3,7 @@ import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
 import { createOrangTua, updateOrangTua, getOrangTuaById } from '../../OrangTuaService'; // Service functions
+import { getPosyandus } from '../../PosyanduService'; // Assume this fetches users with the 'kader' role
 import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL params
 import axios from 'axios';
 
@@ -46,17 +47,30 @@ const OrangtuaForm = () => {
     email_ayah: '',
     pekerjaan_ayah: '',
     pendidikan_ayah: '',
+    posyandu: '',
   });
   const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state management
   const navigate = useNavigate(); // For navigation
   const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
   const [pendidikanOptions, setPendidikanOptions] = useState([]);
+  const [posyanduOptions, setPosyanduOptions] = useState([]); // Store list of kader options
 
   useEffect(() => {
     if (id) {
       loadOrangtua(); // Load orangtua data if editing
     }
+    loadPosyandu(); // Load kader options
   }, [id]);
+  
+  const loadPosyandu = async () => {
+    try {
+      const result = await getPosyandus(); // Fetch kader data (users with the role 'kader')
+      setPosyanduOptions(result.data);
+    } catch (error) {
+      setError('Failed to load kader options.');
+      console.error('Failed to load kader options:', error);
+    }
+  };
 
   useEffect(() => {
     const fetchPekerjaan = async () => {
@@ -482,6 +496,23 @@ const OrangtuaForm = () => {
               {pendidikanOptions.map((pendidikan) => (
                 <option key={pendidikan.id} value={pendidikan.id}>
                   {pendidikan.nama}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Posyandu</label>
+            <select
+              className="w-full p-2 border border-gray-300 rounded"
+              value={formData.posyandu}
+              onChange={handleChange}
+              name="posyandu"
+              required
+            >
+              <option value="">Pilih Posyandu</option>
+              {posyanduOptions.map((posyandu) => (
+                <option key={posyandu.id} value={posyandu.id}>
+                  {posyandu.nama}
                 </option>
               ))}
             </select>

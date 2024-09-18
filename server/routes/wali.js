@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Wali = require('../models/wali');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 router.post('/', async (req, res) => {
@@ -8,12 +9,14 @@ router.post('/', async (req, res) => {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
             kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, alamat_domisili_wali, kelurahan_domisili_wali,
-            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
+            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali,
+            posyandu
         } = req.body;
         const newWali = await Wali.create({
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
             kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, alamat_domisili_wali, kelurahan_domisili_wali,
-            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
+            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali,
+            posyandu
         });
         res.status(201).json(newWali);
     } catch (error) {
@@ -23,7 +26,12 @@ router.post('/', async (req, res) => {
 
 router.get('/', authenticateToken, async (req, res) => {
     try {
-        const walis = await Wali.findAll();
+        const walis = await Wali.findAll({
+            include: [{
+                model: Posyandu,
+                as: 'posyanduDetail'
+            }]
+        });
         res.status(200).json(walis);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -32,7 +40,12 @@ router.get('/', authenticateToken, async (req, res) => {
 
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const wali = await Wali.findByPk(req.params.id);
+        const wali = await Wali.findByPk(req.params.id, {
+            include: [{
+                model: Posyandu,
+                as: 'posyanduDetail'
+            }]
+        });
         if (wali) {
             res.status(200).json(wali);
         } else {
@@ -48,7 +61,8 @@ router.put('/:id', authenticateToken, async (req, res) => {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, alamat_ktp_wali, kelurahan_ktp_wali,
             kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, alamat_domisili_wali, kelurahan_domisili_wali,
-            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
+            kecamatan_domisili_wali, kota_domisili_wali, provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali,
+            posyandu
         } = req.body;
         const wali = await Wali.findByPk(req.params.id);
         if (wali) {
@@ -72,6 +86,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             wali.email_wali = email_wali;
             wali.pekerjaan_wali = pekerjaan_wali;
             wali.pendidikan_wali = pendidikan_wali;
+            wali.posyandu = posyandu;
             await wali.save();
             res.status(200).json(wali);
         } else {

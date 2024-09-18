@@ -70,6 +70,10 @@ const WaliDetail = () => {
               {/* Left Column */}
               <div className="col-span-1">
                 <div className="mb-4">
+                  <label className="block font-semibold">Posyandu:</label>
+                  <p>{wali.posyanduDetail?.nama}</p>
+                </div>
+                <div className="mb-4">
                   <label className="block font-semibold">No KK:</label>
                   <p>{wali.no_kk}</p>
                 </div>

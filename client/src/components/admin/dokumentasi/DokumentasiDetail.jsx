@@ -78,6 +78,16 @@ const DokumentasiDetail = () => {
                   <strong>Tanggal:</strong> {new Date(dokumentasi.tanggal).toLocaleDateString()}
                 </p>
               </div>
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-gray-700">
+                  <strong>Kader:</strong> {dokumentasi.kaderDetail?.nama}
+                </p>
+              </div>
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-gray-700">
+                  <strong>Posyandu:</strong> {dokumentasi.kaderDetail?.posyanduDetail?.nama}
+                </p>
+              </div>
             </div>
 
             {/* Right Column - Additional Information or Actions */}

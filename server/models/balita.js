@@ -63,6 +63,6 @@ Balita.init({
 });
 
 Balita.belongsTo(OrangTua, { as: 'orangtuaDetail', foreignKey: 'orangtua' });
-Balita.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
+Balita.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
 
 module.exports = Balita;

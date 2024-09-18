@@ -33,6 +33,6 @@ Kegiatan.init({
     modelName: 'Kegiatan'
 });
 
-Kegiatan.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
+Kegiatan.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
 
 module.exports = Kegiatan;

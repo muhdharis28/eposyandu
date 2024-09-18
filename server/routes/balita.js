@@ -2,17 +2,21 @@ const express = require('express');
 const router = express.Router();
 const Balita = require('../models/balita');
 const OrangTua = require('../models/orangtua');
+const Pengguna = require('../models/pengguna');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken } = require('./middleware/authMiddleware');
 
 router.post('/', authenticateToken, async (req, res) => {
     try {
         const {
             nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
-            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita
+            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita,
+            kader
         } = req.body;
         const newBalita = await Balita.create({
             nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
-            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita
+            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita,
+            kader
         });
         res.status(201).json(newBalita);
     } catch (error) {
@@ -30,9 +34,8 @@ router.get('/', authenticateToken, async (req, res) => {
             ...filterCondition,
             include: [{
                 model: OrangTua,
-                as: 'orangtuaDetail',
-                attributes: ['id', 'nama_ayah', 'nama_ibu'],
-              }]
+                as: 'orangtuaDetail'
+            }, { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }],
         });
         res.status(200).json(balitas);
     } catch (error) {
@@ -45,9 +48,9 @@ router.get('/:id', authenticateToken, async (req, res) => {
         const balita = await Balita.findByPk(req.params.id, {
             include: [{
                 model: OrangTua,
-                as: 'orangtuaDetail',
-                attributes: ['id', 'nama_ayah', 'nama_ibu'],
-              }]
+                as: 'orangtuaDetail'
+              },
+              { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }],
         });
         if (balita) {
             res.status(200).json(balita);
@@ -63,7 +66,8 @@ router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
             nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
-            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita
+            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita,
+            kader
         } = req.body;
         const balita = await Balita.findByPk(req.params.id);
         if (balita) {
@@ -78,6 +82,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             balita.riwayat_penyakit_balita = riwayat_penyakit_balita;
             balita.riwayat_kelahiran_balita = riwayat_kelahiran_balita;
             balita.keterangan_balita = keterangan_balita;
+            balita.kader = kader;
             await balita.save();
             res.status(200).json(balita);
         } else {
@@ -99,26 +104,6 @@ router.delete('/:id', authenticateToken, async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error });
-    }
-});
-
-router.get('/reports', authenticateToken, async (req, res) => {
-    try {
-        const totalBalita = await Balita.count(); // Get total number of Balita
-        const averageWeightBalita = await Balita.findAll({
-            attributes: [[Sequelize.fn('AVG', Sequelize.col('berat_badan_awal_balita')), 'average_weight']]
-        });
-        const averageHeightBalita = await Balita.findAll({
-            attributes: [[Sequelize.fn('AVG', Sequelize.col('tinggi_badan_awal_balita')), 'average_height']]
-        });
-
-        res.status(200).json({
-            totalBalita,
-            averageWeightBalita: averageWeightBalita[0].dataValues.average_weight,
-            averageHeightBalita: averageHeightBalita[0].dataValues.average_height
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
     }
 });
 

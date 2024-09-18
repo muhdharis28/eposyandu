@@ -2,7 +2,7 @@ const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../db.config');
 const Pendidikan = require('./pendidikan');
 const Pekerjaan = require('./pekerjaan');
-const Pengguna = require('./pengguna');
+const Posyandu = require('./posyandu');
 
 class OrangTua extends Model {}
 
@@ -166,10 +166,10 @@ OrangTua.init({
             key: 'id'
         }
     },
-    kader: {
+    posyandu: {
         type: DataTypes.INTEGER,
         references: {
-            model: Pengguna,
+            model: Posyandu,
             key: 'id'
         }
     },
@@ -177,5 +177,7 @@ OrangTua.init({
     sequelize,
     modelName: 'OrangTua'
 });
+
+OrangTua.belongsTo(Posyandu, { as: 'posyanduDetail', foreignKey: 'posyandu' });
 
 module.exports = OrangTua;

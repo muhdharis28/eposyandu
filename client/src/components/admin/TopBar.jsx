@@ -29,8 +29,6 @@ const TopBar = ({ onToggle, isCollapsed }) => {
     navigate('/login');
   };
 
-  const handleSettings = () => navigate('/settings');
-
   return (
     <div className="bg-white h-16 flex items-center justify-between pl-4 pr-6 shadow-lg fixed top-0 left-0 w-full z-10">
       <div className="flex items-center">
@@ -59,13 +57,6 @@ const TopBar = ({ onToggle, isCollapsed }) => {
         </button>
         {isProfileMenuOpen && (
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
-            <button
-              onClick={handleSettings}
-              className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              <FaCog className="mr-2" />
-              Settings
-            </button>
             <button
               onClick={handleLogout}
               className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"

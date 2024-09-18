@@ -183,10 +183,17 @@ router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, re
 // Get all pengguna with role 'kader'
 router.get('/role/kader', authenticateToken, async (req, res) => {
     try {
-        const kaderUsers = await Pengguna.findAll({ where: { role: 'kader' } });
+        const kaderUsers = await Pengguna.findAll({
+            where: { role: 'kader' }, 
+            include: [
+                // { model: OrangTua, as: 'orangTuaDetail' },
+                // { model: Wali, as: 'waliDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
+            ]
+        });
         res.status(200).json(kaderUsers);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch users with role kader' });
+        res.status(500).json({ error: error });
     }
 });
 

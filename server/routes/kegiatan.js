@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const Kegiatan = require('../models/kegiatan');
+const Pengguna = require('../models/pengguna');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
-        const { nama, tanggal, jenis, deskripsi } = req.body;
-        const newKegiatan = await Kegiatan.create({ nama, tanggal, jenis, deskripsi });
+        const { nama, tanggal, jenis, deskripsi, kader } = req.body;
+        const newKegiatan = await Kegiatan.create({ nama, tanggal, jenis, deskripsi, kader });
         res.status(201).json(newKegiatan);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -15,7 +17,11 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
 
 router.get('/', async (req, res) => {
     try {
-        const kegiatans = await Kegiatan.findAll();
+        const kegiatans = await Kegiatan.findAll({
+            include: [
+              { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }
+            ]
+          });
         res.status(200).json(kegiatans);
     } catch (error) {
         res.status(500).json({ error: error });
@@ -24,7 +30,11 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
     try {
-        const kegiatan = await Kegiatan.findByPk(req.params.id);
+        const kegiatan = await Kegiatan.findByPk(req.params.id, {
+            include: [
+              { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }
+            ]
+          });
         if (kegiatan) {
             res.status(200).json(kegiatan);
         } else {
