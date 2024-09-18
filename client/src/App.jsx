@@ -1,5 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+
+import { SidebarProvider } from './components/SideBarContext';
 import Homepage from './components/homepage/HomePage';
 import Login from './components/auth/Login';
 import RegistrationFlow from './components/auth/register/RegistrationFlow';
@@ -52,11 +54,24 @@ import BayiCard from './components/user/bayi/BayiCard';
 import BayiUserDetail from './components/user/bayi/BayiDetail';
 import BayiUserAdd from './components/user/bayi/AddBayi';
 import BayiUserEdit from './components/user/bayi/EditBayi';
-import LansiaReport from './components/user/report/LansiaReport';
-import BayiReport from './components/user/report/BayiReport';
-import { SidebarProvider } from './components/SideBarContext';
-import DataBayi from './components/kader/Bayi/DataBayi';
-import BalitaReport from './components/user/report/BayiReport';
+import BayiCardKader from './components/kader/bayi/BayiCardKader';
+import BayiDetailKader from './components/kader/bayi/BayiDetailKader';
+import AddBayiKader from './components/kader/bayi/AddBayiKader';
+import EditBayiKader from './components/kader/bayi/EditBayiKader';
+import LansiaCardKader from './components/kader/lansia/LansiaCardKader';
+import LansiaDetailKader from './components/kader/lansia/LansiaDetailKader';
+import AddLansiaKader from './components/kader/lansia/AddLansiaKader';
+import EditLansiaKader from './components/kader/lansia/EditLansiaKader';
+import PemeriksaanLansiaCard from './components/kader/pemeriksaan_lansia/PemeriksaanLansiaCard';
+import PemeriksaanLansiaDetailKader from './components/kader/pemeriksaan_lansia/PemeriksaanLansiaDetailKader';
+import PemeriksaanLansiaKaderForm from './components/kader/pemeriksaan_lansia/PemeriksaanLansiaKaderForm';
+import PerkembanganBalitaCard from './components/kader/perkembangan_balita/PerkembanganBalitaCard';
+import PerkembanganBalitaDetailKader from './components/kader/perkembangan_balita/PerkembanganBalitaDetailKader';
+import PerkembanganBalitaKaderForm from './components/kader/perkembangan_balita/PerkembanganBalitaKaderForm';
+import KegiatanCardKader from './components/kader/kegiatan/KegiatanCardKader';
+import KegiatanDetailKader from './components/kader/kegiatan/KegiatanDetailKader';
+import KegiatanKaderForm from './components/kader/kegiatan/KegiatanKaderForm';
+import SettingsKader from './components/kader/settings/SettingsKader';
 
 const App = () => (
   <SidebarProvider>
@@ -121,13 +136,31 @@ const App = () => (
 
         <Route element={<ProtectedRoute role="kader" />}>
           <Route path="/kader-dashboard" element={<KaderDashboard />} />
-          <Route path="/data-anak" element={<DataBayi />} />
+          <Route path="/kader-balita" element={<BayiCardKader />} />
+          <Route path="/kader-balita/:id" element={<BayiDetailKader/>} />
+          <Route path="/kader-balita/edit/:id" element={<EditBayiKader/>} />
+          <Route path="/kader-balita/baru" element={<AddBayiKader/>} />
+          <Route path="/kader-lansia" element={<LansiaCardKader />} />
+          <Route path="/kader-lansia/:id" element={<LansiaDetailKader/>} />
+          <Route path="/kader-lansia/baru" element={<AddLansiaKader/>} />
+          <Route path="/kader-lansia/edit/:id" element={<EditLansiaKader/>} />
+          <Route path="/kader-pemeriksaan-lansia" element={<PemeriksaanLansiaCard/>} />
+          <Route path="/kader-pemeriksaan-lansia/:id" element={<PemeriksaanLansiaDetailKader/>} />
+          <Route path="/kader-pemeriksaan-lansia/baru" element={<PemeriksaanLansiaKaderForm/>} />
+          <Route path="/kader-pemeriksaan-lansia/edit/:id" element={<PemeriksaanLansiaKaderForm/>} />
+          <Route path="/kader-perkembangan-balita" element={<PerkembanganBalitaCard/>} />
+          <Route path="/kader-perkembangan-balita/:id" element={<PerkembanganBalitaDetailKader/>} />
+          <Route path="/kader-perkembangan-balita/baru" element={<PerkembanganBalitaKaderForm/>} />
+          <Route path="/kader-perkembangan-balita/edit/:id" element={<PerkembanganBalitaKaderForm/>} />
+          <Route path="/kader-kegiatan" element={<KegiatanCardKader/>} />
+          <Route path="/kader-kegiatan/:id" element={<KegiatanDetailKader/>} />
+          <Route path="/kader-kegiatan/baru" element={<KegiatanKaderForm/>} />
+          <Route path="/kader-kegiatan/edit/:id" element={<KegiatanKaderForm/>} />
+          <Route path="/kader-settings" element={<SettingsKader/>} />
         </Route>
 
         <Route element={<ProtectedRoute role="user" />}>
           <Route path="/user-dashboard" element={<UserDashboard />} />
-          <Route path="/user-report-lansia" element={<LansiaReport />} />
-          <Route path="/user-report-balita" element={<BayiReport />} />
           <Route path="/user-settings" element={<Settings />} />
           <Route path="/user-lansia" element={<LansiaCard />} />
           <Route path="/user-lansia/:id" element={<LansiaUserDetail/>} />

@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // Import InputText for search
 import { useNavigate } from 'react-router-dom'; // Import useNavigate for routing
-import { getDoctors, deleteDoctor } from './DokterService'; // Your API services
+import { getDoctors, deleteDoctor } from '../../DokterService'; // Your API services
 
 const DokterList = () => {
   const [doctors, setDoctors] = useState([]);

@@ -5,7 +5,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext'; // For search input
 import { useNavigate } from 'react-router-dom'; // For navigation
-import { getKegiatan, deleteKegiatan } from './KegiatanService'; // Your API services
+import { getKegiatan, deleteKegiatan } from '../../KegiatanService'; // Your API services
 
 const KegiatanList = () => {
   const [kegiatanList, setKegiatanList] = useState([]);

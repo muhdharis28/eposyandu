@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getPemeriksaanLansiaById, createPemeriksaanLansia, updatePemeriksaanLansia } from '../../PemeriksaanLansiaService'; // You need to implement this service
 import { getLansia } from '../../LansiaService'; // Fetch Lansia data
-import { getDoctors } from '../dokter/DokterService'; // Fetch Dokter data
+import { getDoctors } from '../../DokterService'; // Fetch Dokter data
 import { getKader } from '../../PenggunaService'; // Fetch Kader data
 import TopBar from '../TopBar'; // Import the TopBar
 import SideBar from '../SideBar'; // Import the SideBar

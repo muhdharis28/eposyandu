@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { useNavigate } from 'react-router-dom';
-import { getDokumentasi, deleteDokumentasi } from './DokumentasiService'; // Your API services
+import { getDokumentasi, deleteDokumentasi } from '../../DokumentasiService'; // Your API services
 
 const DokumentasiList = () => {
   const [dokumentasi, setDokumentasi] = useState([]);

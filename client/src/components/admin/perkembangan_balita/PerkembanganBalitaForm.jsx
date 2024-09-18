@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { createPerkembanganBalita, updatePerkembanganBalita, getPerkembanganBalitaById } from '../../PerkembanganBalitaService'; // Adjust the path if needed
 import { getBayi } from '../../BayiService'; // Service to fetch Balita options
 import { getKader } from '../../PenggunaService'; // Service to fetch Kader options
-import { getDoctors } from '../dokter/DokterService'; // Service to fetch Doctor options
+import { getDoctors } from '../../DokterService'; // Service to fetch Doctor options
 import TopBar from '../TopBar'; // Adjust the path as necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management

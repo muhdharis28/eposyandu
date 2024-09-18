@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
-import { createDoctor, updateDoctor, getDoctorById } from './DokterService';
+import { createDoctor, updateDoctor, getDoctorById } from '../../DokterService';
 import { useNavigate, useParams } from 'react-router-dom'; // Replace useHistory with useNavigate
 
 const DokterForm = () => {

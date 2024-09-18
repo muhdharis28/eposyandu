@@ -6,11 +6,14 @@ import {
   FaBriefcase,
   FaGraduationCap,
   FaCalendarAlt,
-  FaFileAlt,
+  FaStethoscope,
+  FaHeartbeat,
+  FaUserTie,
   FaCog,
   FaUserFriends,
   FaBaby,
-  FaUsers,
+  FaUser,
+  FaUserShield,
   FaCamera
 } from 'react-icons/fa';
 
@@ -18,21 +21,20 @@ const SideBar = ({ isCollapsed }) => {
   const location = useLocation();  // Get the current route
 
   const navItems = [
-    { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },
-    { icon: FaUserMd, label: 'Dokter', path: '/dokter' },
-    { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },
-    { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },
-    { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },
-    { icon: FaUserFriends, label: 'Lansia', path: '/lansia' },
-    { icon: FaBaby, label: 'Balita', path: '/balita' },
-    { icon: FaUsers, label: 'Orang Tua', path: '/orangtua' },
-    { icon: FaUsers, label: 'Wali', path: '/wali' },
-    { icon: FaUsers, label: 'Pemeriksaan Lansia', path: '/pemeriksaan-lansia' },
-    { icon: FaUsers, label: 'Perkembangan Balita', path: '/perkembangan-balita' },
-    { icon: FaUsers, label: 'Pengguna', path: '/pengguna' },
-    { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' },
-    { icon: FaFileAlt, label: 'Laporan', path: '/report' },
-    { icon: FaCog, label: 'Pengaturan', path: '/settings' },
+    { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },  // Dashboard Home Icon
+    { icon: FaUserMd, label: 'Dokter', path: '/dokter' },  // Doctor Icon for Doctors
+    { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },  // Work Icon for Pekerjaan
+    { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },  // Graduation Cap for Education
+    { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },  // Calendar Icon for Events
+    { icon: FaUserFriends, label: 'Lansia', path: '/lansia' },  // Users Icon for Elderly (Lansia)
+    { icon: FaBaby, label: 'Balita', path: '/balita' },  // Baby Icon for Toddlers (Balita)
+    { icon: FaUserTie, label: 'Orang Tua', path: '/orangtua' },  // User Tie for Parents
+    { icon: FaUserShield, label: 'Wali', path: '/wali' },  // User Shield for Guardians
+    { icon: FaStethoscope, label: 'Pemeriksaan Lansia', path: '/pemeriksaan-lansia' },  // Stethoscope Icon for Elderly Checkups
+    { icon: FaHeartbeat, label: 'Perkembangan Balita', path: '/perkembangan-balita' },  // Heartbeat for Toddler Development
+    { icon: FaUser, label: 'Pengguna', path: '/pengguna' },  // User Icon for Users
+    { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' },  // Camera for Documentation
+    { icon: FaCog, label: 'Pengaturan', path: '/settings' },  // Cog for Settings
   ];
 
   return (

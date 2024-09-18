@@ -1,7 +1,7 @@
 // KegiatanForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
-import { createKegiatan, updateKegiatan, getKegiatanById } from './KegiatanService';
+import { createKegiatan, updateKegiatan, getKegiatanById } from '../../KegiatanService';
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';

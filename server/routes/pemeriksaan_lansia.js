@@ -28,9 +28,9 @@ router.get('/', authenticateToken, async (req, res) => {
     try {
         const pemeriksaanLansias = await PemeriksaanLansia.findAll({
             include: [
-                { model: Lansia, as: 'lansiaDetail', attributes: ['id', 'nama_lansia'], },
-                { model: Pengguna, as: 'penggunaDetail', attributes: ['id', 'nama'], },
-                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'], },
+                { model: Lansia, as: 'lansiaDetail'},
+                { model: Pengguna, as: 'penggunaDetail'},
+                { model: Dokter, as: 'dokterDetail'},
             ]
         });
         res.status(200).json(pemeriksaanLansias);
@@ -43,9 +43,9 @@ router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id, {
             include: [
-                { model: Lansia, as: 'lansiaDetail', attributes: ['id', 'nama_lansia'], },
-                { model: Pengguna, as: 'penggunaDetail', attributes: ['id', 'nama'], },
-                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'], },
+                { model: Lansia, as: 'lansiaDetail'},
+                { model: Pengguna, as: 'penggunaDetail'},
+                { model: Dokter, as: 'dokterDetail'},
             ]
         });
         if (pemeriksaanLansia) {

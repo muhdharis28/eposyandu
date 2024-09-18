@@ -8,15 +8,6 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaHome, label: 'Dashboard', path: '/user-dashboard' },
     { icon: FaUsers, label: 'Lansia', path: '/user-lansia' },
     { icon: FaBaby, label: 'Balita', path: '/user-balita' },
-    {
-      icon: FaFileAlt,
-      label: 'Laporan',
-      path: '/report',
-      subItems: [
-        { icon: FaUsers, label: 'Laporan Lansia', path: '/user-report-lansia' },
-        { icon: FaBaby, label: 'Laporan Balita', path: '/user-report-balita' }
-      ]
-    },
     { icon: FaCog, label: 'Pengaturan', path: '/user-settings' }
   ];
 

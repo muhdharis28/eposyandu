@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getDoctorById } from './DokterService'; // Assuming you have this API service
+import { getDoctorById } from '../../DokterService'; // Assuming you have this API service
 import TopBar from '../TopBar'; // Adjust the path as necessary
 import SideBar from '../SideBar'; // Adjust the path as necessary
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context

@@ -1,7 +1,7 @@
 // KegiatanDetail.jsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getKegiatanById } from './KegiatanService'; // Assume this service fetches kegiatan details
+import { getKegiatanById } from '../../KegiatanService'; // Assume this service fetches kegiatan details
 import TopBar from '../TopBar'; // Adjust the path if necessary
 import SideBar from '../SideBar'; // Adjust the path if necessary
 import { useSidebar } from '../../SideBarContext'; // Use context for sidebar state

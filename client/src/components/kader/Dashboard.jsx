@@ -1,68 +1,56 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import api from '../../api'; // Import the Axios instance
+import { FaSpinner } from 'react-icons/fa'; // Import an icon for loading state
 
 const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState('bayi');
+  const [stats, setStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Stats for each tab
-  const bayiStats = [
-    { label: 'User', value: 18, icon: '👤', bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
-    { label: 'Kegiatan', value: 132, icon: '📅', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
-    { label: 'Kader', value: 4, icon: '👩‍⚕️', bgColor: 'bg-pink-100', textColor: 'text-pink-700' },
-    { label: 'Bayi', value: 5, icon: '👶', bgColor: 'bg-yellow-100', textColor: 'text-yellow-700' }
-  ];
+  useEffect(() => {
+    // Fetch stats from the backend API
+    const fetchStats = async () => {
+      try {
+        const response = await api.get('/stats'); // Adjust the API path if necessary
+        setStats(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError('Failed to fetch stats');
+        setLoading(false);
+      }
+    };
 
-  const lansiaStats = [
-    { label: 'User', value: 18, icon: '👤', bgColor: 'bg-purple-100', textColor: 'text-purple-700' },
-    { label: 'Kegiatan', value: 132, icon: '📅', bgColor: 'bg-blue-100', textColor: 'text-blue-700' },
-    { label: 'Kader', value: 4, icon: '👩‍⚕️', bgColor: 'bg-pink-100', textColor: 'text-pink-700' },
-    { label: 'Lansia', value: 4, icon: '👵', bgColor: 'bg-teal-100', textColor: 'text-teal-700' }
-  ];
+    fetchStats();
+  }, []);
 
-  // Determine which stats to display based on the active tab
-  const stats = activeTab === 'bayi' ? bayiStats : lansiaStats;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <FaSpinner className="animate-spin text-blue-500 text-4xl" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center mt-4">{error}</div>;
+  }
 
   return (
-    <div className="p-6">
-      {/* Tab Navigation */}
-      <div className="flex mb-4 border-b-2 border-gray-300">
-        <button
-          onClick={() => setActiveTab('bayi')}
-          className={`px-4 py-2 font-semibold ${
-            activeTab === 'bayi' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'
-          }`}
-        >
-          Bayi
-        </button>
-        <button
-          onClick={() => setActiveTab('lansia')}
-          className={`px-4 py-2 font-semibold ${
-            activeTab === 'lansia' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500'
-          }`}
-        >
-          Lansia
-        </button>
-      </div>
-
-      {/* Search and Stats Section */}
-      <div className="flex justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">{activeTab === 'bayi' ? 'Dashboard Bayi' : 'Dashboard Lansia'}</h2>
-        <input
-          type="text"
-          placeholder="Cari..."
-          className="p-2 border border-gray-300 rounded"
-        />
-      </div>
-
+    <div className="p-6 max-w-screen-lg mx-auto">
+      
       {/* Stats Display */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
-          <div key={stat.label} className={`${stat.bgColor} p-4 rounded-lg`}>
+          <div
+            key={stat.label}
+            className={`bg-white p-6 rounded-xl shadow-lg transition-transform transform hover:scale-105 hover:shadow-2xl ${stat.bgColor}`}
+          >
             <div className="flex items-center justify-between">
               <div>
-                <h3 className={`text-xl font-bold ${stat.textColor}`}>{stat.value}</h3>
-                <p className="text-gray-500">{stat.label}</p>
+                <h3 className={`text-3xl font-bold ${stat.textColor}`}>{stat.value}</h3>
+                <p className="text-gray-500 text-lg mt-2">{stat.label}</p>
               </div>
-              <div className={`text-3xl ${stat.textColor}`}>{stat.icon}</div>
+              <div className={`text-4xl ${stat.textColor}`}>{stat.icon}</div>
             </div>
           </div>
         ))}

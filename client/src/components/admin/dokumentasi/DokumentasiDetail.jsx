@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getDokumentasiById } from './DokumentasiService'; // Assuming you have this API service
+import { getDokumentasiById } from '../../DokumentasiService'; // Assuming you have this API service
 import TopBar from '../TopBar'; // Adjust the path as necessary
 import SideBar from '../SideBar'; // Adjust the path as necessary
 import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
@@ -71,7 +71,6 @@ const DokumentasiDetail = () => {
                 />
                 <div>
                   <h3 className="text-xl font-semibold">{dokumentasi.judul}</h3>
-                  <p className="text-gray-500">{dokumentasi.deskripsi}</p>
                 </div>
               </div>
               <div className="bg-gray-50 p-4 rounded-md">

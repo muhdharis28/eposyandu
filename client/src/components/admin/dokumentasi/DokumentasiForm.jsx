@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
-import { createDokumentasi, updateDokumentasi, getDokumentasiById } from './DokumentasiService';
+import { createDokumentasi, updateDokumentasi, getDokumentasiById } from '../../DokumentasiService';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios'; // Axios to handle the file upload
 
