@@ -1,6 +1,7 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../db.config');
 const OrangTua = require('./orangtua');
+const Pengguna = require('./pengguna');
 
 class Balita extends Model {}
 
@@ -14,6 +15,13 @@ Balita.init({
         type: DataTypes.INTEGER,
         references: {
             model: OrangTua,
+            key: 'id'
+        }
+    },
+    kader: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Pengguna,
             key: 'id'
         }
     },
@@ -55,5 +63,6 @@ Balita.init({
 });
 
 Balita.belongsTo(OrangTua, { as: 'orangtuaDetail', foreignKey: 'orangtua' });
+Balita.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
 
 module.exports = Balita;

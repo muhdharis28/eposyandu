@@ -3,6 +3,7 @@ const sequelize = require('../db.config');
 const Wali = require('./wali');
 const Pekerjaan = require('./pekerjaan');
 const Pendidikan = require('./pendidikan');
+const Pengguna = require('./pengguna');
 
 class Lansia extends Model {}
 
@@ -16,6 +17,13 @@ Lansia.init({
         type: DataTypes.INTEGER,
         references: {
             model: Wali,
+            key: 'id'
+        }
+    },
+    kader: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Pengguna,
             key: 'id'
         }
     },
@@ -112,4 +120,5 @@ Lansia.init({
 Lansia.belongsTo(Wali, { as: 'waliDetail', foreignKey: 'wali' });
 Lansia.belongsTo(Pendidikan, { as: 'pendidikan', foreignKey: 'pendidikan_lansia' });
 Lansia.belongsTo(Pekerjaan, { as: 'pekerjaan', foreignKey: 'pekerjaan_lansia' });
+Lansia.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
 module.exports = Lansia;

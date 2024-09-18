@@ -6,6 +6,7 @@ const router = express.Router();
 const Pengguna = require('../models/pengguna');
 const OrangTua = require('../models/orangtua');
 const Wali = require('../models/wali');
+const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -14,7 +15,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 router.post('/', async (req, res) => {
     try {
         const {
-            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali
+            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu
         } = req.body;
 
         const hashedPassword = await bcrypt.hash(kata_sandi, 10);
@@ -29,6 +30,7 @@ router.post('/', async (req, res) => {
             foto_kk,
             orangtua,
             wali,
+            posyandu
         });
 
         res.status(201).json(newUser);
@@ -53,7 +55,7 @@ router.post('/login', async (req, res) => {
         }
 
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, role: user.role, userName: user.nama, userNoHp: user.no_hp, userId: user.id });
+        res.json({ token, role: user.role, userName: user.nama, userNoHp: user.no_hp, userId: user.id, userPosyandu: user.posyandu });
     } catch (error) {
         res.status(500).json({ error: error });
     }
@@ -62,28 +64,15 @@ router.post('/login', async (req, res) => {
 // Get all pengguna
 router.get('/', authenticateToken, async (req, res) => {
     try {
-      const users = await Pengguna.findAll();
-      const usersWithRelations = await Promise.all(
-        users.map(async (user) => {
-          let orangTua = null;
-          if (user.orangtua) {
-            orangTua = await OrangTua.findOne({ where: { id: user.orangtua } });
-          }
+      const users = await Pengguna.findAll({
+        include: [
+            { model: OrangTua, as: 'orangTuaDetail' },
+            { model: Wali, as: 'waliDetail' },
+            { model: Posyandu, as: 'posyanduDetail' },
+        ]
+    });
   
-          let wali = null;
-          if (user.wali) {
-            wali = await Wali.findOne({ where: { id: user.wali } });
-          }
-  
-          return {
-            ...user.toJSON(),
-            orang_tua: orangTua,
-            wali: wali,
-          };
-        })
-      );
-  
-      res.status(200).json(usersWithRelations);
+      res.status(200).json(users);
     } catch (error) {
       console.error('Error fetching pengguna data:', error);
       res.status(500).json({ error: error });
@@ -96,7 +85,8 @@ router.get('/:id', authenticateToken, async (req, res) => {
         const user = await Pengguna.findByPk(req.params.id, {
             include: [
                 { model: OrangTua, as: 'orangTuaDetail' },
-                { model: Wali, as: 'waliDetail' }
+                { model: Wali, as: 'waliDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
             ]
         });
         if (user) {
@@ -145,7 +135,7 @@ router.post('/check-nik', async (req, res) => {
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
-            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali
+            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu
         } = req.body;
 
         const user = await Pengguna.findByPk(req.params.id);
@@ -164,6 +154,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
             user.foto_kk = foto_kk;
             user.orangtua = orangtua;
             user.wali = wali;
+            user.posyandu = posyandu;
             await user.save();
             res.status(200).json(user);
         } else {

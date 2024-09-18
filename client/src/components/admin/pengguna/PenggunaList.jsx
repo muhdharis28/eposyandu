@@ -97,7 +97,11 @@ const PenggunaList = () => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Data Master Pengguna</h2>
+      {/* Heading on the left */}
+      <h2 className="text-xl font-bold">Data Master Pengguna</h2>
+
+      {/* Buttons on the right */}
+      <div className="flex space-x-4">
         <Button
           label="Tambah Pengguna"
           icon="pi pi-plus"
@@ -105,6 +109,7 @@ const PenggunaList = () => {
           onClick={handleAddPengguna}
         />
       </div>
+    </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
 

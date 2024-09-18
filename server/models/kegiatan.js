@@ -1,5 +1,6 @@
 const { Model, DataTypes } = require('sequelize');
 const sequelize = require('../db.config');
+const Pengguna = require('./pengguna');
 
 class Kegiatan extends Model {}
 
@@ -20,9 +21,18 @@ Kegiatan.init({
     deskripsi: {
         type: DataTypes.STRING
     },
+    kader: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Pengguna,
+            key: 'id'
+        }
+    },
 }, {
     sequelize,
     modelName: 'Kegiatan'
 });
+
+Kegiatan.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
 
 module.exports = Kegiatan;

@@ -1,6 +1,7 @@
 // models/Dokumentasi.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db.config');
+const Pengguna = require('./pengguna');
 
 const Dokumentasi = sequelize.define('Dokumentasi', {
   judul: {
@@ -19,8 +20,17 @@ const Dokumentasi = sequelize.define('Dokumentasi', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  kader: {
+    type: DataTypes.INTEGER,
+    references: {
+        model: Pengguna,
+        key: 'id'
+    }
+},
 }, {
   timestamps: true,
 });
+
+Dokumentasi.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
 
 module.exports = Dokumentasi;

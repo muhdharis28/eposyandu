@@ -13,6 +13,9 @@ import PekerjaanDetail from './components/admin/pekerjaan/PekerjaanDetail';
 import PendidikanDashboard from './components/admin/pendidikan/PendidikanDashboard';
 import PendidikanForm from './components/admin/pendidikan/PendidikanForm';
 import PendidikanDetail from './components/admin/pendidikan/PendidikanDetail';
+import PosyanduDashboard from './components/admin/posyandu/PosyanduDashboard';
+import PosyanduForm from './components/admin/posyandu/PosyanduForm';
+import PosyanduDetail from './components/admin/posyandu/PosyanduDetail';
 import DokterDashboard from './components/admin/dokter/DokterDashboard';
 import DokterForm from './components/admin/dokter/DokterForm';
 import DokterDetail from './components/admin/dokter/DokterDetail';
@@ -132,6 +135,10 @@ const App = () => (
           <Route path="/perkembangan-balita/baru" element={<PerkembanganBalitaForm />} />
           <Route path="/perkembangan-balita/edit/:id" element={<PerkembanganBalitaForm />} />
           <Route path="/perkembangan-balita/:id" element={<PerkembanganBalitaDetail />} />
+          <Route path="/posyandu" element={<PosyanduDashboard />} />
+          <Route path="/posyandu/baru" element={<PosyanduForm />} />
+          <Route path="/posyandu/edit/:id" element={<PosyanduForm />} />
+          <Route path="/posyandu/:id" element={<PosyanduDetail />} />
         </Route>
 
         <Route element={<ProtectedRoute role="kader" />}>

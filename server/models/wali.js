@@ -93,6 +93,13 @@ Wali.init({
             key: 'id'
         }
     },
+    kader: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Pengguna,
+            key: 'id'
+        }
+    },
 }, {
     sequelize,
     modelName: 'Wali'

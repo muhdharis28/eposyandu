@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
+import { useNavigate, useParams } from 'react-router-dom';
 import { createPengguna, updatePengguna, getPenggunaById } from '../../PenggunaService'; // API services
-import TopBar from '../TopBar'; // Adjust the path as necessary
+import { getPosyandus } from '../../PosyanduService'; // API service to fetch Posyandu data
+import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management
+import { useSidebar } from '../../SideBarContext';
 
 const PenggunaForm = () => {
-  const { id } = useParams(); // Get the ID from URL params
+  const { id } = useParams();
   const [pengguna, setPengguna] = useState({
     nama: '',
     email: '',
@@ -14,21 +15,28 @@ const PenggunaForm = () => {
     no_hp: '',
     no_kk: '',
     no_ktp: '',
-    kata_sandi: ''
+    kata_sandi: '',
+    verifikasi: 'true',
+    posyandu: '', // Add posyandu field for kader role
   });
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // For navigation
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state
+  const [posyanduOptions, setPosyanduOptions] = useState([]); // To store posyandu data
+  const [previewImage, setPreviewImage] = useState(null); // To store image preview
+  const navigate = useNavigate();
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   useEffect(() => {
     if (id) {
-      loadPengguna(); // Load pengguna data if editing
+      loadPengguna();
     }
-  }, [id]);
+    if (pengguna.role === 'kader') {
+      loadPosyandu(); // Load Posyandu options when role is kader
+    }
+  }, [id, pengguna.role]);
 
   const loadPengguna = async () => {
     try {
-      const result = await getPenggunaById(id); // Fetch pengguna data by ID
+      const result = await getPenggunaById(id);
       const fetchedPengguna = result.data;
       setPengguna(fetchedPengguna);
     } catch (error) {
@@ -37,27 +45,30 @@ const PenggunaForm = () => {
     }
   };
 
-  const isUserAuthorized = () => {
-    const userRole = localStorage.getItem('role'); // Assuming roles are stored in local storage
-    return userRole === 'admin'; // Only admin can edit or add pengguna
+  const loadPosyandu = async () => {
+    try {
+      const result = await getPosyandus(); // Fetch posyandu data from route
+      setPosyanduOptions(result.data);
+    } catch (error) {
+      console.error('Failed to load posyandu data:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!isUserAuthorized()) {
-      alert('You are not authorized to perform this action.');
-      return; // Prevent submission
-    }
-
     try {
+      const formData = new FormData();
+      Object.keys(pengguna).forEach((key) => {
+        formData.append(key, pengguna[key]);
+      });
+
       if (id) {
-        await updatePengguna(id, pengguna); // Update pengguna if editing
+        await updatePengguna(id, formData);
       } else {
-        await createPengguna(pengguna); // Create new pengguna if no ID is provided
+        await createPengguna(formData);
       }
 
-      navigate('/pengguna'); // Navigate back to pengguna list
+      navigate('/pengguna');
     } catch (error) {
       setError('Failed to save pengguna data.');
       console.error('Error saving pengguna:', error);
@@ -65,12 +76,25 @@ const PenggunaForm = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/pengguna'); // Navigate back to the list
+    navigate('/pengguna');
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setPengguna((prevPengguna) => ({ ...prevPengguna, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setPengguna((prevPengguna) => ({ ...prevPengguna, foto_kk: file }));
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewImage(reader.result);
+    };
+    if (file) {
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -117,20 +141,6 @@ const PenggunaForm = () => {
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-700">Role</label>
-                <select
-                  name="role"
-                  className="w-full p-2 border border-gray-300 rounded"
-                  value={pengguna.role}
-                  onChange={handleChange}
-                >
-                  <option value="admin">Admin</option>
-                  <option value="kader">Kader</option>
-                  <option value="user">User</option>
-                </select>
-              </div>
-
-              <div className="mb-4">
                 <label className="block text-gray-700">No. HP</label>
                 <input
                   type="tel"
@@ -162,6 +172,54 @@ const PenggunaForm = () => {
                   onChange={handleChange}
                 />
               </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Role</label>
+                <select
+                  name="role"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={pengguna.role}
+                  onChange={handleChange}
+                >
+                  <option value="user">User</option>
+                  <option value="kader">Kader</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-gray-700">Posyandu</label>
+                <select
+                  name="posyandu"
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={pengguna.posyandu}
+                  onChange={handleChange}
+                >
+                  <option value="">Pilih Posyandu</option>
+                  {posyanduOptions.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.nama_posyandu}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {!id && pengguna.role !== 'kader' && (
+                <div className="mb-4">
+                  <label className="block text-gray-700">Foto KK</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="w-full p-2 border border-gray-300 rounded"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              )}
+
+              {previewImage && (
+                <div className="mb-4">
+                  <img src={previewImage} alt="Preview" className="w-40 h-40 object-cover rounded-md shadow" />
+                </div>
+              )}
 
               {!id && (
                 <div className="mb-4">

@@ -9,6 +9,7 @@ const Pendidikan = require('./pendidikan');
 const Pengguna = require('./pengguna');
 const PerkembanganBalita = require('./perkembangan_balita');
 const Wali = require('./wali');
+const Posyandu = require('./posyandu');
 
 // OrangTua
 OrangTua.hasMany(Pengguna, { foreignKey: 'orangtua', as: 'pengguna' });
@@ -17,6 +18,10 @@ Pengguna.belongsTo(OrangTua, { foreignKey: 'orangtua', as: 'orangTuaDetail' });
 // Wali
 Wali.hasMany(Pengguna, { foreignKey: 'wali', as: 'pengguna' });
 Pengguna.belongsTo(Wali, { foreignKey: 'wali', as: 'waliDetail' });
+
+// Posyandu
+Posyandu.hasMany(Pengguna, { foreignKey: 'posyandu', as: 'pengguna' });
+Pengguna.belongsTo(Posyandu, { foreignKey: 'posyandu', as: 'posyanduDetail' });
 
 // Associations for Wali
 Wali.hasMany(Lansia, { foreignKey: 'wali' });

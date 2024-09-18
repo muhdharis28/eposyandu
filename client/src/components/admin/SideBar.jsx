@@ -14,7 +14,8 @@ import {
   FaBaby,
   FaUser,
   FaUserShield,
-  FaCamera
+  FaCamera,
+  FaClinicMedical
 } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
@@ -23,6 +24,7 @@ const SideBar = ({ isCollapsed }) => {
   const navItems = [
     { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },  // Dashboard Home Icon
     { icon: FaUserMd, label: 'Dokter', path: '/dokter' },  // Doctor Icon for Doctors
+    { icon: FaClinicMedical, label: 'Posyandu', path: '/posyandu' },
     { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },  // Work Icon for Pekerjaan
     { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },  // Graduation Cap for Education
     { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },  // Calendar Icon for Events
