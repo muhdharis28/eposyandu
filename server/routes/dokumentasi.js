@@ -38,6 +38,31 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+router.get('/all', async (req, res) => {
+  try {
+    // Define the base include options
+    const includeOptions = {
+      model: Pengguna,
+      as: 'kaderDetail',
+      include: [
+        {
+          model: Posyandu,
+          as: 'posyanduDetail'
+        }
+      ]
+    };
+
+    const dokumentasiList = await Dokumentasi.findAll({
+      include: [includeOptions]
+    });
+
+    res.json(dokumentasiList);
+  } catch (error) {
+    console.error('Error fetching dokumentasi:', error);
+    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
+  }
+});
+
 // Fetch a single dokumentasi record by ID, filtered by posyandu
 router.get('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;

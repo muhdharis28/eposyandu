@@ -18,7 +18,7 @@ const Documentation = () => {
   useEffect(() => {
     const fetchDocumentation = async() => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/dokumentasi`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/dokumentasi/all`);
         setDocumentation(response.data); // Assuming the response data is an array of documentation objects
         setLoading(false);
       } catch (err) {

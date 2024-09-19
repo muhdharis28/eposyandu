@@ -35,6 +35,31 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 });
 
+// Get all OrangTua records, with optional filtering by posyandu
+router.get('/', authenticateToken, async (req, res) => {
+    try {
+        const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
+        const userRole = req.user.role; // Get the role of the authenticated user
+
+        const filterCondition = {
+            include: [{
+                model: Posyandu,
+                as: 'posyanduDetail'
+            }]
+        };
+
+        // Apply posyandu filter only if the user is not an admin
+        if (userRole !== 'admin') {
+            filterCondition.where = { posyandu: posyanduId };
+        }
+
+        const orangTuas = await OrangTua.findAll(filterCondition);
+        res.status(200).json(orangTuas);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Get a single OrangTua record by ID
 router.get('/:id', authenticateToken, async (req, res) => {
     try {

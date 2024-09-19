@@ -15,7 +15,7 @@ const Schedule = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/kegiatan`);
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/kegiatan/all`);
         const events = response.data.map(event => ({
           title: event.nama,
           start: new Date(event.tanggal),

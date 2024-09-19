@@ -27,11 +27,8 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
     }
 });
 
-// Get all Kegiatan records associated with the authenticated user's posyandu
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/all', async (req, res) => {
     try {
-        const posyanduId = req.user.posyanduId;
-
         const kegiatans = await Kegiatan.findAll({
             include: [
                 {
@@ -40,8 +37,7 @@ router.get('/', authenticateToken, async (req, res) => {
                     include: [
                         {
                             model: Posyandu,
-                            as: 'posyanduDetail',
-                            where: { id: posyanduId }
+                            as: 'posyanduDetail'
                         }
                     ]
                 }
@@ -52,6 +48,40 @@ router.get('/', authenticateToken, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+// Get all Kegiatan records associated with the authenticated user's posyandu
+router.get('/', authenticateToken, async (req, res) => {
+    try {
+        const posyanduId = req.user.posyanduId;
+        const userRole = req.user.role; // Get the role of the authenticated user
+
+        // Define the base include options
+        const includeOptions = {
+            model: Pengguna,
+            as: 'kaderDetail',
+            include: [
+                {
+                    model: Posyandu,
+                    as: 'posyanduDetail'
+                }
+            ]
+        };
+
+        // Apply the posyandu filter only if the user is not an admin
+        if (userRole !== 'admin') {
+            includeOptions.include[0].where = { id: posyanduId };
+        }
+
+        const kegiatans = await Kegiatan.findAll({
+            include: [includeOptions]
+        });
+        
+        res.status(200).json(kegiatans);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 
 // Get a specific Kegiatan record by ID, filtered by posyandu
 router.get('/:id', authenticateToken, async (req, res) => {
