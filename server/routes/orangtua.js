@@ -106,10 +106,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
         const orangTua = await OrangTua.findByPk(req.params.id);
         if (orangTua) {
             // Ensure the update is within the authenticated user's posyandu
-            const posyanduId = req.user.posyanduId;
-            if (orangTua.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: OrangTua does not belong to your posyandu.' });
-            }
+            // const posyanduId = req.user.posyanduId;
+            // if (orangTua.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: OrangTua does not belong to your posyandu.' });
+            // }
 
             await orangTua.update({
                 no_kk, nik_ibu, nama_ibu, tempat_lahir_ibu, tanggal_lahir_ibu, alamat_ktp_ibu, kelurahan_ktp_ibu,
@@ -135,10 +135,10 @@ router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async
         const orangTua = await OrangTua.findByPk(req.params.id);
         if (orangTua) {
             // Ensure the delete is within the authenticated user's posyandu
-            const posyanduId = req.user.posyanduId;
-            if (orangTua.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: OrangTua does not belong to your posyandu.' });
-            }
+            // const posyanduId = req.user.posyanduId;
+            // if (orangTua.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: OrangTua does not belong to your posyandu.' });
+            // }
 
             await orangTua.destroy();
             res.status(204).end();

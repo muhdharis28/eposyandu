@@ -167,7 +167,6 @@ router.put('/:id', authenticateToken, async (req, res) => {
         const {
             nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu
         } = req.body;
-
         const posyanduId = req.user.posyanduId;
         const user = await Pengguna.findByPk(req.params.id);
 
@@ -194,6 +193,47 @@ router.put('/:id', authenticateToken, async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+});
+
+router.post('/:id/orangtua', authenticateToken, async (req, res) => {
+    try {
+        const { orangtua } = req.body; // Extract the orangtua field from the request body
+        const posyanduId = req.user.posyanduId; // Get the posyanduId of the authenticated user
+        const user = await Pengguna.findByPk(req.params.id); // Find the user by the provided id
+        
+        if (user && user.posyandu === posyanduId) { // Check if the user exists and belongs to the same posyandu
+            // Update only the orangtua field
+            console.log('555',orangtua)
+            user.orangtua = orangtua;
+            await user.save(); // Save the updated user
+
+            res.status(200).json(user); // Send the updated user object as a response
+        } else {
+            res.status(404).json({ error: 'Pengguna not found or unauthorized' }); // Handle case where user is not found or unauthorized
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle any errors
+    }
+});
+
+router.post('/:id/wali', authenticateToken, async (req, res) => {
+    try {
+        const { wali } = req.body; // Extract the wali field from the request body
+        const posyanduId = req.user.posyanduId; // Get the posyanduId of the authenticated user
+        const user = await Pengguna.findByPk(req.params.id); // Find the user by the provided id
+
+        if (user && user.posyandu === posyanduId) { // Check if the user exists and belongs to the same posyandu
+            // Update only the wali field
+            user.wali = wali;
+            await user.save(); // Save the updated user
+
+            res.status(200).json(user); // Send the updated user object as a response
+        } else {
+            res.status(404).json({ error: 'Pengguna not found or unauthorized' }); // Handle case where user is not found or unauthorized
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle any errors
     }
 });
 

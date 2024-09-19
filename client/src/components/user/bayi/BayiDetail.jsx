@@ -204,7 +204,7 @@ const BayiDetail = () => {
                                     </p>
                                     <p className="text-gray-600">
                                       <strong>Kader: </strong>
-                                      {perkembangan.penggunaDetail.nama}
+                                      {perkembangan.kaderDetail.nama}
                                     </p>
                                     <p className="text-gray-600">
                                       <strong>Hasil Perkembangan: </strong>

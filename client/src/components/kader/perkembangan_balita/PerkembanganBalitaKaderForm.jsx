@@ -6,6 +6,8 @@ import { getDoctors } from '../../DokterService';
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
+import moment from 'moment';
+import { antropometriBoys, antropometriGirl } from '../../../DataAntropometri';
 
 const PerkembanganBalitaForm = () => {
   const { id } = useParams();
@@ -19,16 +21,24 @@ const PerkembanganBalitaForm = () => {
     tinggi_badan: '',
     lingkar_kepala: '',
     imunisasi: '',
-    riwayat_penyakit: '',
+    tipe_imunisasi: '',
+    tipe_vitamin: '',
     keterangan: '',
     kader: '', // Will be automatically filled with logged-in user
-    dokter: ''
+    dokter: '',
+    status_gizi: ''  // Add status_gizi to the form data
   });
 
   const [balitaOptions, setBalitaOptions] = useState([]);
   const [dokterOptions, setDokterOptions] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const [selectedBalita, setSelectedBalita] = useState(null);
+  const [umurDalamBulan, setUmurDalamBulan] = useState(null);
+  const [selectedAntropometri, setSelectedAntropometri] = useState(null);
+  const [zScore, setZScore] = useState(null);
+  const [statusGizi, setStatusGizi] = useState(null);
 
   // Get logged-in user ID from localStorage
   useEffect(() => {
@@ -76,13 +86,86 @@ const PerkembanganBalitaForm = () => {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({
-      ...formData,
-      [name]: value
+        ...formData,
+        [name]: value
     });
-  };
+
+    if (name === 'balita') {
+        const balitaId = value;
+        setSelectedBalita(balitaId);
+
+        if (balitaId) {
+            try {
+                const response = await getBayi(balitaId);
+                const balitaData = response.data;
+                
+                const { tanggal_lahir_balita, jenis_kelamin_balita } = balitaData;
+                const umur = calculateAgeInMonths(tanggal_lahir_balita);
+                setUmurDalamBulan(umur);
+
+                const selectedAntropometri = selectAntropometri(jenis_kelamin_balita, umur);
+                setSelectedAntropometri(selectedAntropometri);
+
+                if (formData.berat_badan) {
+                    calculateZScoreAndStatusGizi(formData.berat_badan, selectedAntropometri);
+                }
+
+            } catch (error) {
+                console.error('Failed to fetch balita data:', error);
+            }
+        }
+    }
+};
+
+const calculateAgeInMonths = (birthDate) => {
+  return moment().diff(moment(birthDate), 'months');
+};
+
+const selectAntropometri = (gender, ageInMonths) => {
+  if (gender === 'l') {
+      return antropometriBoys.find((item) => item.umur === ageInMonths);
+  } else {
+      return antropometriGirl.find((item) => item.umur === ageInMonths);
+  }
+};
+
+const calculateZScoreAndStatusGizi = (weight, antropometri) => {
+  if (antropometri) {
+      const medianBB = antropometri.median;
+      const sd = (antropometri["+1SD"] - medianBB) / 1;
+      const zScore = (weight - medianBB) / sd;
+      setZScore(zScore);
+
+      let statusGizi;
+      if (zScore < -3) {
+          statusGizi = "buruk";
+      } else if (zScore >= -3 && zScore < -2) {
+          statusGizi = "kurang";
+      } else if (zScore >= -2 && zScore <= 1) {
+          statusGizi = "baik";
+      } else if (zScore > 1 && zScore <= 2) {
+          statusGizi = "lebih";
+      } else if (zScore > 2) {
+          statusGizi = "obesitas";
+      }
+      
+      // Update formData with the calculated status_gizi
+      setFormData(prevData => ({
+          ...prevData,
+          status_gizi: statusGizi
+      }));
+      setStatusGizi(statusGizi);
+  }
+};
+
+useEffect(() => {
+  if (formData.berat_badan && selectedAntropometri) {
+      calculateZScoreAndStatusGizi(parseFloat(formData.berat_badan), selectedAntropometri);
+  }
+}, [formData.berat_badan, selectedAntropometri]);
 
   const validateForm = () => {
     let newErrors = {};
@@ -98,7 +181,7 @@ const PerkembanganBalitaForm = () => {
     if (!validateForm()) {
       return;
     }
-
+    console.log('gggggggggggggggg', formData, 'dff', id)
     setIsSubmitting(true);
     try {
       if (id) {
@@ -214,22 +297,45 @@ const PerkembanganBalitaForm = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold">Imunisasi</label>
-                  <textarea
-                    name="imunisasi"
-                    value={formData.imunisasi}
+                  <label className="block text-sm font-semibold">Tipe Imunisasi</label>
+                  <select
+                    name="tipe_imunisasi"
+                    value={formData.tipe_imunisasi}
                     onChange={handleChange}
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                  />
+                  >
+                    <option value="">Pilih Tipe Imunisasi</option>
+                    <option value="BCGE">BCGE</option>
+                    <option value="Hepatitis B">Hepatitis B</option>
+                    <option value="Polio">Polio</option>
+                    <option value="DPT-HB-Hib">DPT-HB-Hib</option>
+                    <option value="Campak">Campak</option>
+                    <option value="MR">MR</option>
+                  </select>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold">Riwayat Penyakit</label>
-                  <textarea
-                    name="riwayat_penyakit"
-                    value={formData.riwayat_penyakit}
+                  <label className="block text-sm font-semibold">Tipe Vitamin</label>
+                  <select
+                    name="tipe_vitamin"
+                    value={formData.tipe_vitamin}
                     onChange={handleChange}
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  >
+                    <option value="">Pilih Tipe Vitamin</option>
+                    <option value="A">Vitamin A</option>
+                    <option value="Cacing">Vitamin Cacing</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold">Status Gizi</label>
+                  <input
+                    type="text"
+                    name="status_gizi"
+                    value={formData.status_gizi}
+                    readOnly
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md bg-gray-100"
                   />
                 </div>
 

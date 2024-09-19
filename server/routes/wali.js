@@ -99,9 +99,9 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
 
         if (wali) {
             // Ensure the update is within the authenticated user's posyandu
-            if (wali.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: Wali does not belong to your posyandu.' });
-            }
+            // if (wali.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: Wali does not belong to your posyandu.' });
+            // }
 
             await wali.update({
                 no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, 
@@ -126,9 +126,9 @@ router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async
 
         if (wali) {
             // Ensure the delete is within the authenticated user's posyandu
-            if (wali.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: Wali does not belong to your posyandu.' });
-            }
+            // if (wali.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: Wali does not belong to your posyandu.' });
+            // }
 
             await wali.destroy();
             res.status(204).end();

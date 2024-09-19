@@ -92,7 +92,7 @@ const PerkembanganBalitaDetail = () => {
               </div>
               <div className="bg-gray-50 p-4 rounded-md">
                 <p className="text-gray-700">
-                  <strong>Kader:</strong> {perkembanganBalita.penggunaDetail ? perkembanganBalita.penggunaDetail.nama : 'Tidak ada'}
+                  <strong>Kader:</strong> {perkembanganBalita.kaderDetail ? perkembanganBalita.kaderDetail.nama : 'Tidak ada'}
                 </p>
                 <p className="text-gray-700">
                   <strong>Dokter:</strong> {perkembanganBalita.dokterDetail ? perkembanganBalita.dokterDetail.nama : 'Tidak ada'}

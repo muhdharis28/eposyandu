@@ -51,21 +51,26 @@ const TopBar = ({ onToggle, isCollapsed }) => {
           <FaBars size={24} />
         </button>
       </div>
-      <div className="relative" ref={profileRef}>
-        <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="text-gray-600 text-3xl">
-          <FaUserCircle />
-        </button>
-        {isProfileMenuOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
-            <button
-              onClick={handleLogout}
-              className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"
-            >
-              <FaPowerOff className="mr-2" />
-              Logout
-            </button>
-          </div>
-        )}
+      <div className="flex items-center space-x-4">
+        <div className="text-right">
+          <div className="font-semibold text-gray-800">{userName}</div>
+        </div>
+        <div className="relative" ref={profileRef}>
+          <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="text-gray-600 text-3xl">
+            <FaUserCircle />
+          </button>
+          {isProfileMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"
+              >
+                <FaPowerOff className="mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

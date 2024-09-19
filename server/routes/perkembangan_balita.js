@@ -130,10 +130,10 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
         if (perkembanganBalita) {
             // Ensure the update is within the authenticated user's posyandu
-            const posyanduId = req.user.posyanduId;
-            if (perkembanganBalita.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: PerkembanganBalita does not belong to your posyandu.' });
-            }
+            // const posyanduId = req.user.posyanduId;
+            // if (perkembanganBalita.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: PerkembanganBalita does not belong to your posyandu.' });
+            // }
 
             await perkembanganBalita.update({
                 balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
@@ -154,10 +154,10 @@ router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
         if (perkembanganBalita) {
             // Ensure the delete is within the authenticated user's posyandu
-            const posyanduId = req.user.posyanduId;
-            if (perkembanganBalita.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: PerkembanganBalita does not belong to your posyandu.' });
-            }
+            // const posyanduId = req.user.posyanduId;
+            // if (perkembanganBalita.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: PerkembanganBalita does not belong to your posyandu.' });
+            // }
 
             await perkembanganBalita.destroy();
             res.status(204).end();

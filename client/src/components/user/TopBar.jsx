@@ -9,10 +9,13 @@ const TopBar = ({ onToggle, isCollapsed }) => {
   const navigate = useNavigate();
   const profileRef = useRef(null);
   const [userName, setUserName] = useState('');
+  const [posyanduName, setPosyanduName] = useState(''); // New state for Posyandu name
 
   useEffect(() => {
     const name = localStorage.getItem('userName');
+    const posyandu = localStorage.getItem('userPosyanduName'); // Assuming you store Posyandu name in local storage
     if (name) setUserName(name);
+    if (posyandu) setPosyanduName(posyandu);
 
     const handleClickOutside = (event) => {
       if (profileRef.current && !profileRef.current.contains(event.target)) {
@@ -26,6 +29,8 @@ const TopBar = ({ onToggle, isCollapsed }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userPosyanduName'); // Clear Posyandu name on logout
     navigate('/login');
   };
 
@@ -53,28 +58,34 @@ const TopBar = ({ onToggle, isCollapsed }) => {
           <FaBars size={24} />
         </button>
       </div>
-      <div className="relative" ref={profileRef}>
-        <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="text-gray-600 text-3xl">
-          <FaUserCircle />
-        </button>
-        {isProfileMenuOpen && (
-          <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
-            <button
-              onClick={handleSettings}
-              className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
-            >
-              <FaCog className="mr-2" />
-              Settings
-            </button>
-            <button
-              onClick={handleLogout}
-              className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"
-            >
-              <FaPowerOff className="mr-2" />
-              Logout
-            </button>
-          </div>
-        )}
+      <div className="flex items-center space-x-4">
+        <div className="text-right">
+          <div className="font-semibold text-gray-800">{userName}</div>
+          <div className="text-sm text-gray-500">{posyanduName}</div>
+        </div>
+        <div className="relative" ref={profileRef}>
+          <button onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)} className="text-gray-600 text-3xl">
+            <FaUserCircle />
+          </button>
+          {isProfileMenuOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
+              <button
+                onClick={handleSettings}
+                className="flex items-center w-full px-4 py-2 text-gray-700 hover:bg-gray-100"
+              >
+                <FaCog className="mr-2" />
+                Settings
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex items-center w-full px-4 py-2 text-red-600 hover:bg-gray-100"
+              >
+                <FaPowerOff className="mr-2" />
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -89,7 +89,13 @@ const PerkembanganBalitaDetailKader = () => {
               <h3 className="text-xl font-semibold text-gray-800">Detail Kesehatan Tambahan</h3>
               <div className="bg-gray-50 p-4 rounded-md">
                 <p className="text-gray-700">
-                  <strong>Imunisasi:</strong> {perkembanganBalita.imunisasi || 'Tidak ada data'}
+                  <strong>Status Gizi:</strong> {perkembanganBalita.status_gizi || 'Tidak ada data'}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Tipe Imunisasi:</strong> {perkembanganBalita.tipe_imunisasi || 'Tidak ada data'}
+                </p>
+                <p className="text-gray-700">
+                  <strong>Tipe Vitamin:</strong> {perkembanganBalita.tipe_vitamin || 'Tidak ada data'}
                 </p>
                 <p className="text-gray-700">
                   <strong>Riwayat Penyakit:</strong> {perkembanganBalita.riwayat_penyakit || 'Tidak ada'}
@@ -103,7 +109,7 @@ const PerkembanganBalitaDetailKader = () => {
               <div className="bg-gray-50 p-4 rounded-md">
                 <h4 className="text-lg font-semibold mb-2">Informasi Kader dan Dokter</h4>
                 <p className="text-gray-700">
-                  <strong>Kader (Pengguna):</strong> {perkembanganBalita.penggunaDetail?.nama || 'Tidak ada data'}
+                  <strong>Kader (Pengguna):</strong> {perkembanganBalita.kaderDetail?.nama || 'Tidak ada data'}
                 </p>
                 <p className="text-gray-700">
                   <strong>Dokter:</strong> {perkembanganBalita.dokterDetail?.nama || 'Tidak ada data'}

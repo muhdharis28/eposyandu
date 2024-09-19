@@ -133,10 +133,10 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
         const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id);
         if (pemeriksaanLansia) {
             // Ensure the update is within the authenticated user's posyandu
-            const posyanduId = req.user.posyanduId;
-            if (pemeriksaanLansia.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: PemeriksaanLansia does not belong to your posyandu.' });
-            }
+            // const posyanduId = req.user.posyanduId;
+            // if (pemeriksaanLansia.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: PemeriksaanLansia does not belong to your posyandu.' });
+            // }
 
             await pemeriksaanLansia.update({
                 lansia, tanggal_kunjungan, berat_badan, tinggi_badan, lingkar_perut, tekanan_darah, 
@@ -158,10 +158,10 @@ router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async
         const pemeriksaanLansia = await PemeriksaanLansia.findByPk(req.params.id);
         if (pemeriksaanLansia) {
             // Ensure the delete is within the authenticated user's posyandu
-            const posyanduId = req.user.posyanduId;
-            if (pemeriksaanLansia.posyandu !== posyanduId) {
-                return res.status(403).json({ error: 'Unauthorized action: PemeriksaanLansia does not belong to your posyandu.' });
-            }
+            // const posyanduId = req.user.posyanduId;
+            // if (pemeriksaanLansia.posyandu !== posyanduId) {
+            //     return res.status(403).json({ error: 'Unauthorized action: PemeriksaanLansia does not belong to your posyandu.' });
+            // }
 
             await pemeriksaanLansia.destroy();
             res.status(204).end();

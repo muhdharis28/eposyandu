@@ -24,7 +24,7 @@ router.get('/', authenticateToken, async (req, res) => {
 
     // Apply posyandu filter only if the user is not an admin
     if (userRole !== 'admin') {
-      includeOptions.include[0].where = { id: posyanduId };
+      includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
     }
 
     const dokumentasiList = await Dokumentasi.findAll({
@@ -83,7 +83,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
 
     // Apply posyandu filter only if the user is not an admin
     if (userRole !== 'admin') {
-      includeOptions.include[0].where = { id: posyanduId };
+      includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
     }
 
     const dokumentasi = await Dokumentasi.findByPk(id, { include: [includeOptions] });

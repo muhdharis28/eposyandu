@@ -17,6 +17,14 @@ export const updatePengguna = (id, pengguna) => {
   return api.put(`${API_URL}/${id}`, pengguna); // Authenticated request via interceptor
 };
 
+export const updatePenggunaOrtu = (id, pengguna) => {
+  return api.post(`${API_URL}/${id}/orangtua`, pengguna); // Authenticated request via interceptor
+};
+
+export const updatePenggunaWali = (id, pengguna) => {
+  return api.post(`${API_URL}/${id}/wali`, pengguna); // Authenticated request via interceptor
+};
+
 // Delete a pengguna
 export const deletePengguna = (id) => {
   return api.delete(`${API_URL}/${id}`); // Authenticated request via interceptor

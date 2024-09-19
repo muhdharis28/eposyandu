@@ -112,7 +112,7 @@ const PemeriksaanLansiaDetail = () => {
               <div className="bg-gray-50 p-4 rounded-md">
                 <h4 className="text-lg font-semibold mb-2">Informasi Kader dan Dokter</h4>
                 <p className="text-gray-700">
-                  <strong>Kader (Pengguna):</strong> {pemeriksaanLansia.penggunaDetail?.nama || 'Tidak ada data'}
+                  <strong>Kader (Pengguna):</strong> {pemeriksaanLansia.kaderDetail?.nama || 'Tidak ada data'}
                 </p>
                 <p className="text-gray-700">
                   <strong>Dokter:</strong> {pemeriksaanLansia.dokterDetail?.nama || 'Tidak ada data'}

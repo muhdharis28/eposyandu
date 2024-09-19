@@ -184,7 +184,7 @@ const LansiaDetail = () => {
                               </p>
                               <p className="text-gray-600">
                                 <strong>Kader: </strong>
-                                {pemeriksaan.penggunaDetail?.nama || 'N/A'}
+                                {pemeriksaan.kaderDetail?.nama || 'N/A'}
                               </p>
                               <p className="text-gray-600">
                                 <strong>Hasil Pemeriksaan: </strong>
