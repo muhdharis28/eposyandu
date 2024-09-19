@@ -1,14 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios'; // Import axios
-import posyandu from '@/assets/posyandu.png';
+import posyanduLogo from '@/assets/posyandu.png';
 
-const Register = ({ formData, setFormData, navigate }) => {
+const Register = ({ formData, setFormData }) => {
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [phoneCheckInProgress, setPhoneCheckInProgress] = useState(false);
+  const [posyanduOptions, setPosyanduOptions] = useState([]); // State for posyandu options
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch posyandu options from the backend
+    const fetchPosyandus = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/posyandu`);
+        setPosyanduOptions(response.data);
+      } catch (error) {
+        console.error('Error fetching posyandu options:', error);
+      }
+    };
+
+    fetchPosyandus();
+  }, []);
 
   const validate = () => {
     let formErrors = {};
@@ -27,6 +44,10 @@ const Register = ({ formData, setFormData, navigate }) => {
       formErrors.kata_sandi = 'Kata Sandi is required';
     } else if (formData.kata_sandi.length < 6) {
       formErrors.kata_sandi = 'Kata Sandi must be at least 6 characters';
+    }
+
+    if (!formData.posyandu) {
+      formErrors.posyandu = 'Posyandu is required';
     }
 
     setErrors(formErrors);
@@ -89,7 +110,7 @@ const Register = ({ formData, setFormData, navigate }) => {
       <div className="w-full py-4 px-6 bg-gray-200 shadow-md">
         <div className="flex justify-between items-center max-w-4xl mx-auto">
           <Link to="/" className="flex items-center">
-            <img src={posyandu} alt="Logo" className="h-10 w-auto" />
+            <img src={posyanduLogo} alt="Logo" className="h-10 w-auto" />
             <span className="text-lg font-semibold ml-2 text-gray-700">ePosyandu Tanjungpinang</span>
           </Link>
           <Link to="/" className="text-gray-600 text-sm font-medium hover:underline">
@@ -159,6 +180,25 @@ const Register = ({ formData, setFormData, navigate }) => {
                   </button>
                   {errors.kata_sandi && <p className="text-red-500 text-sm mt-1">{errors.kata_sandi}</p>}
                 </div>
+
+                {/* New Posyandu Dropdown */}
+                <div className="mb-4">
+                  <select
+                    name="posyandu"
+                    value={formData.posyandu}
+                    onChange={handleInputChange}
+                    className="w-full py-3 px-6 border border-gray-300 rounded-full shadow-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+                  >
+                    <option value="">Pilih Posyandu</option>
+                    {posyanduOptions.map((posyandu) => (
+                      <option key={posyandu.id} value={posyandu.id}>
+                        {posyandu.nama}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.posyandu && <p className="text-red-500 text-sm mt-1">{errors.posyandu}</p>}
+                </div>
+
                 <button
                   type="submit"
                   className="w-full py-3 rounded-full shadow-lg transition duration-300 mt-10"

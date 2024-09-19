@@ -74,6 +74,9 @@ import PerkembanganBalitaKaderForm from './components/kader/perkembangan_balita/
 import KegiatanCardKader from './components/kader/kegiatan/KegiatanCardKader';
 import KegiatanDetailKader from './components/kader/kegiatan/KegiatanDetailKader';
 import KegiatanKaderForm from './components/kader/kegiatan/KegiatanKaderForm';
+import DokumentasiCardKader from './components/kader/dokumentasi/DokumentasiCardKader';
+import DokumentasiDetailKader from './components/kader/dokumentasi/DokumentasiDetailKader';
+import DokumentasiKaderForm from './components/kader/dokumentasi/DokumentasiKaderForm';
 import SettingsKader from './components/kader/settings/SettingsKader';
 
 const App = () => (
@@ -163,6 +166,10 @@ const App = () => (
           <Route path="/kader-kegiatan/:id" element={<KegiatanDetailKader/>} />
           <Route path="/kader-kegiatan/baru" element={<KegiatanKaderForm/>} />
           <Route path="/kader-kegiatan/edit/:id" element={<KegiatanKaderForm/>} />
+          <Route path="/kader-dokumentasi" element={<DokumentasiCardKader/>} />
+          <Route path="/kader-dokumentasi/:id" element={<DokumentasiDetailKader/>} />
+          <Route path="/kader-dokumentasi/baru" element={<DokumentasiKaderForm/>} />
+          <Route path="/kader-dokumentasi/edit/:id" element={<DokumentasiKaderForm/>} />
           <Route path="/kader-settings" element={<SettingsKader/>} />
         </Route>
 

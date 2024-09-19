@@ -72,6 +72,7 @@ const RegistrationFlow = () => {
         email_wali: '',
         pekerjaan_wali: '',  // Store the ID or name depending on your frontend logic
         pendidikan_wali: '',  // Store the ID or name depending on your frontend logic
+        posyandu: '',
     });
 
   const navigate = useNavigate();

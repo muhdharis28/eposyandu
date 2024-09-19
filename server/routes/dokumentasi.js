@@ -5,13 +5,32 @@ const Pengguna = require('../models/pengguna');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-router.get('/', async (req, res) => {
+// Fetch all dokumentasi records, filtered by posyandu
+router.get('/', authenticateToken, async (req, res) => {
   try {
-    const dokumentasiList = await Dokumentasi.findAll({
+    const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
+    const userRole = req.user.role; // Get the role of the authenticated user
+
+    const includeOptions = {
+      model: Pengguna,
+      as: 'kaderDetail',
       include: [
-        { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }
+        {
+          model: Posyandu,
+          as: 'posyanduDetail'
+        }
       ]
+    };
+
+    // Apply posyandu filter only if the user is not an admin
+    if (userRole !== 'admin') {
+      includeOptions.include[0].where = { id: posyanduId };
+    }
+
+    const dokumentasiList = await Dokumentasi.findAll({
+      include: [includeOptions]
     });
+
     res.json(dokumentasiList);
   } catch (error) {
     console.error('Error fetching dokumentasi:', error);
@@ -19,14 +38,31 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', async (req, res) => {
+// Fetch a single dokumentasi record by ID, filtered by posyandu
+router.get('/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;
+  const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
+  const userRole = req.user.role; // Get the role of the authenticated user
+
   try {
-    const dokumentasi = await Dokumentasi.findByPk(id, {
+    const includeOptions = {
+      model: Pengguna,
+      as: 'kaderDetail',
       include: [
-        { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }
+        {
+          model: Posyandu,
+          as: 'posyanduDetail'
+        }
       ]
-    });
+    };
+
+    // Apply posyandu filter only if the user is not an admin
+    if (userRole !== 'admin') {
+      includeOptions.include[0].where = { id: posyanduId };
+    }
+
+    const dokumentasi = await Dokumentasi.findByPk(id, { include: [includeOptions] });
+
     if (dokumentasi) {
       res.json(dokumentasi);
     } else {
@@ -38,17 +74,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// Create a new dokumentasi record
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { judul, deskripsi, tanggal, foto, kader } = req.body;
 
   try {
-    const newDokumentasi = await Dokumentasi.create({
-      judul,
-      deskripsi,
-      foto,
-      tanggal,
-      kader
-    });
+    const newDokumentasi = await Dokumentasi.create({ judul, deskripsi, foto, tanggal, kader });
     res.status(201).json(newDokumentasi);
   } catch (error) {
     console.error('Error creating dokumentasi:', error);
@@ -56,6 +87,7 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
   }
 });
 
+// Update an existing dokumentasi record
 router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
   const { judul, deskripsi, tanggal, foto, kader } = req.body;
@@ -80,6 +112,7 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
   }
 });
 
+// Delete a dokumentasi record
 router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
   const { id } = req.params;
   try {

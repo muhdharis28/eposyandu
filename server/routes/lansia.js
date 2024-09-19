@@ -7,8 +7,9 @@ const Pekerjaan = require('../models/pekerjaan');
 const Pengguna = require('../models/pengguna');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
-const Sequelize = require('sequelize'); 
+const Sequelize = require('sequelize');
 
+// Create new Lansia record
 router.post('/', authenticateToken, async (req, res) => {
     try {
         const {
@@ -36,6 +37,16 @@ router.post('/', authenticateToken, async (req, res) => {
             status_pernikahan_lansia,
             kader,
         } = req.body;
+
+        // Ensure that the kader belongs to the same posyandu as the authenticated user
+        const authenticatedUserPosyanduId = req.user.posyanduId;
+        const kaderUser = await Pengguna.findByPk(kader, {
+            include: [{ model: Posyandu, as: 'posyanduDetail' }]
+        });
+
+        if (kaderUser.posyandu !== authenticatedUserPosyanduId) {
+            return res.status(403).json({ error: 'Unauthorized action: kader does not belong to your posyandu.' });
+        }
 
         const newLansia = await Lansia.create({
             no_kk_lansia,
@@ -65,36 +76,60 @@ router.post('/', authenticateToken, async (req, res) => {
 
         res.status(201).json(newLansia);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
+// Get all Lansia records, filtered by posyandu
 router.get('/', authenticateToken, async (req, res) => {
-    const { wali } = req.query;  // Get the wali parameter from the query string
+    const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
+    const userRole = req.user.role; // Get the role of the authenticated user
+    const { wali } = req.query;
 
     try {
-        // If wali is provided, filter lansia by wali, else return all lansia
-        const filterCondition = wali ? { where: { wali } } : {};
+        const filterCondition = {
+            include: [
+                {
+                    model: Wali,
+                    as: 'waliDetail',
+                    attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
+                },
+                {
+                    model: Pengguna,
+                    as: 'kaderDetail',
+                    include: [
+                        {
+                            model: Posyandu,
+                            as: 'posyanduDetail'
+                        }
+                    ]
+                }
+            ]
+        };
 
-        const lansias = await Lansia.findAll({
-            ...filterCondition,
-            include: [{
-                model: Wali,
-                as: 'waliDetail',
-                attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
-            },
-            { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }]
-        });
-        
+        // Apply posyandu filter only if the user is not an admin
+        if (userRole !== 'admin') {
+            filterCondition.where = { '$kaderDetail.posyandu$': posyanduId };
+        }
+
+        if (wali) {
+            filterCondition.where = {
+                ...filterCondition.where,
+                wali
+            };
+        }
+
+        const lansias = await Lansia.findAll(filterCondition);
         res.status(200).json(lansias);
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
+// Get Lansia statistics
 router.get('/laporan', async (req, res) => {
     try {
-        const totalLansia = await Lansia.count();  // Get total number of Lansia
+        const totalLansia = await Lansia.count();
         const averageAgeLansia = await Lansia.findAll({
             attributes: [[Sequelize.fn('AVG', Sequelize.literal('DATEDIFF(CURDATE(), tanggal_lahir_lansia) / 365')), 'average_age']]
         });
@@ -111,36 +146,60 @@ router.get('/laporan', async (req, res) => {
     }
 });
 
+// Get a single Lansia record by ID
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const lansia = await Lansia.findByPk(req.params.id, {
-            include: [{
-              model: Wali,
-              as: 'waliDetail',
-              attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
-            },
-            {
-                model: Pekerjaan,
-                as: 'pekerjaan',
-                attributes: ['id', 'nama'],
-            },
-            {
-                model: Pendidikan,
-                as: 'pendidikan',
-                attributes: ['id', 'nama'],
-            },
-            { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }]
-        });
+        const posyanduId = req.user.posyanduId;
+        const userRole = req.user.role; // Get the role of the authenticated user
+
+        const includeOptions = {
+            include: [
+                {
+                    model: Wali,
+                    as: 'waliDetail',
+                    attributes: ['id', 'nama_wali', 'email_wali', 'no_hp_wali'],
+                },
+                {
+                    model: Pekerjaan,
+                    as: 'pekerjaan',
+                    attributes: ['id', 'nama'],
+                },
+                {
+                    model: Pendidikan,
+                    as: 'pendidikan',
+                    attributes: ['id', 'nama'],
+                },
+                {
+                    model: Pengguna,
+                    as: 'kaderDetail',
+                    include: [
+                        {
+                            model: Posyandu,
+                            as: 'posyanduDetail'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Apply posyandu filter only if the user is not an admin
+        if (userRole !== 'admin') {
+            includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
+        }
+
+        const lansia = await Lansia.findByPk(req.params.id, includeOptions);
+
         if (lansia) {
             res.status(200).json(lansia);
         } else {
             res.status(404).json({ error: 'Lansia not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
+// Update a Lansia record
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
@@ -201,10 +260,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
             res.status(404).json({ error: 'Lansia not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 
+// Delete a Lansia record
 router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const lansia = await Lansia.findByPk(req.params.id);
@@ -215,7 +275,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
             res.status(404).json({ error: 'Lansia not found' });
         }
     } catch (error) {
-        res.status(500).json({ error: error });
+        res.status(500).json({ error: error.message });
     }
 });
 

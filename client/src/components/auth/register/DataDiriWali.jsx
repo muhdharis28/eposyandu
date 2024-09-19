@@ -306,23 +306,23 @@ const DataDiriWali = ({ formData, updateFormData }) => {
         email_wali: formData.email_wali,
         pekerjaan_wali: formData.pekerjaan_wali,
         pendidikan_wali: formData.pendidikan_wali,
+        posyandu: formData.posyandu,
       });
 
       const uploadedFilePath = await uploadFile();
-      if (uploadedFilePath) {
-        updateFormData({ ['foto_kk']: uploadedFilePath });
-      }
+      
       // Store Pengguna data and associate with OrangTua
       await axios.post(`${import.meta.env.VITE_API_URL}/api/pengguna`, {
         nama: formData.nama,
         email: formData.email,
         kata_sandi: formData.kata_sandi, // Ensure this is hashed in the backend
         role: 'user',
-        foto_kk: formData.foto_kk,
+        foto_kk: uploadedFilePath,
         no_hp: formData.no_hp,
         no_kk: formData.no_kk,
         no_ktp: formData.no_ktp,
-        wali: waliResponse.data.id, // Use the ID returned from the OrangTua creation
+        wali: waliResponse.data.id,
+        posyandu: formData.posyandu // Use the ID returned from the OrangTua creation
       });
 
       // Navigate to the summary page after successful registration

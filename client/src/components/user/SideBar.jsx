@@ -1,8 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { FaHome, FaUsers, FaFileAlt, FaCog, FaBaby, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { FaHome, FaUsers, FaCog, FaBaby, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
+  const location = useLocation(); // Get the current route
+  const [activeSubMenu, setActiveSubMenu] = useState(null);
 
   const navItems = [
     { icon: FaHome, label: 'Dashboard', path: '/user-dashboard' },
@@ -11,11 +13,11 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaCog, label: 'Pengaturan', path: '/user-settings' }
   ];
 
-  const [activeSubMenu, setActiveSubMenu] = useState(null);
-
   const toggleSubMenu = (label) => {
     setActiveSubMenu(activeSubMenu === label ? null : label);
   };
+
+  const isActive = (path) => location.pathname === path; // Check if the current path matches
 
   return (
     <div
@@ -24,60 +26,20 @@ const SideBar = ({ isCollapsed }) => {
         <ul className="space-y-4">
           {navItems.map((item) => (
             <li key={item.label}>
-              {/* If the item has subItems, render it with toggle functionality */}
-              {item.subItems ? (
-                <div>
-                  <div
-                    onClick={() => toggleSubMenu(item.label)}
-                    className={`flex items-center justify-between hover:bg-blue-700 hover:bg-opacity-20 p-2 rounded-lg cursor-pointer transition-colors duration-200 ease-in-out ${isCollapsed ? 'justify-center' : ''}`}>
-                    <div className="flex items-center">
-                      <item.icon className="mr-2" size={18} />
-                      {!isCollapsed && (
-                        <span className="transition-opacity duration-300 ease-in-out">
-                          {item.label}
-                        </span>
-                      )}
-                    </div>
-                    {!isCollapsed && (
-                      <span>
-                        {activeSubMenu === item.label ? <FaChevronUp /> : <FaChevronDown />}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Submenu items with smooth collapse */}
-                  <div
-                    className={`transition-max-height duration-300 ease-in-out overflow-hidden`}
-                    style={{
-                      maxHeight: activeSubMenu === item.label ? '1000px' : '0',
-                    }}
-                  >
-                    <ul className="ml-6 space-y-2">
-                      {item.subItems.map((subItem) => (
-                        <li key={subItem.label}>
-                          <Link
-                            to={subItem.path}
-                            className="flex items-center hover:bg-blue-700 hover:bg-opacity-20 p-2 rounded-lg transition-colors duration-200 ease-in-out">
-                            <subItem.icon className="mr-2" size={18} />
-                            <span>{subItem.label}</span>
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              ) : (
-                <Link
-                  to={item.path}
-                  className={`flex items-center hover:bg-blue-700 hover:bg-opacity-20 p-2 rounded-lg transition-colors duration-200 ease-in-out ${isCollapsed ? 'justify-center' : ''}`}>
-                  <item.icon className="mr-2" size={18} />
-                  {!isCollapsed && (
-                    <span className="transition-opacity duration-300 ease-in-out">
-                      {item.label}
-                    </span>
-                  )}
-                </Link>
-              )}
+              {/* No sub-items, just a link */}
+              <Link
+                to={item.path}
+                className={`flex items-center hover:bg-blue-700 hover:bg-opacity-20 p-2 rounded-lg transition-colors duration-200 ease-in-out ${
+                  isCollapsed ? 'justify-center' : ''
+                } ${isActive(item.path) ? 'bg-blue-700 bg-opacity-30' : ''}` /* Add active style if it's active */}
+              >
+                <item.icon className="mr-2" size={18} />
+                {!isCollapsed && (
+                  <span className="transition-opacity duration-300 ease-in-out">
+                    {item.label}
+                  </span>
+                )}
+              </Link>
             </li>
           ))}
         </ul>

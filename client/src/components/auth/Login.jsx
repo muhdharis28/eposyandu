@@ -35,14 +35,15 @@ const Login = () => {
         kata_sandi: password,
       });
 
-      const { token, role, userName, userEmail, userId } = response.data;
+      const { token, role, userName, userId, userPosyanduId, userPosyanduName } = response.data;
       console.log(response.data)
       // Store the token, role, and user information in localStorage
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
       localStorage.setItem('userName', userName); // Store user name
       localStorage.setItem('userId', userId); // Store user email
-      localStorage.setItem('userEmail', userEmail); // Store user email
+      localStorage.setItem('userPosyanduId', userPosyanduId); // Store user email
+      localStorage.setItem('userPosyanduName', userPosyanduName); // Store user email
 
       // Redirect based on role
       if (role === 'admin') {

@@ -57,15 +57,10 @@ const PenggunaForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const formData = new FormData();
-      Object.keys(pengguna).forEach((key) => {
-        formData.append(key, pengguna[key]);
-      });
-
       if (id) {
-        await updatePengguna(id, formData);
+        await updatePengguna(id, pengguna);
       } else {
-        await createPengguna(formData);
+        await createPengguna(pengguna);
       }
 
       navigate('/pengguna');

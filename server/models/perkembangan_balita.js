@@ -59,7 +59,7 @@ PerkembanganBalita.init({
 });
 
 PerkembanganBalita.belongsTo(Balita, { as: 'balitaDetail', foreignKey: 'balita' });
-PerkembanganBalita.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
+PerkembanganBalita.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
 PerkembanganBalita.belongsTo(Dokter, { as: 'dokterDetail', foreignKey: 'dokter' });
 
 module.exports = PerkembanganBalita;

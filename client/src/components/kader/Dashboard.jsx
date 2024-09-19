@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api'; // Import the Axios instance
-import { FaSpinner } from 'react-icons/fa'; // Import an icon for loading state
+import { FaSpinner } from 'react-icons/fa';
 
 const Dashboard = () => {
   const [stats, setStats] = useState([]);
@@ -8,10 +8,10 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch stats from the backend API
     const fetchStats = async () => {
       try {
-        const response = await api.get('/stats'); // Adjust the API path if necessary
+        
+        const response = await api.get(`/stats/authenticated`);  // Include posyanduId in the request
         setStats(response.data);
         setLoading(false);
       } catch (error) {
@@ -37,8 +37,6 @@ const Dashboard = () => {
 
   return (
     <div className="p-6 max-w-screen-lg mx-auto">
-      
-      {/* Stats Display */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <div

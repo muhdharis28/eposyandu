@@ -209,6 +209,7 @@ const DataDiriIbu = ({ formData, updateFormData }) => {
 
   const handleNext = () => {
     if (validateForm()) {
+      console.log('fffffffffffffff', formData)
       navigate('/register/data-diri-ayah', { state: { formData } });
     }
   };

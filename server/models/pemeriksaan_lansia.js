@@ -71,7 +71,7 @@ PemeriksaanLansia.init({
 });
 
 PemeriksaanLansia.belongsTo(Lansia, { as: 'lansiaDetail', foreignKey: 'lansia' });
-PemeriksaanLansia.belongsTo(Pengguna, { as: 'penggunaDetail', foreignKey: 'kader' });
+PemeriksaanLansia.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
 PemeriksaanLansia.belongsTo(Dokter, { as: 'dokterDetail', foreignKey: 'dokter' });
 
 module.exports = PemeriksaanLansia;

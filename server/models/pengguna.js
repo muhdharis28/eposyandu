@@ -15,7 +15,6 @@ Pengguna.init({
     email: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
     },
     kata_sandi: {
         type: DataTypes.STRING

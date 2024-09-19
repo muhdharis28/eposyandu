@@ -260,30 +260,28 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
         email_ayah: formData.email_ayah,
         pekerjaan_ayah: formData.pekerjaan_ayah,
         pendidikan_ayah: formData.pendidikan_ayah,
-        nik_ayah: formData.nik_ayah,
-        nama_ayah: formData.nama_ayah,
-        tempat_lahir_ayah: formData.tempat_lahir_ayah,
-        tanggal_lahir_ayah: formData.tanggal_lahir_ayah,
-        alamat_ktp_ayah: formData.alamat_ktp_ayah,
-        kelurahan_ktp_ayah: formData.kelurahan_ktp_ayah,
-        kecamatan_ktp_ayah: formData.kecamatan_ktp_ayah,
-        kota_ktp_ayah: formData.kota_ktp_ayah,
-        provinsi_ktp_ayah: formData.provinsi_ktp_ayah,
-        alamat_domisili_ayah: formData.alamat_domisili_ayah,
-        kelurahan_domisili_ayah: formData.kelurahan_domisili_ayah,
-        kecamatan_domisili_ayah: formData.kecamatan_domisili_ayah,
-        kota_domisili_ayah: formData.kota_domisili_ayah,
-        provinsi_domisili_ayah: formData.provinsi_domisili_ayah,
-        no_hp_ayah: formData.no_hp_ayah,
-        email_ayah: formData.email_ayah,
-        pekerjaan_ayah: formData.pekerjaan_ayah,
-        pendidikan_ayah: formData.pendidikan_ayah,
+        nik_ibu: formData.nik_ibu,
+        nama_ibu: formData.nama_ibu,
+        tempat_lahir_ibu: formData.tempat_lahir_ibu,
+        tanggal_lahir_ibu: formData.tanggal_lahir_ibu,
+        alamat_ktp_ibu: formData.alamat_ktp_ibu,
+        kelurahan_ktp_ibu: formData.kelurahan_ktp_ibu,
+        kecamatan_ktp_ibu: formData.kecamatan_ktp_ibu,
+        kota_ktp_ibu: formData.kota_ktp_ibu,
+        provinsi_ktp_ibu: formData.provinsi_ktp_ibu,
+        alamat_domisili_ibu: formData.alamat_domisili_ibu,
+        kelurahan_domisili_ibu: formData.kelurahan_domisili_ibu,
+        kecamatan_domisili_ibu: formData.kecamatan_domisili_ibu,
+        kota_domisili_ibu: formData.kota_domisili_ibu,
+        provinsi_domisili_ibu: formData.provinsi_domisili_ibu,
+        no_hp_ibu: formData.no_hp_ibu,
+        email_ibu: formData.email_ibu,
+        pekerjaan_ibu: formData.pekerjaan_ibu,
+        pendidikan_ibu: formData.pendidikan_ibu,
+        posyandu: formData.posyandu,
       });
       
       const uploadedFilePath = await uploadFile();
-      if (uploadedFilePath) {
-        updateFormData({ ['foto_kk']: uploadedFilePath });
-      }
       // Store Pengguna data and associate with OrangTua
       await axios.post(`${import.meta.env.VITE_API_URL}/api/pengguna`, {
         nama: formData.nama,
@@ -293,8 +291,9 @@ const DataDiriAyah = ({ formData, updateFormData }) => {
         no_hp: formData.no_hp, 
         no_kk: formData.no_kk,
         no_ktp: formData.no_ktp,
-        foto_kk: formData.foto_kk,
+        foto_kk: uploadedFilePath,
         orangtua: orangTuaResponse.data.id, // Use the ID returned from the OrangTua creation
+        posyandu: formData.posyandu
       });
 
       navigate('/register/summary', { state: { formData } });

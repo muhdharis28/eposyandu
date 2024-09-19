@@ -6,105 +6,189 @@ const Pengguna = require('../models/pengguna');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken } = require('./middleware/authMiddleware');
 
+// Create new Balita record
 router.post('/', authenticateToken, async (req, res) => {
-    try {
-        const {
-            nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
-            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita,
-            kader
-        } = req.body;
-        const newBalita = await Balita.create({
-            nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
-            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita,
-            kader
-        });
-        res.status(201).json(newBalita);
-    } catch (error) {
-        res.status(500).json({ error: error });
-    }
+  try {
+    const {
+      nama_balita,
+      orangtua,
+      nik_balita,
+      jenis_kelamin_balita,
+      tempat_lahir_balita,
+      tanggal_lahir_balita,
+      berat_badan_awal_balita,
+      tinggi_badan_awal_balita,
+      riwayat_penyakit_balita,
+      riwayat_kelahiran_balita,
+      keterangan_balita,
+      kader
+    } = req.body;
+
+    const newBalita = await Balita.create({
+      nama_balita,
+      orangtua,
+      nik_balita,
+      jenis_kelamin_balita,
+      tempat_lahir_balita,
+      tanggal_lahir_balita,
+      berat_badan_awal_balita,
+      tinggi_badan_awal_balita,
+      riwayat_penyakit_balita,
+      riwayat_kelahiran_balita,
+      keterangan_balita,
+      kader
+    });
+
+    res.status(201).json(newBalita);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+// Get all Balita records, filtered by posyandu
 router.get('/', authenticateToken, async (req, res) => {
-    const { orangtua } = req.query;  // Get the wali parameter from the query string
+  const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
+  const userRole = req.user.role; // Get the role of the authenticated user
+  const { orangtua } = req.query; // Get the orangtua parameter from the query string
 
-    try {
-        const filterCondition = orangtua ? { where: { orangtua } } : {};
+  try {
+    // Define the base filter condition
+    const filterCondition = {
+      where: {},
+      include: [
+        {
+          model: OrangTua,
+          as: 'orangtuaDetail'
+        },
+        {
+          model: Pengguna,
+          as: 'kaderDetail',
+          include: [
+            {
+              model: Posyandu,
+              as: 'posyanduDetail'
+            }
+          ]
+        }
+      ]
+    };
 
-        const balitas = await Balita.findAll({
-            ...filterCondition,
-            include: [{
-                model: OrangTua,
-                as: 'orangtuaDetail'
-            }, { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }],
-        });
-        res.status(200).json(balitas);
-    } catch (error) {
-        res.status(500).json({ error: error });
+    // Apply posyandu filter only if the user is not an admin
+    if (userRole !== 'admin') {
+      filterCondition.where['$kaderDetail.posyandu$'] = posyanduId;
     }
+
+    // Optionally filter by orangtua
+    if (orangtua) {
+      filterCondition.where.orangtua = orangtua;
+    }
+
+    const balitas = await Balita.findAll(filterCondition);
+    res.status(200).json(balitas);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+// Get a single Balita record by ID
 router.get('/:id', authenticateToken, async (req, res) => {
-    try {
-        const balita = await Balita.findByPk(req.params.id, {
-            include: [{
-                model: OrangTua,
-                as: 'orangtuaDetail'
-              },
-              { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] }],
-        });
-        if (balita) {
-            res.status(200).json(balita);
-        } else {
-            res.status(404).json({ error: 'Balita not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error });
+  const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
+  const userRole = req.user.role; // Get the role of the authenticated user
+
+  try {
+    // Define the base include condition
+    const includeOptions = [
+      {
+        model: OrangTua,
+        as: 'orangtuaDetail'
+      },
+      {
+        model: Pengguna,
+        as: 'kaderDetail',
+        include: [
+          {
+            model: Posyandu,
+            as: 'posyanduDetail'
+          }
+        ]
+      }
+    ];
+
+    // Apply posyandu filter only if the user is not an admin
+    if (userRole !== 'admin') {
+      includeOptions[1].include[0].where = { id: posyanduId };
     }
+
+    const balita = await Balita.findByPk(req.params.id, {
+      include: includeOptions
+    });
+
+    if (balita) {
+      res.status(200).json(balita);
+    } else {
+      res.status(404).json({ error: 'Balita not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+// Update a Balita record
 router.put('/:id', authenticateToken, async (req, res) => {
-    try {
-        const {
-            nama_balita, orangtua, nik_balita, jenis_kelamin_balita, tempat_lahir_balita, tanggal_lahir_balita,
-            berat_badan_awal_balita, tinggi_badan_awal_balita, riwayat_penyakit_balita, riwayat_kelahiran_balita, keterangan_balita,
-            kader
-        } = req.body;
-        const balita = await Balita.findByPk(req.params.id);
-        if (balita) {
-            balita.nama_balita = nama_balita;
-            balita.orangtua = orangtua;
-            balita.nik_balita = nik_balita;
-            balita.jenis_kelamin_balita = jenis_kelamin_balita;
-            balita.tempat_lahir_balita = tempat_lahir_balita;
-            balita.tanggal_lahir_balita = tanggal_lahir_balita;
-            balita.berat_badan_awal_balita = berat_badan_awal_balita;
-            balita.tinggi_badan_awal_balita = tinggi_badan_awal_balita;
-            balita.riwayat_penyakit_balita = riwayat_penyakit_balita;
-            balita.riwayat_kelahiran_balita = riwayat_kelahiran_balita;
-            balita.keterangan_balita = keterangan_balita;
-            balita.kader = kader;
-            await balita.save();
-            res.status(200).json(balita);
-        } else {
-            res.status(404).json({ error: 'Balita not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error });
+  try {
+    const {
+      nama_balita,
+      orangtua,
+      nik_balita,
+      jenis_kelamin_balita,
+      tempat_lahir_balita,
+      tanggal_lahir_balita,
+      berat_badan_awal_balita,
+      tinggi_badan_awal_balita,
+      riwayat_penyakit_balita,
+      riwayat_kelahiran_balita,
+      keterangan_balita,
+      kader
+    } = req.body;
+
+    const balita = await Balita.findByPk(req.params.id);
+    if (balita) {
+      await balita.update({
+        nama_balita,
+        orangtua,
+        nik_balita,
+        jenis_kelamin_balita,
+        tempat_lahir_balita,
+        tanggal_lahir_balita,
+        berat_badan_awal_balita,
+        tinggi_badan_awal_balita,
+        riwayat_penyakit_balita,
+        riwayat_kelahiran_balita,
+        keterangan_balita,
+        kader
+      });
+      res.status(200).json(balita);
+    } else {
+      res.status(404).json({ error: 'Balita not found' });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
+// Delete a Balita record
 router.delete('/:id', authenticateToken, async (req, res) => {
-    try {
-        const balita = await Balita.findByPk(req.params.id);
-        if (balita) {
-            await balita.destroy();
-            res.status(204).end();
-        } else {
-            res.status(404).json({ error: 'Balita not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error });
+  try {
+    const balita = await Balita.findByPk(req.params.id);
+    if (balita) {
+      await balita.destroy();
+      res.status(204).end();
+    } else {
+      res.status(404).json({ error: 'Balita not found' });
     }
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 module.exports = router;

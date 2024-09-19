@@ -69,7 +69,7 @@ const RegistrationDetails = ({ formData, updateFormData }) => {
         } else {
           setErrors((prev) => ({ ...prev, no_ktp: undefined })); // Clear the error if the NIK is not registered
           setNikCheckInProgress(false);
-          console.log('rrrrrrrrrrrrrrrrrrrrrrr',formData)
+          
           navigate(path, { state: { formData } }); // Navigate to the next step
         }
       } catch (error) {

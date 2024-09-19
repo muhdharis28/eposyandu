@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 // Use an environment variable for the JWT secret key
 const JWT_SECRET = process.env.JWT_SECRET; // Fallback to a default secret if not provided
 
-// Middleware to authenticate using JWT
+// Middleware to authenticate using JWT and attach posyanduId to the request
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -18,6 +18,8 @@ const authenticateToken = (req, res, next) => {
         }
 
         req.user = user; // Attach user data to the request object
+        req.posyanduId = user.posyanduId; // Attach posyanduId from the token to the request object
+
         next(); // Proceed to the next middleware or route handler
     });
 };
