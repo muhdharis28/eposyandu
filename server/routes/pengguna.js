@@ -11,7 +11,7 @@ const { authenticateToken, authorizeRoles } = require('./middleware/authMiddlewa
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Create new Pengguna (admin only)
-router.post('/', authenticateToken, authorizeRoles('admin'), async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const {
             nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu

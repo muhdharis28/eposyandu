@@ -5,7 +5,7 @@ const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
 // Create a new Wali record
-router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+router.post('/', async (req, res) => {
     try {
         const {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, 

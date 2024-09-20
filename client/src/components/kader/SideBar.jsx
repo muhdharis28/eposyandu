@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { FaHome, FaUsers, FaStethoscope, FaHeartbeat, FaCog, FaBaby, FaChevronDown, FaChevronUp, FaCalendarAlt, FaCamera } from 'react-icons/fa';
+import { FaHome, FaUsers, FaStethoscope, FaHeartbeat, FaCog, FaBaby, FaChevronDown, FaChevronUp, FaCalendarAlt, FaCamera, FaUserTie, FaUserShield } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
 
@@ -12,6 +12,8 @@ const SideBar = ({ isCollapsed }) => {
     { icon: FaHeartbeat, label: 'Perkembangan Balita', path: '/kader-perkembangan-balita' },
     { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kader-kegiatan' },
     { icon: FaCamera, label: 'Dokumentasi', path: '/kader-dokumentasi' },  // Calendar Icon for Events
+    { icon: FaUserTie, label: 'Orang Tua', path: '/kader-orangtua' },  // Calendar Icon for Events
+    { icon: FaUserShield, label: 'Wali', path: '/kader-wali' },
     { icon: FaCog, label: 'Pengaturan', path: '/kader-settings' }
   ];
 

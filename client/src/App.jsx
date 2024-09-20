@@ -77,6 +77,12 @@ import KegiatanKaderForm from './components/kader/kegiatan/KegiatanKaderForm';
 import DokumentasiCardKader from './components/kader/dokumentasi/DokumentasiCardKader';
 import DokumentasiDetailKader from './components/kader/dokumentasi/DokumentasiDetailKader';
 import DokumentasiKaderForm from './components/kader/dokumentasi/DokumentasiKaderForm';
+import OrangTuaCardKader from './components/kader/orangtua/OrangTuaCardKader';
+import OrangTuaDetailKader from './components/kader/orangtua/OrangTuaDetailKader';
+import OrangTuaKaderForm from './components/kader/orangtua/OrangTuaKaderForm';
+import WaliCardKader from './components/kader/wali/WaliCardKader';
+import WaliDetailKader from './components/kader/wali/WaliDetailKader';
+import WaliKaderForm from './components/kader/wali/WaliKaderForm';
 import SettingsKader from './components/kader/settings/SettingsKader';
 
 const App = () => (
@@ -170,6 +176,14 @@ const App = () => (
           <Route path="/kader-dokumentasi/:id" element={<DokumentasiDetailKader/>} />
           <Route path="/kader-dokumentasi/baru" element={<DokumentasiKaderForm/>} />
           <Route path="/kader-dokumentasi/edit/:id" element={<DokumentasiKaderForm/>} />
+          <Route path="/kader-orangtua" element={<OrangTuaCardKader/>} />
+          <Route path="/kader-orangtua/:id" element={<OrangTuaDetailKader/>} />
+          <Route path="/kader-orangtua/baru" element={<OrangTuaKaderForm/>} />
+          <Route path="/kader-orangtua/edit/:id" element={<OrangTuaKaderForm/>} />
+          <Route path="/kader-wali" element={<WaliCardKader/>} />
+          <Route path="/kader-wali/:id" element={<WaliDetailKader/>} />
+          <Route path="/kader-wali/baru" element={<WaliKaderForm/>} />
+          <Route path="/kader-wali/edit/:id" element={<WaliKaderForm/>} />
           <Route path="/kader-settings" element={<SettingsKader/>} />
         </Route>
 
