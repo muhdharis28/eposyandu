@@ -14,11 +14,11 @@ router.post('/', async (req, res) => {
             pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
             kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
             kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-            pendidikan_ayah
+            pendidikan_ayah, posyandu
         } = req.body;
 
         // Ensure the created OrangTua is associated with the authenticated user's posyandu
-        const posyanduId = req.user.posyanduId;
+        // const posyanduId = req.user.posyanduId;
 
         const newOrangTua = await OrangTua.create({
             no_kk, nik_ibu, nama_ibu, tempat_lahir_ibu, tanggal_lahir_ibu, alamat_ktp_ibu, kelurahan_ktp_ibu,
@@ -27,7 +27,7 @@ router.post('/', async (req, res) => {
             pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
             kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
             kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-            pendidikan_ayah, posyandu: posyanduId  // Associate with the authenticated user's posyandu
+            pendidikan_ayah, posyandu: posyandu  // Associate with the authenticated user's posyandu
         });
         res.status(201).json(newOrangTua);
     } catch (error) {

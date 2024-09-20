@@ -11,17 +11,17 @@ router.post('/', async (req, res) => {
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, 
             alamat_ktp_wali, kelurahan_ktp_wali, kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, 
             alamat_domisili_wali, kelurahan_domisili_wali, kecamatan_domisili_wali, kota_domisili_wali, 
-            provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali
+            provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali, posyandu
         } = req.body;
 
         // Ensure the wali is associated with the authenticated user's posyandu
-        const posyanduId = req.user.posyanduId;
+        // const posyanduId = req.user.posyanduId;
 
         const newWali = await Wali.create({
             no_kk, nik_wali, nama_wali, tempat_lahir_wali, tanggal_lahir_wali, jenis_kelamin_wali, 
             alamat_ktp_wali, kelurahan_ktp_wali, kecamatan_ktp_wali, kota_ktp_wali, provinsi_ktp_wali, 
             alamat_domisili_wali, kelurahan_domisili_wali, kecamatan_domisili_wali, kota_domisili_wali, 
-            provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali, posyandu: posyanduId // Associate with posyandu
+            provinsi_domisili_wali, no_hp_wali, email_wali, pekerjaan_wali, pendidikan_wali, posyandu: posyandu // Associate with posyandu
         });
 
         res.status(201).json(newWali);
