@@ -10,7 +10,6 @@ Wali.init({
     no_kk: {
         type: DataTypes.BIGINT,
         allowNull: false,
-        unique: true,
     },
     nik_wali: {
         type: DataTypes.BIGINT,
@@ -35,43 +34,33 @@ Wali.init({
     },
     alamat_ktp_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_ktp_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_ktp_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_ktp_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_ktp_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     alamat_domisili_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_domisili_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_domisili_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_domisili_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_domisili_wali: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     no_hp_wali: {
         type: DataTypes.STRING
@@ -98,7 +87,8 @@ Wali.init({
         references: {
             model: Posyandu,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
 }, {
     sequelize,

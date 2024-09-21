@@ -25,7 +25,8 @@ const Dokumentasi = sequelize.define('Dokumentasi', {
     references: {
         model: Pengguna,
         key: 'id'
-    }
+    },
+    allowNull: false,
   },
 }, {
   timestamps: true,

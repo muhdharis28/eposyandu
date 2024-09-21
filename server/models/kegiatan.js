@@ -26,7 +26,8 @@ Kegiatan.init({
         references: {
             model: Pengguna,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
 }, {
     sequelize,

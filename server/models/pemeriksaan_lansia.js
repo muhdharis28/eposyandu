@@ -12,23 +12,24 @@ PemeriksaanLansia.init({
         references: {
             model: Lansia,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     tanggal_kunjungan: {
         type: DataTypes.DATEONLY,
         allowNull: false,
     },
     berat_badan: {
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT,
     },
     tinggi_badan: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
     },
     lingkar_perut: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
     },
     tekanan_darah: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
     },
     gula_darah: {
         type: DataTypes.STRING
@@ -56,7 +57,8 @@ PemeriksaanLansia.init({
         references: {
             model: Pengguna,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     dokter: {
         type: DataTypes.INTEGER,

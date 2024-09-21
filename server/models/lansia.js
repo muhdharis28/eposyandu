@@ -10,26 +10,26 @@ class Lansia extends Model {}
 Lansia.init({
     no_kk_lansia: {
         type: DataTypes.BIGINT,
-        allowNull: false,
-        unique: true,
+        allowNull: false
     },
     wali: {
         type: DataTypes.INTEGER,
         references: {
             model: Wali,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     kader: {
         type: DataTypes.INTEGER,
         references: {
             model: Pengguna,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     nik_lansia: {
         type: DataTypes.BIGINT,
-        allowNull: false,
         unique: true,
     },
     nama_lansia: {
@@ -50,49 +50,39 @@ Lansia.init({
     },
     alamat_ktp_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_ktp_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_ktp_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_ktp_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_ktp_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     alamat_domisili_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_domisili_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_domisili_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_domisili_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_domisili_lansia: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     no_hp_lansia: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
     },
     email_lansia: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
     },
     pekerjaan_lansia: {
         type: DataTypes.INTEGER,

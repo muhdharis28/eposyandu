@@ -8,27 +8,27 @@ class Balita extends Model {}
 Balita.init({
     nama_balita: {
         type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
+        allowNull: false
     },
     orangtua: {
         type: DataTypes.INTEGER,
         references: {
             model: OrangTua,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     kader: {
         type: DataTypes.INTEGER,
         references: {
             model: Pengguna,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     nik_balita: {
         type: DataTypes.BIGINT,
-        allowNull: false,
-        unique: true,
+        allowNull: false
     },
     jenis_kelamin_balita: {
         type: DataTypes.ENUM('l','p'),
@@ -43,10 +43,12 @@ Balita.init({
         allowNull: false,
     },
     berat_badan_awal_balita: {
-        type: DataTypes.FLOAT
+        type: DataTypes.FLOAT,
+        allowNull: false,
     },
     tinggi_badan_awal_balita: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        allowNull: false,
     },
     riwayat_penyakit_balita: {
         type: DataTypes.STRING

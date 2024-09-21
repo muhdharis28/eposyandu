@@ -10,29 +10,32 @@ Pengguna.init({
     nama: {
         type: DataTypes.STRING,
         allowNull: false,
-        unique: true,
     },
     email: {
         type: DataTypes.STRING,
         allowNull: false,
     },
     kata_sandi: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     role: {
-        type: DataTypes.ENUM('admin', 'kader', 'user')
+        type: DataTypes.ENUM('admin', 'kader', 'user'),
+        allowNull: false,
     },
     no_hp: {
         type: DataTypes.STRING,
         unique: true,
+        allowNull: false,
     },
     no_kk: {
         type: DataTypes.BIGINT,
-        unique: true,
+        allowNull: false,
     },
     no_ktp: {
         type: DataTypes.BIGINT,
         unique: true,
+        allowNull: false,
     },
     foto_kk: {
         type: DataTypes.STRING,
@@ -42,7 +45,7 @@ Pengguna.init({
         references: {
             model: OrangTua,
             key: 'id'
-        }
+        },
     },
     wali: {
         type: DataTypes.INTEGER,
@@ -60,7 +63,8 @@ Pengguna.init({
         references: {
             model: Posyandu,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
 }, {
     sequelize,

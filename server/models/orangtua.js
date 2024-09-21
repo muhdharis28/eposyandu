@@ -9,7 +9,6 @@ class OrangTua extends Model {}
 OrangTua.init({
     no_kk: {
         type: DataTypes.BIGINT,
-        unique: true,
         allowNull: false,
     },
     nik_ibu: {
@@ -31,43 +30,33 @@ OrangTua.init({
     },
     alamat_ktp_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_ktp_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_ktp_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_ktp_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_ktp_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     alamat_domisili_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_domisili_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_domisili_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_domisili_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_domisili_ibu: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     no_hp_ibu: {
         type: DataTypes.STRING
@@ -80,7 +69,7 @@ OrangTua.init({
         references: {
             model: Pekerjaan,
             key: 'id'
-        }
+        },
     },
     pendidikan_ibu: {
         type: DataTypes.INTEGER,
@@ -108,43 +97,33 @@ OrangTua.init({
     },
     alamat_ktp_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_ktp_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_ktp_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_ktp_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_ktp_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     alamat_domisili_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kelurahan_domisili_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kecamatan_domisili_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     kota_domisili_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     provinsi_domisili_ayah: {
         type: DataTypes.STRING,
-        allowNull: false,
     },
     no_hp_ayah: {
         type: DataTypes.STRING
@@ -171,7 +150,8 @@ OrangTua.init({
         references: {
             model: Posyandu,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
 }, {
     sequelize,

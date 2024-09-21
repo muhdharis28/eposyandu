@@ -12,7 +12,8 @@ PerkembanganBalita.init({
         references: {
             model: Balita,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     tanggal_kunjungan: {
         type: DataTypes.DATEONLY,
@@ -31,10 +32,10 @@ PerkembanganBalita.init({
         type: DataTypes.STRING
     },
     tipe_imunisasi: {
-        type: DataTypes.ENUM('BCGE','Hepatitis B','Polio','DPT-HB-Hib','Campak','MR'),
+        type: DataTypes.STRING,
     },
     tipe_vitamin: {
-        type: DataTypes.ENUM('A','Cacing'),
+        type: DataTypes.STRING,
     },
     lingkar_kepala: {
         type: DataTypes.INTEGER
@@ -44,7 +45,8 @@ PerkembanganBalita.init({
         references: {
             model: Pengguna,
             key: 'id'
-        }
+        },
+        allowNull: false,
     },
     dokter: {
         type: DataTypes.INTEGER,
