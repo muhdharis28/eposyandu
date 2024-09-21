@@ -239,7 +239,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
     setDistrictsIbuDom] = useState([]);
   const [villagesIbuDom,
     setVillagesIbuDom] = useState([]);
-  
+
   const [provinsiAyah,
     setProvinsiAyah] = useState([]); // Initialize as an array
   const [regenciesAyah,
@@ -257,12 +257,231 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
   const [villagesAyahDom,
     setVillagesAyahDom] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi`)
+      .then(response => {
+        setProvinsiIbu(response.data);
+        setProvinsiIbuDom(response.data);
+        setProvinsiAyah(response.data);
+        setProvinsiAyahDom(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching provinces:', error);
+      });
+
+  }, []);
+
+  const handleProvinsiIbuChange = (e) => {
+    const selectedProvinsiId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      provinsi_ktp_ibu: selectedProvinsiId
+    })
+
+    // Fetch regencies when a province is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiId}/regencies`)
+      .then((response) => {
+        setRegenciesIbu(response.data);
+        setDistrictsIbu([]); // Reset districts and villages when province changes
+        setVillagesIbu([]);
+      })
+      .catch((error) => console.error('Error fetching regencies:', error));
+  };
+
+  const handleProvinsiIbuChangeDom = (e) => {
+    const selectedProvinsiDomId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      provinsi_domisili_ibu: selectedProvinsiDomId
+    })
+
+    // Fetch regencies when a province is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiDomId}/regencies`)
+      .then((response) => {
+        setRegenciesIbuDom(response.data);
+        setDistrictsIbuDom([]); // Reset districts and villages when province changes
+        setVillagesIbuDom([]);
+      })
+      .catch((error) => console.error('Error fetching regencies dom:', error));
+  };
+
+  const handleRegencyIbuChange = (e) => {
+    const selectedRegencyId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kota_ktp_ibu: selectedRegencyId
+    });
+
+    // Fetch districts when a regency is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyId}/districts`)
+      .then((response) => {
+        setDistrictsIbu(response.data);
+        setVillagesIbu([]); // Reset villages when regency changes
+      })
+      .catch((error) => console.error('Error fetching districts:', error));
+  };
+
+  const handleRegencyIbuChangeDom = (e) => {
+    const selectedRegencyDomId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kota_domisili_ibu: selectedRegencyDomId
+    });
+
+    // Fetch districts when a regency is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyDomId}/districts`)
+      .then((response) => {
+        setDistrictsIbuDom(response.data);
+        setVillagesIbuDom([]); // Reset villages when regency changes
+      })
+      .catch((error) => console.error('Error fetching districts dom:', error));
+  };
+
+  const handleDistrictIbuChange = (e) => {
+    const selectedDistrictId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kecamatan_ktp_ibu: selectedDistrictId
+    });
+
+    // Fetch villages when a district is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictId}/villages`)
+      .then((response) => {
+        setVillagesIbu(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages:', error));
+  };
+
+  const handleDistrictIbuChangeDom = (e) => {
+    const selectedDistrictDomId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kecamatan_domisili_ibu: selectedDistrictDomId
+    });
+
+    // Fetch villages when a district is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictDomId}/villages`)
+      .then((response) => {
+        setVillagesIbuDom(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages dom:', error));
+  };
+
+  // --------------
+
+  const handleProvinsiAyahChange = (e) => {
+    const selectedProvinsiId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      provinsi_ktp_ayah: selectedProvinsiId
+    })
+
+    // Fetch regencies when a province is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiId}/regencies`)
+      .then((response) => {
+        setRegenciesAyah(response.data);
+        setDistrictsAyah([]); // Reset districts and villages when province changes
+        setVillagesAyah([]);
+      })
+      .catch((error) => console.error('Error fetching regencies:', error));
+  };
+
+  const handleProvinsiAyahChangeDom = (e) => {
+    const selectedProvinsiDomId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      provinsi_domisili_ayah: selectedProvinsiDomId
+    });
+
+    // Fetch regencies when a province is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiDomId}/regencies`)
+      .then((response) => {
+        setRegenciesAyahDom(response.data);
+        setDistrictsAyahDom([]); // Reset districts and villages when province changes
+        setVillagesAyahDom([]);
+      })
+      .catch((error) => console.error('Error fetching regencies dom:', error));
+  };
+
+  const handleRegencyAyahChange = (e) => {
+    const selectedRegencyId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kota_ktp_ayah: selectedRegencyId
+    });
+
+    // Fetch districts when a regency is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyId}/districts`)
+      .then((response) => {
+        setDistrictsAyah(response.data);
+        setVillagesAyah([]); // Reset villages when regency changes
+      })
+      .catch((error) => console.error('Error fetching districts:', error));
+  };
+
+  const handleRegencyAyahChangeDom = (e) => {
+    const selectedRegencyDomId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kota_domisili_ayah: selectedRegencyDomId
+    });
+
+    // Fetch districts when a regency is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyDomId}/districts`)
+      .then((response) => {
+        setDistrictsAyahDom(response.data);
+        setVillagesAyahDom([]); // Reset villages when regency changes
+      })
+      .catch((error) => console.error('Error fetching districts dom:', error));
+  };
+
+  const handleDistrictAyahChange = (e) => {
+    const selectedDistrictId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kecamatan_ktp_ayah: selectedDistrictId
+    });
+
+    // Fetch villages when a district is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictId}/villages`)
+      .then((response) => {
+        setVillagesAyah(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages:', error));
+  };
+
+  const handleDistrictAyahChangeDom = (e) => {
+    const selectedDistrictDomId = e.target.value;
+    setOrangTuaDetails({
+      ...orangTuaDetails,
+      kecamatan_domisili_ayah: selectedDistrictDomId
+    });
+
+    // Fetch villages when a district is selected
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictDomId}/villages`)
+      .then((response) => {
+        setVillagesAyahDom(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages dom:', error));
+  };
+
   return (
     <div>
       <h3 className="text-xl font-bold text-gray-700 mt-5 mb-3">Data Ibu</h3>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
-        {/* Fields for Ibu */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">No KK</label>
           <input
@@ -275,6 +494,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.no_kk && <p className="text-red-500 text-sm mt-1">{errors.no_kk}</p>}
         </div>
+        
         {/* Additional fields for Ibu... */}
       </div>
       {/* Similar structure for Ayah... */}
