@@ -65,7 +65,8 @@ Wali.init({
         allowNull: false,
     },
     no_hp_wali: {
-        type: DataTypes.STRING
+        type: DataTypes.STRING,
+        allowNull: false,
     },
     email_wali: {
         type: DataTypes.STRING
