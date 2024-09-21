@@ -4,6 +4,7 @@ const Wali = require('./wali');
 const Pekerjaan = require('./pekerjaan');
 const Pendidikan = require('./pendidikan');
 const Pengguna = require('./pengguna');
+const Posyandu = require('./posyandu');
 
 class Lansia extends Model {}
 
@@ -25,8 +26,15 @@ Lansia.init({
         references: {
             model: Pengguna,
             key: 'id'
+        }
+    },
+    posyandu: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Posyandu,
+            key: 'id'
         },
-        allowNull: false,
+        allowNull: false
     },
     nik_lansia: {
         type: DataTypes.BIGINT,
@@ -113,4 +121,5 @@ Lansia.belongsTo(Wali, { as: 'waliDetail', foreignKey: 'wali' });
 Lansia.belongsTo(Pendidikan, { as: 'pendidikan', foreignKey: 'pendidikan_lansia' });
 Lansia.belongsTo(Pekerjaan, { as: 'pekerjaan', foreignKey: 'pekerjaan_lansia' });
 Lansia.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
+Balita.belongsTo(Posyandu, { as: 'posyanduDetail', foreignKey: 'posyandu' });
 module.exports = Lansia;
