@@ -76,49 +76,53 @@ router.post('/', authenticateToken, async(req, res) => {
   }
 });
 
-router.get('/', authenticateToken, async(req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
   const userRole = req.user.role; // Get the role of the authenticated user
-  const {wali} = req.query; // Get the wali parameter from the query string
+  const { wali } = req.query; // Get the wali parameter from the query string
 
   try {
     // Define the base filter condition
     const filterCondition = {
-      where: {},
       include: [
         {
           model: Wali,
-          as: 'waliDetail'
-        }, {
+          as: 'waliDetail',
+          where: {}, // Initialize where condition for Wali
+          required: false // Allow results even if there's no matching Wali
+        },
+        {
           model: Pengguna,
-          as: 'kaderDetail'
-        }, {
+          as: 'kaderDetail',
+          required: false // Allow results even if there's no matching Pengguna
+        },
+        {
           model: Posyandu,
-          as: 'posyanduDetail'
+          as: 'posyanduDetail',
+          required: false // Allow results even if there's no matching Posyandu
         }
       ]
     };
 
     // Apply posyandu filter only if the user is not an admin
     if (userRole !== 'admin') {
-      filterCondition.where.posyandu = posyanduId;
+      filterCondition.include[2].where = { id: posyanduId };
+      filterCondition.include[2].required = true; // Ensure the Posyandu filter is applied
     }
 
     // Optionally filter by wali
     if (wali) {
-      filterCondition.where.wali = wali; // Assuming 'wali' refers to 'waliId'
+      filterCondition.include[0].where.id = wali; // Assuming 'wali' refers to 'waliId'
+      filterCondition.include[0].required = true; // Ensure the Wali filter is applied
     }
 
     const lansias = await Lansia.findAll(filterCondition);
-    res
-      .status(200)
-      .json(lansias);
+    res.status(200).json(lansias);
   } catch (error) {
-    res
-      .status(500)
-      .json({error: error});
+    res.status(500).json({ error: error.message });
   }
 });
+
 
 // Get Lansia statistics
 router.get('/laporan', async(req, res) => {
@@ -153,52 +157,52 @@ router.get('/laporan', async(req, res) => {
 });
 
 // Get a single Lansia record by ID
-router.get('/:id', authenticateToken, async(req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   try {
     const posyanduId = req.user.posyanduId;
     const userRole = req.user.role; // Get the role of the authenticated user
 
-    const includeOptions = {
-      include: [
-        {
-          model: Wali,
-          as: 'waliDetail'
-        }, {
-          model: Pekerjaan,
-          as: 'pekerjaan'
-        }, {
-          model: Pendidikan,
-          as: 'pendidikan'
-        }, {
-          model: Pengguna,
-          as: 'kaderDetail'
-        }, {
-          model: Posyandu,
-          as: 'posyanduDetail'
-        }
-      ]
-    };
+    const includeOptions = [
+      {
+        model: Wali,
+        as: 'waliDetail'
+      },
+      {
+        model: Pekerjaan,
+        as: 'pekerjaan'
+      },
+      {
+        model: Pendidikan,
+        as: 'pendidikan'
+      },
+      {
+        model: Pengguna,
+        as: 'kaderDetail'
+      },
+      {
+        model: Posyandu,
+        as: 'posyanduDetail',
+        required: false // Allow results even if there's no matching Posyandu
+      }
+    ];
 
-    const whereCondition = {};
+    // Apply posyandu filter only if the user is not an admin
     if (userRole !== 'admin') {
-      whereCondition.posyandu = posyanduId;
+      includeOptions[4].where = { id: posyanduId };
+      includeOptions[4].required = true; // Ensure the Posyandu filter is applied
     }
 
-    const lansia = await Lansia.findByPk(req.params.id, {includeOptions, where: whereCondition});
+    const lansia = await Lansia.findByPk(req.params.id, {
+      include: includeOptions
+    });
 
     if (lansia) {
-      res
-        .status(200)
-        .json(lansia);
+      res.status(200).json(lansia);
     } else {
-      res
-        .status(404)
-        .json({error: 'Lansia not found'});
+      res.status(404).json({ error: 'Lansia not found' });
     }
   } catch (error) {
-    res
-      .status(500)
-      .json({error: error});
+    res.status(500).json({ error: error.message });
   }
 });
 

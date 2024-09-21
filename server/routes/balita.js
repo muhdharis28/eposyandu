@@ -52,52 +52,55 @@ router.post('/', authenticateToken, async(req, res) => {
 });
 
 // Get all Balita records, filtered by posyandu
-router.get('/', authenticateToken, async(req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
   const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
   const userRole = req.user.role; // Get the role of the authenticated user
-  const {orangtua} = req.query; // Get the orangtua parameter from the query string
+  const { orangtua } = req.query; // Get the orangtua parameter from the query string
 
   try {
     // Define the base filter condition
     const filterCondition = {
-      where: {},
       include: [
         {
           model: OrangTua,
-          as: 'orangtuaDetail'
-        }, {
+          as: 'orangtuaDetail',
+          where: {}, // Initialize where condition for OrangTua
+          required: false // Allow results even if there's no matching OrangTua
+        },
+        {
           model: Pengguna,
-          as: 'kaderDetail'
-        }, {
+          as: 'kaderDetail',
+          required: false // Allow results even if there's no matching Pengguna
+        },
+        {
           model: Posyandu,
-          as: 'posyanduDetail'
+          as: 'posyanduDetail',
+          required: false // Allow results even if there's no matching Posyandu
         }
       ]
     };
 
     // Apply posyandu filter only if the user is not an admin
     if (userRole !== 'admin') {
-      filterCondition.where.posyandu = posyanduId;
+      filterCondition.include[2].where = { id: posyanduId };
+      filterCondition.include[2].required = true; // Ensure the Posyandu filter is applied
     }
 
     // Optionally filter by orangtua
     if (orangtua) {
-      filterCondition.where.orangtua = orangtua;
+      filterCondition.include[0].where.id = orangtua;
+      filterCondition.include[0].required = true; // Ensure the Wali filter is applied
     }
 
     const balitas = await Balita.findAll(filterCondition);
-    res
-      .status(200)
-      .json(balitas);
+    res.status(200).json(balitas);
   } catch (error) {
-    res
-      .status(500)
-      .json({error: error});
+    res.status(500).json({ error: error.message });
   }
 });
 
 // Get a single Balita record by ID
-router.get('/:id', authenticateToken, async(req, res) => {
+router.get('/:id', authenticateToken, async (req, res) => {
   const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
   const userRole = req.user.role; // Get the role of the authenticated user
 
@@ -107,39 +110,37 @@ router.get('/:id', authenticateToken, async(req, res) => {
       {
         model: OrangTua,
         as: 'orangtuaDetail'
-      }, {
+      },
+      {
         model: Pengguna,
         as: 'kaderDetail'
-      }, {
+      },
+      {
         model: Posyandu,
-        as: 'posyanduDetail'
+        as: 'posyanduDetail',
+        required: false // Allow results even if there's no matching Posyandu
       }
     ];
 
     // Apply posyandu filter only if the user is not an admin
-    const whereCondition = {};
+    const whereCondition = { id: req.params.id }; // Ensure we are filtering by Balita ID
     if (userRole !== 'admin') {
-      whereCondition.posyandu = posyanduId;
+      includeOptions[2].where = { id: posyanduId };
+      includeOptions[2].required = true; // Ensure the Posyandu filter is applied
     }
 
-    const balita = await Balita.findByPk(req.params.id, {
+    const balita = await Balita.findOne({
       where: whereCondition,
       include: includeOptions
     });
 
     if (balita) {
-      res
-        .status(200)
-        .json(balita);
+      res.status(200).json(balita);
     } else {
-      res
-        .status(404)
-        .json({error: 'Balita not found'});
+      res.status(404).json({ error: 'Balita not found' });
     }
   } catch (error) {
-    res
-      .status(500)
-      .json({error: error});
+    res.status(500).json({ error: error.message });
   }
 });
 
