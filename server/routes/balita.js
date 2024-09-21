@@ -92,7 +92,7 @@ router.get('/', authenticateToken, async(req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({error: error.message});
+      .json({error: error});
   }
 });
 
@@ -119,7 +119,7 @@ router.get('/:id', authenticateToken, async(req, res) => {
     // Apply posyandu filter only if the user is not an admin
     const whereCondition = {};
     if (userRole !== 'admin') {
-      whereCondition.posyanduId = posyanduId;
+      whereCondition.posyandu = posyanduId;
     }
 
     const balita = await Balita.findByPk(req.params.id, {
@@ -139,7 +139,7 @@ router.get('/:id', authenticateToken, async(req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({error: error.message});
+      .json({error: error});
   }
 });
 

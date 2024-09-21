@@ -101,12 +101,12 @@ router.get('/', authenticateToken, async(req, res) => {
 
     // Apply posyandu filter only if the user is not an admin
     if (userRole !== 'admin') {
-      filterCondition.where.posyanduId = posyanduId;
+      filterCondition.where.posyandu = posyanduId;
     }
 
     // Optionally filter by wali
     if (wali) {
-      filterCondition.where.waliId = wali; // Assuming 'wali' refers to 'waliId'
+      filterCondition.where.wali = wali; // Assuming 'wali' refers to 'waliId'
     }
 
     const lansias = await Lansia.findAll(filterCondition);
@@ -116,7 +116,7 @@ router.get('/', authenticateToken, async(req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({error: error.message});
+      .json({error: error});
   }
 });
 
@@ -181,7 +181,7 @@ router.get('/:id', authenticateToken, async(req, res) => {
 
     const whereCondition = {};
     if (userRole !== 'admin') {
-      whereCondition.posyanduId = posyanduId;
+      whereCondition.posyandu = posyanduId;
     }
 
     const lansia = await Lansia.findByPk(req.params.id, {includeOptions, where: whereCondition});
@@ -198,7 +198,7 @@ router.get('/:id', authenticateToken, async(req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({error: error.message});
+      .json({error: error});
   }
 });
 
