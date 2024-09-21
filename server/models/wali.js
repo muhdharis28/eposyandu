@@ -49,6 +49,7 @@ Wali.init({
     },
     alamat_domisili_wali: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
     kelurahan_domisili_wali: {
         type: DataTypes.STRING,
@@ -61,6 +62,7 @@ Wali.init({
     },
     provinsi_domisili_wali: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
     no_hp_wali: {
         type: DataTypes.STRING

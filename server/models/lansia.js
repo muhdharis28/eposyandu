@@ -50,6 +50,7 @@ Lansia.init({
     },
     alamat_ktp_lansia: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
     kelurahan_ktp_lansia: {
         type: DataTypes.STRING,
@@ -65,6 +66,7 @@ Lansia.init({
     },
     alamat_domisili_lansia: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
     kelurahan_domisili_lansia: {
         type: DataTypes.STRING,

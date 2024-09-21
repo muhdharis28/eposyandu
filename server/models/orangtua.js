@@ -97,6 +97,7 @@ OrangTua.init({
     },
     alamat_ktp_ayah: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
     kelurahan_ktp_ayah: {
         type: DataTypes.STRING,
@@ -112,6 +113,7 @@ OrangTua.init({
     },
     alamat_domisili_ayah: {
         type: DataTypes.STRING,
+        allowNull: false,
     },
     kelurahan_domisili_ayah: {
         type: DataTypes.STRING,
