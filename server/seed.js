@@ -1,6 +1,7 @@
 // seed.js
 const bcrypt = require('bcrypt');
 const User = require('./models/pengguna'); // Adjust the path to your Pengguna model
+const Posyandu = require('./models/posyandu'); // Import the Posyandu model
 const sequelize = require('./db.config');  // Adjust the path to your Sequelize configuration file
 
 async function seedAdminUser() {
@@ -8,7 +9,7 @@ async function seedAdminUser() {
     const email = 'admin@example.com';
     const password = '123456'; // Replace with your desired password
     const role = 'admin';
-
+    
     try {
         // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -21,7 +22,15 @@ async function seedAdminUser() {
             return;
         }
 
-        // Create the admin user
+        // Create or find the Posyandu
+        const posyandu = await Posyandu.findOrCreate({
+            where: { nama: 'Posyandu Example' }, // Replace with the actual Posyandu name
+            defaults: {
+                alamat: 'Jalan Posyandu No. 1' // Replace with the actual address
+            }
+        });
+
+        // Create the admin user associated with Posyandu
         await User.create({
             nama,
             email,
@@ -33,6 +42,7 @@ async function seedAdminUser() {
             foto_kk: null, // Set this to a valid file path if necessary
             orangtua: null, // Link to OrangTua if necessary
             wali: null, // Link to Wali if necessary
+            posyanduId: posyandu[0].id, // Associate the user with the Posyandu
             createdAt: new Date(),
             updatedAt: new Date(),
         });

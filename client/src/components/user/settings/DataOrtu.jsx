@@ -1,8 +1,10 @@
 // DataOrtu.js
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios'; // Make sure to import axios
+import {getPenggunaById, updatePenggunaOrtu} from '../../PenggunaService';
 
 const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
-
+    const userId = localStorage.getItem('userId');
   const [orangTuaDetails,
     setOrangTuaDetails] = useState({
     id: '',
@@ -47,8 +49,56 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
     pendidikan_ayah: ''
   });
 
+  const [selectedProvince, setSelectedProvince] = useState('');
+  const [selectedRegency, setSelectedRegency] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
+  const [selectedVillage, setSelectedVillage] = useState('');
+
+  const handleProvinceChange = (e) => {
+    setSelectedProvince(e.target.value);
+    setSelectedRegency('');
+    setSelectedDistrict('');
+    setSelectedVillage('');
+  };
+
+  const handleRegencyChange = (e) => {
+    setSelectedRegency(e.target.value);
+    setSelectedDistrict('');
+    setSelectedVillage('');
+  };
+
+  const handleDistrictChange = (e) => {
+    setSelectedDistrict(e.target.value);
+    setSelectedVillage('');
+  };
+
+  const handleVillageChange = (e) => {
+    setSelectedVillage(e.target.value);
+  };
+
+  const getRegencies = () => {
+    if (!selectedProvince) return [];
+    const province = indonesia.find(p => p.id === selectedProvince);
+    return province ? province.regencies : [];
+  };
+
+  const getDistricts = () => {
+    if (!selectedRegency) return [];
+    const regency = getRegencies().find(r => r.id === selectedRegency);
+    return regency ? regency.districts : [];
+  };
+
+  const getVillages = () => {
+    if (!selectedDistrict) return [];
+    const district = getDistricts().find(d => d.id === selectedDistrict);
+    return district ? district.villages : [];
+  };
+
   const [errors,
     setErrors] = useState({});
+
+    const [isLoading,
+        setIsLoading] = useState(true);
 
   const validateForm = () => {
     let formErrors = {};
@@ -77,12 +127,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
       formErrors.tanggal_lahir_ibu = 'Tanggal Lahir Ibu is required';
     }
 
-    if (!orangTuaDetails.email_ibu) {
-      formErrors.email_ibu = 'Email Ibu is required';
-    } else if (!/\S+@\S+\.\S+/.test(orangTuaDetails.email_ibu)) {
-      formErrors.email_ibu = 'Email Ibu is invalid';
-    }
-
     if (!orangTuaDetails.no_hp_ibu) {
       formErrors.no_hp_ibu = 'No HP Ibu is required';
     } else if (!/^\d+$/.test(orangTuaDetails.no_hp_ibu)) {
@@ -93,48 +137,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
       formErrors.alamat_ktp_ibu = 'Alamat KTP Ibu is required';
     }
 
-    if (!orangTuaDetails.kelurahan_ktp_ibu) {
-      formErrors.kelurahan_ktp_ibu = 'Kelurahan KTP Ibu is required';
-    }
-
-    if (!orangTuaDetails.kecamatan_ktp_ibu) {
-      formErrors.kecamatan_ktp_ibu = 'Kecamatan KTP Ibu is required';
-    }
-
-    if (!orangTuaDetails.kota_ktp_ibu) {
-      formErrors.kota_ktp_ibu = 'Kota KTP Ibu is required';
-    }
-
-    if (!orangTuaDetails.provinsi_ktp_ibu) {
-      formErrors.provinsi_ktp_ibu = 'Provinsi KTP Ibu is required';
-    }
-
     if (!orangTuaDetails.alamat_domisili_ibu) {
       formErrors.alamat_domisili_ibu = 'Alamat Domisili Ibu is required';
-    }
-
-    if (!orangTuaDetails.kelurahan_domisili_ibu) {
-      formErrors.kelurahan_domisili_ibu = 'Kelurahan Domisili Ibu is required';
-    }
-
-    if (!orangTuaDetails.kecamatan_domisili_ibu) {
-      formErrors.kecamatan_domisili_ibu = 'Kecamatan Domisili Ibu is required';
-    }
-
-    if (!orangTuaDetails.kota_domisili_ibu) {
-      formErrors.kota_domisili_ibu = 'Kota Domisili Ibu is required';
-    }
-
-    if (!orangTuaDetails.provinsi_domisili_ibu) {
-      formErrors.provinsi_domisili_ibu = 'Provinsi Domisili Ibu is required';
-    }
-
-    if (!orangTuaDetails.pekerjaan_ibu) {
-      formErrors.pekerjaan_ibu = 'Pekerjaan Ibu is required';
-    }
-
-    if (!orangTuaDetails.pendidikan_ibu) {
-      formErrors.pendidikan_ibu = 'Pendidikan Ibu is required';
     }
 
     // ------------------
@@ -157,12 +161,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
       formErrors.tanggal_lahir_ayah = 'Tanggal Lahir Ayah is required';
     }
 
-    if (!orangTuaDetails.email_ayah) {
-      formErrors.email_ayah = 'Email Ayah is required';
-    } else if (!/\S+@\S+\.\S+/.test(orangTuaDetails.email_ayah)) {
-      formErrors.email_ayah = 'Email Ayah is invalid';
-    }
-
     if (!orangTuaDetails.no_hp_ayah) {
       formErrors.no_hp_ayah = 'No HP Ayah is required';
     } else if (!/^\d+$/.test(orangTuaDetails.no_hp_ayah)) {
@@ -173,48 +171,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
       formErrors.alamat_ktp_ayah = 'Alamat KTP Ayah is required';
     }
 
-    if (!orangTuaDetails.kelurahan_ktp_ayah) {
-      formErrors.kelurahan_ktp_ayah = 'Kelurahan KTP Ayah is required';
-    }
-
-    if (!orangTuaDetails.kecamatan_ktp_ayah) {
-      formErrors.kecamatan_ktp_ayah = 'Kecamatan KTP Ayah is required';
-    }
-
-    if (!orangTuaDetails.kota_ktp_ayah) {
-      formErrors.kota_ktp_ayah = 'Kota KTP Ayah is required';
-    }
-
-    if (!orangTuaDetails.provinsi_ktp_ayah) {
-      formErrors.provinsi_ktp_ayah = 'Provinsi KTP Ayah is required';
-    }
-
     if (!orangTuaDetails.alamat_domisili_ayah) {
       formErrors.alamat_domisili_ayah = 'Alamat Domisili Ayah is required';
-    }
-
-    if (!orangTuaDetails.kelurahan_domisili_ayah) {
-      formErrors.kelurahan_domisili_ayah = 'Kelurahan Domisili Ayah is required';
-    }
-
-    if (!orangTuaDetails.kecamatan_domisili_ayah) {
-      formErrors.kecamatan_domisili_ayah = 'Kecamatan Domisili Ayah is required';
-    }
-
-    if (!orangTuaDetails.kota_domisili_ayah) {
-      formErrors.kota_domisili_ayah = 'Kota Domisili Ayah is required';
-    }
-
-    if (!orangTuaDetails.provinsi_domisili_ayah) {
-      formErrors.provinsi_domisili_ayah = 'Provinsi Domisili Ayah is required';
-    }
-
-    if (!orangTuaDetails.pekerjaan_ayah) {
-      formErrors.pekerjaan_ayah = 'Pekerjaan Ayah is required';
-    }
-
-    if (!orangTuaDetails.pendidikan_ayah) {
-      formErrors.pendidikan_ayah = 'Pendidikan Ayah is required';
     }
 
     setErrors(formErrors);
@@ -478,6 +436,86 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
       .catch((error) => console.error('Error fetching villages dom:', error));
   };
 
+  useEffect(() => {
+    const fetchOrtu = async() => {
+      try {
+        const response = await getPenggunaById(userId);
+
+        if (response.data.orangTuaDetail) {
+          setOrangTuaDetails({
+            id: response.data.orangTuaDetail.id || '',
+            no_kk: response.data.orangTuaDetail.no_kk || '',
+            nik_ibu: response.data.orangTuaDetail.nik_ibu || '',
+            nama_ibu: response.data.orangTuaDetail.nama_ibu || '',
+            tempat_lahir_ibu: response.data.orangTuaDetail.tempat_lahir_ibu || '',
+            tanggal_lahir_ibu: response.data.orangTuaDetail.tanggal_lahir_ibu || '',
+            jenis_kelamin_ibu: response.data.orangTuaDetail.jenis_kelamin_ibu || '',
+            alamat_ktp_ibu: response.data.orangTuaDetail.alamat_ktp_ibu || '',
+            kelurahan_ktp_ibu: response.data.orangTuaDetail.kelurahan_ktp_ibu || '',
+            kecamatan_ktp_ibu: response.data.orangTuaDetail.kecamatan_ktp_ibu || '',
+            kota_ktp_ibu: response.data.orangTuaDetail.kota_ktp_ibu || '',
+            provinsi_ktp_ibu: response.data.orangTuaDetail.provinsi_ktp_ibu || '',
+            alamat_domisili_ibu: response.data.orangTuaDetail.alamat_domisili_ibu || '',
+            kelurahan_domisili_ibu: response.data.orangTuaDetail.kelurahan_domisili_ibu || '',
+            kecamatan_domisili_ibu: response.data.orangTuaDetail.kecamatan_domisili_ibu || '',
+            kota_domisili_ibu: response.data.orangTuaDetail.kota_domisili_ibu || '',
+            provinsi_domisili_ibu: response.data.orangTuaDetail.provinsi_domisili_ibu || '',
+            no_hp_ibu: response.data.orangTuaDetail.no_hp_ibu || '',
+            email_ibu: response.data.orangTuaDetail.email_ibu || '',
+            pekerjaan_ibu: response.data.orangTuaDetail.pekerjaan_ibu || '',
+            pendidikan_ibu: response.data.orangTuaDetail.pendidikan_ibu || '',
+            nik_ayah: response.data.orangTuaDetail.nik_ayah || '',
+            nama_ayah: response.data.orangTuaDetail.nama_ayah || '',
+            tempat_lahir_ayah: response.data.orangTuaDetail.tempat_lahir_ayah || '',
+            tanggal_lahir_ayah: response.data.orangTuaDetail.tanggal_lahir_ayah || '',
+            jenis_kelamin_ayah: response.data.orangTuaDetail.jenis_kelamin_ayah || '',
+            alamat_ktp_ayah: response.data.orangTuaDetail.alamat_ktp_ayah || '',
+            kelurahan_ktp_ayah: response.data.orangTuaDetail.kelurahan_ktp_ayah || '',
+            kecamatan_ktp_ayah: response.data.orangTuaDetail.kecamatan_ktp_ayah || '',
+            kota_ktp_ayah: response.data.orangTuaDetail.kota_ktp_ayah || '',
+            provinsi_ktp_ayah: response.data.orangTuaDetail.provinsi_ktp_ayah || '',
+            alamat_domisili_ayah: response.data.orangTuaDetail.alamat_domisili_ayah || '',
+            kelurahan_domisili_ayah: response.data.orangTuaDetail.kelurahan_domisili_ayah || '',
+            kecamatan_domisili_ayah: response.data.orangTuaDetail.kecamatan_domisili_ayah || '',
+            kota_domisili_ayah: response.data.orangTuaDetail.kota_domisili_ayah || '',
+            provinsi_domisili_ayah: response.data.orangTuaDetail.provinsi_domisili_ayah || '',
+            no_hp_ayah: response.data.orangTuaDetail.no_hp_ayah || '',
+            email_ayah: response.data.orangTuaDetail.email_ayah || '',
+            pekerjaan_ayah: response.data.orangTuaDetail.pekerjaan_ayah || '',
+            pendidikan_ayah: response.data.orangTuaDetail.pendidikan_ayah || ''
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching ortu:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchOrtu();
+  }, [userId]);
+
+  const handleUpdateOrangtua = async(id) => {
+    console.log(orangTuaDetails)
+    if (!validateForm()) {
+      return; // If validation fails, stop execution
+    }
+    try {
+      if(id){
+        await updateOrangTua(id, orangTuaDetails);  
+      } else {
+        
+        const orangtua = await createOrangTua(orangTuaDetails);
+        console.log('createeee', orangtua)
+        await updatePenggunaOrtu(userId, {orangtua: orangtua.data.id});
+      }
+      
+      alert('Orangtua details updated successfully.');
+    } catch (error) {
+      alert('Error updating user details.');
+    }
+  };
+
   return (
     <div>
       <h3 className="text-xl font-bold text-gray-700 mt-5 mb-3">Data Ibu</h3>
@@ -578,7 +616,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.provinsi_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.provinsi_ktp_ibu}</p>}
+          
         </div>
         <div>
           <label className="block text-sm font-semibold">Kota KTP Ibu</label>
@@ -595,7 +633,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.kota_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.kota_ktp_ibu}</p>}
+          
         </div>
       </div>
       <div
@@ -615,7 +653,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.kecamatan_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_ktp_ibu}</p>}
+          
         </div>
         <div>
           <label className="block text-sm font-semibold">Kelurahan KTP Ibu</label>
@@ -635,7 +673,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.kelurahan_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_ktp_ibu}</p>}
+          
         </div>
       </div>
       <div
@@ -651,6 +689,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             alamat_domisili_ibu: e.target.value
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/>
+            {errors.alamat_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_domisili_ibu}</p>}
         </div>
         <div>
           <label className="block text-sm font-semibold">Provinsi Domisili Ibu</label>
@@ -666,7 +705,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.provinsi_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.provinsi_domisili_ibu}</p>}
         </div>
       </div>
       <div
@@ -686,7 +724,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.kota_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.kota_domisili_ibu}</p>}
         </div>
         <div>
           <label className="block text-sm font-semibold">Kecamatan Domisili Ibu</label>
@@ -703,7 +740,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.kecamatan_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_domisili_ibu}</p>}
         </div>
       </div>
       <div
@@ -726,7 +762,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.kelurahan_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_domisili_ibu}</p>}
         </div>
         <div>
           <label className="block text-sm font-semibold">No Handphone Ibu</label>
@@ -753,7 +788,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ...orangTuaDetails,
             email_ibu: e.target.value
           })}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.email_ibu && <p className="text-red-500 text-sm mt-1">{errors.email_ibu}</p>}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"/>
         </div>
         <div>
           <label className="block text-gray-700">Pekerjaan Ibu</label>
@@ -772,7 +807,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.pekerjaan_ibu && <p className="text-red-500 text-sm mt-1">{errors.pekerjaan_ibu}</p>}
+          
         </div>
       </div>
       <div
@@ -794,7 +829,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          {errors.pendidikan_ibu && <p className="text-red-500 text-sm mt-1">{errors.pendidikan_ibu}</p>}
+          
         </div>
       </div>
 
@@ -885,7 +920,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.provinsi_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.provinsi_ktp_ayah}</p>}
+            
           </div>
         </div>
         <div
@@ -905,7 +940,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.kota_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.kota_ktp_ayah}</p>}
+            
           </div>
           <div>
             <label className="block text-sm font-semibold">Kecamatan KTP Ayah</label>
@@ -922,7 +957,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.kecamatan_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_ktp_ayah}</p>}
+            
           </div>
         </div>
         <div
@@ -945,7 +980,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.kelurahan_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_ktp_ayah}</p>}
+            
           </div>
           <div>
             <label className="block text-sm font-semibold">Alamat Domisili Ayah</label>
@@ -976,7 +1011,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.provinsi_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.provinsi_domisili_ayah}</p>}
+            
           </div>
           <div>
             <label className="block text-sm font-semibold">Kota Domisili Ayah</label>
@@ -993,7 +1028,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.kota_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.kota_domisili_ayah}</p>}
+            
           </div>
         </div>
         <div
@@ -1013,7 +1048,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.kecamatan_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.kecamatan_domisili_ayah}</p>}
+            
           </div>
           <div>
             <label className="block text-sm font-semibold">Kelurahan Domisili Ayah</label>
@@ -1033,7 +1068,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.kelurahan_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.kelurahan_domisili_ayah}</p>}
+            
           </div>
         </div>
         <div
@@ -1060,7 +1095,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               ...orangTuaDetails,
               email_ayah: e.target.value
             })}
-              className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.email_ayah && <p className="text-red-500 text-sm mt-1">{errors.email_ayah}</p>}
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> 
           </div>
         </div>
         <div
@@ -1082,7 +1117,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.pekerjaan_ayah && <p className="text-red-500 text-sm mt-1">{errors.pekerjaan_ayah}</p>}
+            
           </div>
           <div>
             <label className="block text-sm font-semibold">Pendidikan Ayah</label>
@@ -1101,7 +1136,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
                 </option>
               ))}
             </select>
-            {errors.pendidikan_ayah && <p className="text-red-500 text-sm mt-1">{errors.pendidikan_ayah}</p>}
+            
           </div>
         </div>
       </div>
