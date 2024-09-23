@@ -42,7 +42,7 @@ async function seedAdminUser() {
             foto_kk: null, // Set this to a valid file path if necessary
             orangtua: null, // Link to OrangTua if necessary
             wali: null, // Link to Wali if necessary
-            posyanduId: posyandu[0].id, // Associate the user with the Posyandu
+            posyandu: posyandu[0].id, // Associate the user with the Posyandu
             createdAt: new Date(),
             updatedAt: new Date(),
         });
