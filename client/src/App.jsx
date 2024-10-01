@@ -84,6 +84,7 @@ import WaliCardKader from './components/kader/wali/WaliCardKader';
 import WaliDetailKader from './components/kader/wali/WaliDetailKader';
 import WaliKaderForm from './components/kader/wali/WaliKaderForm';
 import SettingsKader from './components/kader/settings/SettingsKader';
+import PrivacyPolicy from './components/homepage/PrivacyPolicy';
 
 const App = () => (
   <SidebarProvider>
@@ -92,6 +93,7 @@ const App = () => (
         <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/*" element={<RegistrationFlow />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute role="admin" />}>

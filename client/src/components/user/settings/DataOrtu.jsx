@@ -49,49 +49,51 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
     pendidikan_ayah: ''
   });
 
-  const [selectedProvince, setSelectedProvince] = useState('');
-  const [selectedRegency, setSelectedRegency] = useState('');
-  const [selectedDistrict, setSelectedDistrict] = useState('');
-  const [selectedVillage, setSelectedVillage] = useState('');
+  const [sameAsKtpIbu, setSameAsKtpIbu] = useState(false);
+  const [sameAsKtpAyah, setSameAsKtpAyah] = useState(false);
 
-  const handleProvinceChange = (e) => {
-    setSelectedProvince(e.target.value);
-    setSelectedRegency('');
-    setSelectedDistrict('');
-    setSelectedVillage('');
-  };
+  const handleCheckboxChangeIbu = (e) => {
+    setSameAsKtpIbu(e.target.checked);
+    if (e.target.checked) {
+      setOrangTuaDetails((prevState) => {
+        // Trigger the change handlers after setting the state
+        // handleProvinsiIbuChangeDom({ target: { value: prevState.provinsi_ktp_ibu } });
+        // handleRegencyIbuChangeDom({ target: { value: prevState.kota_ktp_ibu } });
+        // handleDistrictIbuChangeDom({ target: { value: prevState.kecamatan_ktp_ibu } });
 
-  const handleRegencyChange = (e) => {
-    setSelectedRegency(e.target.value);
-    setSelectedDistrict('');
-    setSelectedVillage('');
-  };
+        return {
+            ...prevState,
+            provinsi_domisili_ibu: prevState.provinsi_ktp_ibu,
+            kota_domisili_ibu: prevState.kota_ktp_ibu,
+            kecamatan_domisili_ibu: prevState.kecamatan_ktp_ibu,
+            kelurahan_domisili_ibu: prevState.kelurahan_ktp_ibu,
+            alamat_domisili_ibu: prevState.alamat_ktp_ibu,
+        };
+    });
+    } else {
+        setOrangTuaDetails((prevState) => ({
+            ...prevState,
+            provinsi_domisili_ibu: '',
+            kota_domisili_ibu: '',
+            kecamatan_domisili_ibu: '',
+            kelurahan_domisili_ibu: '',
+            alamat_domisili_ibu: '',
+        }));
+    }
+};
 
-  const handleDistrictChange = (e) => {
-    setSelectedDistrict(e.target.value);
-    setSelectedVillage('');
-  };
-
-  const handleVillageChange = (e) => {
-    setSelectedVillage(e.target.value);
-  };
-
-  const getRegencies = () => {
-    if (!selectedProvince) return [];
-    const province = indonesia.find(p => p.id === selectedProvince);
-    return province ? province.regencies : [];
-  };
-
-  const getDistricts = () => {
-    if (!selectedRegency) return [];
-    const regency = getRegencies().find(r => r.id === selectedRegency);
-    return regency ? regency.districts : [];
-  };
-
-  const getVillages = () => {
-    if (!selectedDistrict) return [];
-    const district = getDistricts().find(d => d.id === selectedDistrict);
-    return district ? district.villages : [];
+  const handleCheckboxChangeAyah = (e) => {
+    setSameAsKtpAyah(e.target.checked);
+    if (e.target.checked) {
+      setOrangTuaDetails((prevState) => ({
+        ...prevState,
+        alamat_domisili_ayah: prevState.alamat_ktp_ayah,
+        kelurahan_domisili_ayah: prevState.kelurahan_ktp_ayah,
+        kecamatan_domisili_ayah: prevState.kecamatan_ktp_ayah,
+        kota_domisili_ayah: prevState.kota_ktp_ayah,
+        provinsi_domisili_ayah: prevState.provinsi_ktp_ayah
+      }));
+    }
   };
 
   const [errors,
@@ -214,21 +216,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
     setDistrictsAyahDom] = useState([]);
   const [villagesAyahDom,
     setVillagesAyahDom] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi`)
-      .then(response => {
-        setProvinsiIbu(response.data);
-        setProvinsiIbuDom(response.data);
-        setProvinsiAyah(response.data);
-        setProvinsiAyahDom(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching provinces:', error);
-      });
-
-  }, []);
 
   const handleProvinsiIbuChange = (e) => {
     const selectedProvinsiId = e.target.value;
@@ -437,53 +424,129 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
   };
 
   useEffect(() => {
-    const fetchOrtu = async() => {
+    const fetchOrtu = async () => {
       try {
         const response = await getPenggunaById(userId);
-
         if (response.data.orangTuaDetail) {
+          const ortu = response.data.orangTuaDetail;
+  
+          // Set the parent details in the state
           setOrangTuaDetails({
-            id: response.data.orangTuaDetail.id || '',
-            no_kk: response.data.orangTuaDetail.no_kk || '',
-            nik_ibu: response.data.orangTuaDetail.nik_ibu || '',
-            nama_ibu: response.data.orangTuaDetail.nama_ibu || '',
-            tempat_lahir_ibu: response.data.orangTuaDetail.tempat_lahir_ibu || '',
-            tanggal_lahir_ibu: response.data.orangTuaDetail.tanggal_lahir_ibu || '',
-            jenis_kelamin_ibu: response.data.orangTuaDetail.jenis_kelamin_ibu || '',
-            alamat_ktp_ibu: response.data.orangTuaDetail.alamat_ktp_ibu || '',
-            kelurahan_ktp_ibu: response.data.orangTuaDetail.kelurahan_ktp_ibu || '',
-            kecamatan_ktp_ibu: response.data.orangTuaDetail.kecamatan_ktp_ibu || '',
-            kota_ktp_ibu: response.data.orangTuaDetail.kota_ktp_ibu || '',
-            provinsi_ktp_ibu: response.data.orangTuaDetail.provinsi_ktp_ibu || '',
-            alamat_domisili_ibu: response.data.orangTuaDetail.alamat_domisili_ibu || '',
-            kelurahan_domisili_ibu: response.data.orangTuaDetail.kelurahan_domisili_ibu || '',
-            kecamatan_domisili_ibu: response.data.orangTuaDetail.kecamatan_domisili_ibu || '',
-            kota_domisili_ibu: response.data.orangTuaDetail.kota_domisili_ibu || '',
-            provinsi_domisili_ibu: response.data.orangTuaDetail.provinsi_domisili_ibu || '',
-            no_hp_ibu: response.data.orangTuaDetail.no_hp_ibu || '',
-            email_ibu: response.data.orangTuaDetail.email_ibu || '',
-            pekerjaan_ibu: response.data.orangTuaDetail.pekerjaan_ibu || '',
-            pendidikan_ibu: response.data.orangTuaDetail.pendidikan_ibu || '',
-            nik_ayah: response.data.orangTuaDetail.nik_ayah || '',
-            nama_ayah: response.data.orangTuaDetail.nama_ayah || '',
-            tempat_lahir_ayah: response.data.orangTuaDetail.tempat_lahir_ayah || '',
-            tanggal_lahir_ayah: response.data.orangTuaDetail.tanggal_lahir_ayah || '',
-            jenis_kelamin_ayah: response.data.orangTuaDetail.jenis_kelamin_ayah || '',
-            alamat_ktp_ayah: response.data.orangTuaDetail.alamat_ktp_ayah || '',
-            kelurahan_ktp_ayah: response.data.orangTuaDetail.kelurahan_ktp_ayah || '',
-            kecamatan_ktp_ayah: response.data.orangTuaDetail.kecamatan_ktp_ayah || '',
-            kota_ktp_ayah: response.data.orangTuaDetail.kota_ktp_ayah || '',
-            provinsi_ktp_ayah: response.data.orangTuaDetail.provinsi_ktp_ayah || '',
-            alamat_domisili_ayah: response.data.orangTuaDetail.alamat_domisili_ayah || '',
-            kelurahan_domisili_ayah: response.data.orangTuaDetail.kelurahan_domisili_ayah || '',
-            kecamatan_domisili_ayah: response.data.orangTuaDetail.kecamatan_domisili_ayah || '',
-            kota_domisili_ayah: response.data.orangTuaDetail.kota_domisili_ayah || '',
-            provinsi_domisili_ayah: response.data.orangTuaDetail.provinsi_domisili_ayah || '',
-            no_hp_ayah: response.data.orangTuaDetail.no_hp_ayah || '',
-            email_ayah: response.data.orangTuaDetail.email_ayah || '',
-            pekerjaan_ayah: response.data.orangTuaDetail.pekerjaan_ayah || '',
-            pendidikan_ayah: response.data.orangTuaDetail.pendidikan_ayah || ''
+            id: ortu.id || '',
+            no_kk: ortu.no_kk || '',
+            nik_ibu: ortu.nik_ibu || '',
+            nama_ibu: ortu.nama_ibu || '',
+            tempat_lahir_ibu: ortu.tempat_lahir_ibu || '',
+            tanggal_lahir_ibu: ortu.tanggal_lahir_ibu || '',
+            jenis_kelamin_ibu: ortu.jenis_kelamin_ibu || '',
+            alamat_ktp_ibu: ortu.alamat_ktp_ibu || '',
+            kelurahan_ktp_ibu: ortu.kelurahan_ktp_ibu || '',
+            kecamatan_ktp_ibu: ortu.kecamatan_ktp_ibu || '',
+            kota_ktp_ibu: ortu.kota_ktp_ibu || '',
+            provinsi_ktp_ibu: ortu.provinsi_ktp_ibu || '',
+            alamat_domisili_ibu: ortu.alamat_domisili_ibu || '',
+            kelurahan_domisili_ibu: ortu.kelurahan_domisili_ibu || '',
+            kecamatan_domisili_ibu: ortu.kecamatan_domisili_ibu || '',
+            kota_domisili_ibu: ortu.kota_domisili_ibu || '',
+            provinsi_domisili_ibu: ortu.provinsi_domisili_ibu || '',
+            no_hp_ibu: ortu.no_hp_ibu || '',
+            email_ibu: ortu.email_ibu || '',
+            pekerjaan_ibu: ortu.pekerjaan_ibu || '',
+            pendidikan_ibu: ortu.pendidikan_ibu || '',
+            nik_ayah: ortu.nik_ayah || '',
+            nama_ayah: ortu.nama_ayah || '',
+            tempat_lahir_ayah: ortu.tempat_lahir_ayah || '',
+            tanggal_lahir_ayah: ortu.tanggal_lahir_ayah || '',
+            jenis_kelamin_ayah: ortu.jenis_kelamin_ayah || '',
+            alamat_ktp_ayah: ortu.alamat_ktp_ayah || '',
+            kelurahan_ktp_ayah: ortu.kelurahan_ktp_ayah || '',
+            kecamatan_ktp_ayah: ortu.kecamatan_ktp_ayah || '',
+            kota_ktp_ayah: ortu.kota_ktp_ayah || '',
+            provinsi_ktp_ayah: ortu.provinsi_ktp_ayah || '',
+            alamat_domisili_ayah: ortu.alamat_domisili_ayah || '',
+            kelurahan_domisili_ayah: ortu.kelurahan_domisili_ayah || '',
+            kecamatan_domisili_ayah: ortu.kecamatan_domisili_ayah || '',
+            kota_domisili_ayah: ortu.kota_domisili_ayah || '',
+            provinsi_domisili_ayah: ortu.provinsi_domisili_ayah || '',
+            no_hp_ayah: ortu.no_hp_ayah || '',
+            email_ayah: ortu.email_ayah || '',
+            pekerjaan_ayah: ortu.pekerjaan_ayah || '',
+            pendidikan_ayah: ortu.pendidikan_ayah || '',
           });
+  
+          // Fetch regencies, districts, and villages based on the saved IDs
+          axios
+            .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi`)
+            .then(response => {
+              setProvinsiIbu(response.data);
+              setProvinsiIbuDom(response.data);
+              setProvinsiAyah(response.data);
+              setProvinsiAyahDom(response.data);
+            })
+            .catch(error => {
+              console.error('Error fetching provinces:', error);
+            });
+
+          if (ortu.provinsi_ktp_ibu) {
+            const regencyResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${ortu.provinsi_ktp_ibu}/regencies`);
+            setRegenciesIbu(regencyResponse.data);
+  
+            if (ortu.kota_ktp_ibu) {
+              const districtResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${ortu.kota_ktp_ibu}/districts`);
+              setDistrictsIbu(districtResponse.data);
+  
+              if (ortu.kecamatan_ktp_ibu) {
+                const villageResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${ortu.kecamatan_ktp_ibu}/villages`);
+                setVillagesIbu(villageResponse.data);
+              }
+            }
+          }
+  
+          if (ortu.provinsi_domisili_ibu) {
+            const regencyDomResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${ortu.provinsi_domisili_ibu}/regencies`);
+            setRegenciesIbuDom(regencyDomResponse.data);
+  
+            if (ortu.kota_domisili_ibu) {
+              const districtDomResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${ortu.kota_domisili_ibu}/districts`);
+              setDistrictsIbuDom(districtDomResponse.data);
+  
+              if (ortu.kecamatan_domisili_ibu) {
+                const villageDomResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${ortu.kecamatan_domisili_ibu}/villages`);
+                setVillagesIbuDom(villageDomResponse.data);
+              }
+            }
+          }
+  
+          // Repeat the same for Ayah data if needed
+          if (ortu.provinsi_ktp_ayah) {
+            const regencyResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${ortu.provinsi_ktp_ayah}/regencies`);
+            setRegenciesAyah(regencyResponse.data);
+  
+            if (ortu.kota_ktp_ayah) {
+              const districtResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${ortu.kota_ktp_ayah}/districts`);
+              setDistrictsAyah(districtResponse.data);
+  
+              if (ortu.kecamatan_ktp_ayah) {
+                const villageResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${ortu.kecamatan_ktp_ayah}/villages`);
+                setVillagesAyah(villageResponse.data);
+              }
+            }
+          }
+  
+          if (ortu.provinsi_domisili_ayah) {
+            const regencyDomResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${ortu.provinsi_domisili_ayah}/regencies`);
+            setRegenciesAyahDom(regencyDomResponse.data);
+  
+            if (ortu.kota_domisili_ayah) {
+              const districtDomResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${ortu.kota_domisili_ayah}/districts`);
+              setDistrictsAyahDom(districtDomResponse.data);
+  
+              if (ortu.kecamatan_domisili_ayah) {
+                const villageDomResponse = await axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${ortu.kecamatan_domisili_ayah}/villages`);
+                setVillagesAyahDom(villageDomResponse.data);
+              }
+            }
+          }
         }
       } catch (error) {
         console.error('Error fetching ortu:', error);
@@ -491,7 +554,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
         setIsLoading(false);
       }
     };
-
+  
     fetchOrtu();
   }, [userId]);
 
@@ -518,11 +581,15 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
 
   return (
     <div>
-      <h3 className="text-xl font-bold text-gray-700 mt-5 mb-3">Data Ibu</h3>
+      <div className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+        <p className="text-sm font-bold">
+          <span className="text-red-500">*</span> Wajib diisi
+        </p>
+      </div>
       <div
         className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">No KK</label>
+          <label className="block text-sm font-semibold">No KK <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="no_kk"
@@ -533,8 +600,12 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.no_kk && <p className="text-red-500 text-sm mt-1">{errors.no_kk}</p>}
         </div>
+      </div>
+      <h3 className="text-xl font-bold text-gray-700 mt-5 mb-3">Data Ibu</h3>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">NIK Ibu</label>
+          <label className="block text-sm font-semibold">NIK Ibu <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="nik_ibu"
@@ -545,11 +616,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nik_ibu && <p className="text-red-500 text-sm mt-1">{errors.nik_ibu}</p>}
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">Nama Ibu</label>
+          <label className="block text-sm font-semibold">Nama Ibu <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="nama_ibu"
@@ -560,8 +628,11 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nama_ibu && <p className="text-red-500 text-sm mt-1">{errors.nama_ibu}</p>}
         </div>
+      </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">Tempat Lahir Ibu</label>
+          <label className="block text-sm font-semibold">Tempat Lahir Ibu <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="tempat_lahir_ibu"
@@ -572,11 +643,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tempat_lahir_ibu && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir_ibu}</p>}
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">Tanggal Lahir Ibu</label>
+          <label className="block text-sm font-semibold">Tanggal Lahir Ibu <span className="text-red-500">*</span></label>
           <input
             type="date"
             name="tanggal_lahir_ibu"
@@ -587,28 +655,31 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tanggal_lahir_ibu && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir_ibu}</p>}
         </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">Alamat KTP Ibu</label>
-          <input
-            type="text"
+          <label className="block text-sm font-semibold">
+            Alamat KTP Ibu <span className="text-red-500">*</span>
+          </label>
+          <textarea
             name="alamat_ktp_ibu"
             value={orangTuaDetails.alamat_ktp_ibu}
             onChange={(e) => setOrangTuaDetails({
-            ...orangTuaDetails,
-            alamat_ktp_ibu: e.target.value
-          })}
-            className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.alamat_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_ktp_ibu}</p>}
+              ...orangTuaDetails,
+              alamat_ktp_ibu: e.target.value
+            })}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            rows="4"
+          />
+          {errors.alamat_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_ktp_ibu}</p>}
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Provinsi KTP Ibu</label>
           <select
             name="provinsi_ktp_ibu"
             value={orangTuaDetails.provinsi_ktp_ibu}
             onChange={handleProvinsiIbuChange}
-            className="w-full py-3 px-6 border rounded-full shadow-md">
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md">
             <option value="">Pilih Provinsi</option>
             {provinsiIbu.length > 0 && provinsiIbu.map(p => (
               <option key={p.id} value={p.id}>
@@ -616,15 +687,47 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          
         </div>
+        
+          <label className="block text-sm font-semibold">Upload KTP Ibu</label>
+          <input
+            type="file"
+            name="ktp_ibu_file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                // Handle the file upload logic here, for example, by saving the file in state
+                setOrangTuaDetails({
+                  ...orangTuaDetails,
+                  ktp_ibu_file: file
+                });
+              }
+            }}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+          />
+        
+      </div>
+
+      <div className="col-span-2">
+          <label className="block text-sm font-semibold">
+            <input
+              type="checkbox"
+              checked={sameAsKtpIbu}
+              onChange={handleCheckboxChangeIbu}
+              className="mr-2"
+            />
+            Sama dengan Alamat KTP Ibu
+          </label>
+        </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Kota KTP Ibu</label>
           <select
             name="kota_ktp_ibu"
             value={orangTuaDetails.kota_ktp_ibu}
             onChange={handleRegencyIbuChange}
-            className="w-full py-3 px-6 border rounded-full shadow-md"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
             disabled={!regenciesIbu.length}>
             <option value="">Pilih Kota</option>
             {regenciesIbu.length > 0 && regenciesIbu.map(r => (
@@ -633,18 +736,14 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               </option>
             ))}
           </select>
-          
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Kecamatan KTP Ibu</label>
           <select
             name="kecamatan_ktp_ibu"
             value={orangTuaDetails.kecamatan_ktp_ibu}
             onChange={handleDistrictIbuChange}
-            className="w-full py-3 px-6 border rounded-full shadow-md"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
             disabled={!districtsIbu.length}>
             <option value="">Pilih Kecamatan</option>
             {districtsIbu.length > 0 && districtsIbu.map(d => (
@@ -655,6 +754,9 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           </select>
           
         </div>
+      </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Kelurahan KTP Ibu</label>
           <select
@@ -664,7 +766,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ...orangTuaDetails,
             kelurahan_ktp_ibu: e.target.value
           })}
-            className="w-full py-3 px-6 border rounded-full shadow-md"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
             disabled={!villagesIbu.length}>
             <option value="">Pilih Kelurahan</option>
             {villagesIbu.length > 0 && villagesIbu.map(v => (
@@ -675,11 +777,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           </select>
           
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">Alamat Domisili Ibu</label>
+          <label className="block text-sm font-semibold">Alamat Domisili Ibu <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="alamat_domisili_ibu"
@@ -691,13 +790,17 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/>
             {errors.alamat_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_domisili_ibu}</p>}
         </div>
+      </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Provinsi Domisili Ibu</label>
           <select
             name="provinsi_domisili_ibu"
             value={orangTuaDetails.provinsi_domisili_ibu}
             onChange={handleProvinsiIbuChangeDom}
-            className="w-full py-3 px-6 border rounded-full shadow-md">
+            disabled={sameAsKtpIbu}
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md">
             <option value="">Pilih Provinsi</option>
             {provinsiIbuDom.length > 0 && provinsiIbuDom.map(p => (
               <option key={p.id} value={p.id}>
@@ -706,17 +809,14 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ))}
           </select>
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Kota Domisili Ibu</label>
           <select
             name="kota_domisili_ibu"
             value={orangTuaDetails.kota_domisili_ibu}
             onChange={handleRegencyIbuChangeDom}
-            className="w-full py-3 px-6 border rounded-full shadow-md"
-            disabled={!regenciesIbuDom.length}>
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            disabled={sameAsKtpIbu || !regenciesIbuDom.length}>
             <option value="">Pilih Kota</option>
             {regenciesIbuDom.length > 0 && regenciesIbuDom.map(r => (
               <option key={r.id} value={r.id}>
@@ -725,14 +825,17 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ))}
           </select>
         </div>
+      </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Kecamatan Domisili Ibu</label>
           <select
             name="kecamatan_domisili_ibu"
             value={orangTuaDetails.kecamatan_domisili_ibu}
             onChange={handleDistrictIbuChangeDom}
-            className="w-full py-3 px-6 border rounded-full shadow-md"
-            disabled={!districtsIbuDom.length}>
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            disabled={sameAsKtpIbu || !districtsIbuDom.length}>
             <option value="">Pilih Kecamatan</option>
             {districtsIbuDom.length > 0 && districtsIbuDom.map(d => (
               <option key={d.id} value={d.id}>
@@ -741,9 +844,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ))}
           </select>
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Kelurahan Domisili Ibu</label>
           <select
@@ -753,8 +853,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ...orangTuaDetails,
             kelurahan_domisili_ibu: e.target.value
           })}
-            className="w-full py-3 px-6 border rounded-full shadow-md"
-            disabled={!villagesIbuDom.length}>
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+            disabled={sameAsKtpIbu || !villagesIbuDom.length}>
             <option value="">Pilih Kelurahan</option>
             {villagesIbuDom.length > 0 && villagesIbuDom.map(v => (
               <option key={v.id} value={v.id}>
@@ -763,8 +863,11 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             ))}
           </select>
         </div>
+      </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
-          <label className="block text-sm font-semibold">No Handphone Ibu</label>
+          <label className="block text-sm font-semibold">No Handphone Ibu <span className="text-red-500">*</span></label>
           <input
             type="text"
             name="no_hp_ibu"
@@ -775,9 +878,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.no_hp_ibu && <p className="text-red-500 text-sm mt-1">{errors.no_hp_ibu}</p>}
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Email Ibu</label>
           <input
@@ -790,6 +890,9 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"/>
         </div>
+      </div>
+      <div
+        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-gray-700">Pekerjaan Ibu</label>
           <select
@@ -809,9 +912,6 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
           </select>
           
         </div>
-      </div>
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
         <div>
           <label className="block text-sm font-semibold">Pendidikan Ibu</label>
           <select
@@ -838,7 +938,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
         <div
           className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
           <div>
-            <label className="block text-sm font-semibold">NIK Ayah</label>
+            <label className="block text-sm font-semibold">NIK Ayah <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="nik_ayah"
@@ -849,11 +949,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             })}
               className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nik_ayah && <p className="text-red-500 text-sm mt-1">{errors.nik_ayah}</p>}
           </div>
-        </div>
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
           <div>
-            <label className="block text-sm font-semibold">Nama Ayah</label>
+            <label className="block text-sm font-semibold">Nama Ayah <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="nama_ayah"
@@ -864,8 +961,11 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             })}
               className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nama_ayah && <p className="text-red-500 text-sm mt-1">{errors.nama_ayah}</p>}
           </div>
+        </div>
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
           <div>
-            <label className="block text-sm font-semibold">Tempat Lahir Ayah</label>
+            <label className="block text-sm font-semibold">Tempat Lahir Ayah <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="tempat_lahir_ayah"
@@ -876,11 +976,8 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             })}
               className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tempat_lahir_ayah && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir_ayah}</p>}
           </div>
-        </div>
-        <div
-          className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
           <div>
-            <label className="block text-sm font-semibold">Tanggal Lahir Ayah</label>
+            <label className="block text-sm font-semibold">Tanggal Lahir Ayah <span className="text-red-500">*</span></label>
             <input
               type="date"
               name="tanggal_lahir_ayah"
@@ -895,7 +992,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
         <div
           className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
           <div>
-            <label className="block text-sm font-semibold">Alamat KTP Ayah</label>
+            <label className="block text-sm font-semibold">Alamat KTP Ayah <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="alamat_ktp_ayah"
@@ -912,7 +1009,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               name="provinsi_ktp_ayah"
               value={orangTuaDetails.provinsi_ktp_ayah}
               onChange={handleProvinsiAyahChange}
-              className="w-full py-3 px-6 border rounded-full shadow-md">
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md">
               <option value="">Pilih Provinsi</option>
               {provinsiAyah.length > 0 && provinsiAyah.map(p => (
                 <option key={p.id} value={p.id}>
@@ -931,7 +1028,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               name="kota_ktp_ayah"
               value={orangTuaDetails.kota_ktp_ayah}
               onChange={handleRegencyAyahChange}
-              className="w-full py-3 px-6 border rounded-full shadow-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
               disabled={!regenciesAyah.length}>
               <option value="">Pilih Kota</option>
               {regenciesAyah.length > 0 && regenciesAyah.map(r => (
@@ -948,7 +1045,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               name="kecamatan_ktp_ayah"
               value={orangTuaDetails.kecamatan_ktp_ayah}
               onChange={handleDistrictAyahChange}
-              className="w-full py-3 px-6 border rounded-full shadow-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
               disabled={!districtsAyah.length}>
               <option value="">Pilih Kecamatan</option>
               {districtsAyah.length > 0 && districtsAyah.map(d => (
@@ -971,7 +1068,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               ...orangTuaDetails,
               kelurahan_ktp_ayah: e.target.value
             })}
-              className="w-full py-3 px-6 border rounded-full shadow-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
               disabled={!villagesAyah.length}>
               <option value="">Pilih Kelurahan</option>
               {villagesAyah.length > 0 && villagesAyah.map(v => (
@@ -983,7 +1080,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
             
           </div>
           <div>
-            <label className="block text-sm font-semibold">Alamat Domisili Ayah</label>
+            <label className="block text-sm font-semibold">Alamat Domisili Ayah <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="alamat_domisili_ayah"
@@ -1003,7 +1100,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               name="provinsi_domisili_ayah"
               value={orangTuaDetails.provinsi_domisili_ayah}
               onChange={handleProvinsiAyahChangeDom}
-              className="w-full py-3 px-6 border rounded-full shadow-md">
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md">
               <option value="">Pilih Provinsi</option>
               {provinsiAyahDom.length > 0 && provinsiAyahDom.map(p => (
                 <option key={p.id} value={p.id}>
@@ -1019,7 +1116,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               name="kota_domisili_ayah"
               value={orangTuaDetails.kota_domisili_ayah}
               onChange={handleRegencyAyahChangeDom}
-              className="w-full py-3 px-6 border rounded-full shadow-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
               disabled={!regenciesAyahDom.length}>
               <option value="">Pilih Kota</option>
               {regenciesAyahDom.length > 0 && regenciesAyahDom.map(r => (
@@ -1039,7 +1136,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               name="kecamatan_domisili_ayah"
               value={orangTuaDetails.kecamatan_domisili_ayah}
               onChange={handleDistrictAyahChangeDom}
-              className="w-full py-3 px-6 border rounded-full shadow-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
               disabled={!districtsAyahDom.length}>
               <option value="">Pilih Kecamatan</option>
               {districtsAyahDom.length > 0 && districtsAyahDom.map(d => (
@@ -1059,7 +1156,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
               ...orangTuaDetails,
               kelurahan_domisili_ayah: e.target.value
             })}
-              className="w-full py-3 px-6 border rounded-full shadow-md"
+              className="mt-1 p-2 w-full border border-gray-300 rounded-md"
               disabled={!villagesAyahDom.length}>
               <option value="">Pilih Kelurahan</option>
               {villagesAyahDom.length > 0 && villagesAyahDom.map(v => (
@@ -1074,7 +1171,7 @@ const DataOrtu = ({pekerjaanOptions, pendidikanOptions}) => {
         <div
           className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
           <div>
-            <label className="block text-sm font-semibold">No Handphone Ayah</label>
+            <label className="block text-sm font-semibold">No Handphone Ayah <span className="text-red-500">*</span></label>
             <input
               type="text"
               name="no_hp_ayah"
