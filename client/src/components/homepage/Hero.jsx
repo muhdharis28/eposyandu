@@ -3,7 +3,7 @@ import heroImage from '@/assets/hero.png'; // Import the image
 import { Link } from 'react-router-dom';
 
 const Hero = () => (
-  <section className="relative bg-gradient-to-b from-[#008EB3] to-blue-600 py-20 px-6 md:px-12 lg:px-24 overflow-hidden">
+  <section id="home" className="relative bg-gradient-to-b from-[#008EB3] to-blue-600 py-20 px-6 md:px-12 lg:px-24 overflow-hidden">
     <div className="container mx-auto flex flex-col md:flex-row items-center">
       <div className="md:w-1/2 text-left md:pr-10 lg:pr-16">
         <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-10">

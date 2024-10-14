@@ -78,7 +78,7 @@ const Schedule = () => {
   const lastEvent = getLastEvent();
 
   return (
-    <section className="py-20 bg-gradient-to-b from-blue-400 to-blue-600">
+    <section id="jadwal" className="py-20 bg-gradient-to-b from-blue-400 to-blue-600">
       <div className="container mx-auto px-4 lg:px-20">
         <h2 className="text-4xl font-extrabold text-center text-white mb-12">Jadwal Kegiatan</h2>
 

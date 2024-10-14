@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from '@/assets/posyandu.png';
+import { Link } from 'react-router-dom';
 
 const Footer = () => (
   <footer className="bg-gradient-to-b from-[#008EB3] to-[#008EB3] text-white shadow-lg pt-10 px-6">
@@ -14,13 +15,16 @@ const Footer = () => (
         </a>
         <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-200 sm:mb-0">
           <li>
-            <a href="#about" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Beranda</a>
+            <a href="#home" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Beranda</a>
           </li>
           <li>
-            <a href="#privacy" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Jadwal Kegiatan</a>
+            <a href="#jadwal" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Jadwal Kegiatan</a>
           </li>
           <li>
-            <a href="#licensing" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Dokumentasi</a>
+            <a href="#dokumentasi" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Dokumentasi</a>
+          </li>
+          <li>
+            <Link to="/privacy" className="hover:underline mr-4 md:mr-6 transition duration-300 ease-in-out">Privasi</Link>
           </li>
         </ul>
       </div>
