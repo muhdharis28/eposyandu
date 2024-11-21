@@ -3,7 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css'; // Tailwind and global styles
 import App from './App';
-
+import '@fortawesome/fontawesome-free/css/all.min.css';
 const rootElement = document.getElementById('root'); // Ensure this matches your HTML
 const root = createRoot(rootElement); // Initialize createRoot correctly
 

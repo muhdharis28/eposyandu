@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext'; // For search input
-import { useNavigate } from 'react-router-dom'; // For navigation
-import { getPendidikans, deletePendidikan } from '../../PendidikanService'; // Your API services
+import { InputText } from 'primereact/inputtext';
+import { useNavigate } from 'react-router-dom';
+import { getPendidikans, deletePendidikan } from '../../PendidikanService';
 
 const PendidikanList = () => {
   const [jobs, setJobs] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState(''); // For global filtering
+  const [globalFilter, setGlobalFilter] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadJobs();
@@ -32,11 +32,11 @@ const PendidikanList = () => {
   };
 
   const handleAddPendidikan = () => {
-    navigate('/pendidikan/baru'); // Navigate to the create pendidikan form
+    navigate('/pendidikan/baru');
   };
 
   const handleEditPendidikan = (id) => {
-    navigate(`/pendidikan/edit/${id}`); // Navigate to the edit pendidikan form
+    navigate(`/pendidikan/edit/${id}`);
   };
 
   const handleDelete = async (id) => {
@@ -53,22 +53,28 @@ const PendidikanList = () => {
   };
 
   const handleViewDetail = (id) => {
-    navigate(`/pendidikan/${id}`); // Navigate to the detail page
+    navigate(`/pendidikan/${id}`);
   };
 
   const onGlobalFilterChange = (e) => {
-    setGlobalFilter(e.target.value); // Update filter state
+    setGlobalFilter(e.target.value);
   };
 
   const renderHeader = () => {
     return (
       <div className="flex justify-between items-center mb-4">
+        <Button
+          className="bg-green-500 text-white hover:bg-green-600 rounded-md flex items-center"
+          onClick={handleAddPendidikan}
+        >
+          <span className="fas fa-plus mr-2"></span> Tambah
+        </Button>
         <InputText
-          value={globalFilter}
-          onChange={onGlobalFilterChange}
-          placeholder="Keyword Search"
-          className="p-inputtext-sm w-full md:w-30rem"
-        />
+        value={globalFilter}
+        onChange={onGlobalFilterChange}
+        placeholder="Cari Kata Kunci"
+        className="p-inputtext-sm md:w-30rem ml-3"
+      />
       </div>
     );
   };
@@ -77,23 +83,17 @@ const PendidikanList = () => {
     return (
       <div className="flex justify-end gap-2">
         <Button
-          label="Detail"
-          icon="pi pi-eye"
-          className="p-button-text bg-blue-400 text-white hover:bg-blue-500 px-3 py-2"
+          className="p-button-text bg-blue-400 text-white hover:bg-blue-500"
           onClick={() => handleViewDetail(rowData.id)}
-        />
+        ><span className="fas fa-circle-info mr-3"></span> Detail </Button>
         <Button
-          label="Edit"
-          icon="pi pi-pencil"
-          className="p-button-text bg-blue-500 text-white hover:bg-blue-600 px-3 py-2"
+          className="p-button-text bg-blue-500 text-white hover:bg-blue-600"
           onClick={() => handleEditPendidikan(rowData.id)}
-        />
+        ><span className="fas fa-edit mr-3"></span> Edit </Button>
         <Button
-          label="Delete"
-          icon="pi pi-trash"
-          className="p-button-text bg-red-500 text-white hover:bg-red-600 px-3 py-2"
+          className="p-button-text bg-red-500 text-white hover:bg-red-600"
           onClick={() => handleDelete(rowData.id)}
-        />
+        ><span className="fas fa-trash mr-3"></span> Hapus </Button>
       </div>
     );
   };
@@ -102,12 +102,6 @@ const PendidikanList = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Data Master Pendidikan</h2>
-        <Button
-          label="Tambah Pendidikan"
-          icon="pi pi-plus"
-          className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
-          onClick={handleAddPendidikan}
-        />
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -117,7 +111,7 @@ const PendidikanList = () => {
         paginator
         rows={10}
         globalFilter={globalFilter}
-        emptyMessage="No pendidikan found."
+        emptyMessage="Data tidak ditemukan"
         header={renderHeader()}
       >
         <Column

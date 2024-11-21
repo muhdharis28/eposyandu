@@ -21,7 +21,8 @@ const EditBayi = () => {
     berat_badan_awal_balita: '',
     tinggi_badan_awal_balita: '',
     keterangan_balita: '',
-    orangtua: ''
+    orangtua: null,
+    posyandu: null
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,35 +71,31 @@ const EditBayi = () => {
     const errors = {};
 
     if (!formData.nama_balita) {
-      errors.nama_balita = 'Nama balita is required';
+      errors.nama_balita = 'Nama balita wajib';
     }
 
-    if (!formData.nik_balita || formData.nik_balita.length !== 16) {
-      errors.nik_balita = 'NIK balita must be 16 digits';
+    if (!formData.nik_balita || !/^\d{16}$/.test(formData.nik_balita)) {
+      errors.nik_balita = 'NIK balita harus berupa 16 digit angka';
     }
 
     if (!formData.tempat_lahir_balita) {
-      errors.tempat_lahir_balita = 'Tempat lahir is required';
+      errors.tempat_lahir_balita = 'Tempat lahir wajib diisi';
     }
 
     if (!formData.tanggal_lahir_balita) {
-      errors.tanggal_lahir_balita = 'Tanggal lahir is required';
+      errors.tanggal_lahir_balita = 'Tanggal lahir wajib diisi';
     }
 
     if (!formData.jenis_kelamin_balita) {
-      errors.jenis_kelamin_balita = 'Jenis kelamin is required';
+      errors.jenis_kelamin_balita = 'Jenis kelamin wajib diisi';
     }
 
     if (formData.berat_badan_awal_balita <= 0) {
-      errors.berat_badan_awal_balita = 'Berat badan awal must be positive';
+      errors.berat_badan_awal_balita = 'Berat badan awal lebih 0';
     }
 
     if (formData.tinggi_badan_awal_balita <= 0) {
-      errors.tinggi_badan_awal_balita = 'Tinggi badan awal must be positive';
-    }
-
-    if (!formData.orangtua) {
-      errors.orangtua = 'Orangtua data is required. Please fill in the orangtua details';
+      errors.tinggi_badan_awal_balita = 'Tinggi badan awal lebih 0';
     }
 
     setErrors(errors);
@@ -116,15 +113,24 @@ const EditBayi = () => {
           
           {/* Breadcrumb for navigation */}
           <nav className="text-gray-600 mb-4">
-            <Link to="/user-balita" className="hover:underline">Bayi List</Link> &gt; Tambah Bayi
+            <Link to="/user-balita" className="hover:underline">Bayi List</Link> &gt; Edit Bayi
           </nav>
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h1 className="text-2xl font-bold mb-4">Tambah Bayi</h1>
+            <h1 className="text-2xl font-bold mb-4">Edit Bayi</h1>
+            <div
+              className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+              <p className="text-sm font-bold">
+                <span className="text-red-500">*</span>
+                Wajib diisi
+              </p>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold">NIK Bayi</label>
+                  <label className="block text-sm font-semibold">NIK Bayi
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="nik_balita"
@@ -136,7 +142,9 @@ const EditBayi = () => {
                   {errors.nik_balita && <p className="text-red-500 text-sm">{errors.nik_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Nama Bayi</label>
+                  <label className="block text-sm font-semibold">Nama Bayi
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="nama_balita"
@@ -148,7 +156,9 @@ const EditBayi = () => {
                   {errors.nama_balita && <p className="text-red-500 text-sm">{errors.nama_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Tempat Lahir</label>
+                  <label className="block text-sm font-semibold">Tempat Lahir
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="tempat_lahir_balita"
@@ -160,7 +170,9 @@ const EditBayi = () => {
                   {errors.tempat_lahir_balita && <p className="text-red-500 text-sm">{errors.tempat_lahir_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Tanggal Lahir</label>
+                  <label className="block text-sm font-semibold">Tanggal Lahir
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="date"
                     name="tanggal_lahir_balita"
@@ -172,7 +184,9 @@ const EditBayi = () => {
                   {errors.tanggal_lahir_balita && <p className="text-red-500 text-sm">{errors.tanggal_lahir_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Jenis Kelamin</label>
+                  <label className="block text-sm font-semibold">Jenis Kelamin
+                    <span className="text-red-500">*</span>
+                  </label>
                   <select
                     name="jenis_kelamin_balita"
                     value={formData.jenis_kelamin_balita}
@@ -187,7 +201,9 @@ const EditBayi = () => {
                   {errors.jenis_kelamin_balita && <p className="text-red-500 text-sm">{errors.jenis_kelamin_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Berat Badan Awal</label>
+                  <label className="block text-sm font-semibold">Berat Badan Awal (gram)
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="number"
                     name="berat_badan_awal_balita"
@@ -199,7 +215,9 @@ const EditBayi = () => {
                   {errors.berat_badan_awal_balita && <p className="text-red-500 text-sm">{errors.berat_badan_awal_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Tinggi Badan Awal</label>
+                  <label className="block text-sm font-semibold">Tinggi Badan Awal (cm)
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="number"
                     name="tinggi_badan_awal_balita"
@@ -225,7 +243,7 @@ const EditBayi = () => {
                 <div>
                   <label className="block text-sm font-semibold">Riwayat Kelahiran</label>
                   <input
-                    type="number"
+                    type="text"
                     name="riwayat_kelahiran_balita"
                     value={formData.riwayat_kelahiran_balita}
                     onChange={handleChange}
@@ -237,7 +255,7 @@ const EditBayi = () => {
                 <div>
                   <label className="block text-sm font-semibold">Keterangan</label>
                   <input
-                    type="number"
+                    type="text"
                     name="keterangan_balita"
                     value={formData.keterangan_balita}
                     onChange={handleChange}
@@ -253,7 +271,7 @@ const EditBayi = () => {
                 className={`mt-6 px-6 py-2 rounded-lg text-white ${isSubmitting ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Updating...' : 'Edit Bayi'}
+                {isSubmitting ? 'Terkirim...' : 'Edit'}
               </button>
             </form>
           </div>

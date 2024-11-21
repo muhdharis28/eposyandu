@@ -2,6 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db.config');
 const Pengguna = require('./pengguna');
+const Posyandu = require('./posyandu');
 
 const Dokumentasi = sequelize.define('Dokumentasi', {
   judul: {
@@ -26,12 +27,20 @@ const Dokumentasi = sequelize.define('Dokumentasi', {
         model: Pengguna,
         key: 'id'
     },
-    allowNull: false,
   },
+  posyandu: {
+    type: DataTypes.INTEGER,
+    references: {
+        model: Posyandu,
+        key: 'id'
+    },
+    allowNull: false
+},
 }, {
   timestamps: true,
 });
 
 Dokumentasi.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
+Dokumentasi.belongsTo(Posyandu, { as: 'posyanduDetail', foreignKey: 'posyandu' });
 
 module.exports = Dokumentasi;

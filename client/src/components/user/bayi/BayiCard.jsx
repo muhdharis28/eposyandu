@@ -73,7 +73,7 @@ const BayiCard = () => {
                 user?.orangtua && user?.verifikasi ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
               }`}
             >
-              <FaPlus className="mr-2" /> Tambah Data Bayi
+              <FaPlus className="mr-2" /> Tambah Data Balita
             </button>
           </div>
           
@@ -81,7 +81,7 @@ const BayiCard = () => {
           {!user?.orangtua && (
             <div className="mb-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
               <p>
-                Anda harus melengkapi data Orangtua terlebih dahulu sebelum menambah data bayi. Silakan lengkapi data
+                Anda harus melengkapi data Orangtua terlebih dahulu sebelum menambah data balita. Silakan lengkapi data
                 Orangtua di bagian Pengaturan pengguna.
               </p>
             </div>
@@ -91,17 +91,17 @@ const BayiCard = () => {
           {!user?.verifikasi && (
             <div className="mb-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
               <p>
-                Anda harus memverifikasi akun terlebih dahulu sebelum dapat menambah atau mengakses data bayi. Silakan hubungi admin untuk verifikasi.
+                Akun anda sedang diverifikasi sebelum dapat menambah atau mengakses data balita. Silakan hubungi admin untuk verifikasi.
               </p>
             </div>
           )}
 
           <div className="bg-white p-6 rounded-xl shadow-lg">
-            <h3 className="text-xl font-bold text-gray-700 mb-4">Data Bayi</h3>
+            <h3 className="text-xl font-bold text-gray-700 mb-4">Data Balita</h3>
 
             {bayiData.length === 0 ? (
               <div className="text-center py-10">
-                <p className="text-gray-500">Belum ada data bayi yang terkait dengan user ini.</p>
+                <p className="text-gray-500">Tambahkan data balita anda.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

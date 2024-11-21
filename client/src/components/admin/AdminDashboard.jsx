@@ -1,9 +1,8 @@
-// src/components/admin/AdminDashboard.jsx
 import React from 'react';
 import TopBar from './TopBar';
 import SideBar from './SideBar';
-import Dashboard from './Dashboard'; // Admin-specific dashboard content
-import { useSidebar } from '../SideBarContext'; // Use unified context
+import Dashboard from './Dashboard';
+import { useSidebar } from '../SideBarContext';
 
 const AdminDashboard = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();

@@ -33,6 +33,7 @@ app.use('/api/stats', require('./routes/stats'));
 app.use('/api/dokumentasi', require('./routes/dokumentasi'));
 app.use('/api/location', require('./routes/location'));
 app.use('/api/posyandu', require('./routes/posyandu'));
+app.use('/api/penghapusan-data', require('./routes/penghapusan_data'));
 
 const server = app.listen(port, () => console.log(`running server on port ${port}`));
 

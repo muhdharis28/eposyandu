@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import PenggunaList from './PenggunaList';
+import PenghapusanDataList from './PenghapusanDataList';
 import { useSidebar } from '../../SideBarContext';
 
-const PenggunaDashboard = () => {
+const PenghapusanData = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   return (
@@ -14,14 +14,13 @@ const PenggunaDashboard = () => {
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
         <SideBar isCollapsed={isSidebarCollapsed} />
 
-        <div className={`flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out`}>
-          <h1 className="text-3xl font-bold mb-4">Pengguna Dashboard</h1>
-          <PenggunaList />
-        
+        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out">
+          <h1 className="text-3xl font-bold mb-4">Penghapusan Data</h1>
+          <PenghapusanDataList />
         </div>
       </div>
     </div>
   );
 };
 
-export default PenggunaDashboard;
+export default PenghapusanData;

@@ -5,7 +5,7 @@ import { getPemeriksaanByLansiaId } from '../../PemeriksaanLansiaService';
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
-import { FaUser, FaPhone, FaEnvelope, FaTransgender, FaBriefcase, FaGraduationCap, FaHome, FaCalendar, FaTimes, FaUserTie } from 'react-icons/fa';
+import { FaUser, FaPhone, FaEnvelope, FaCalendar, FaUserTie, FaTimes } from 'react-icons/fa';
 import Modal from 'react-modal';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
@@ -49,6 +49,22 @@ const LansiaDetail = () => {
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedPemeriksaan(null);
+  };
+
+  const customModalStyles = {
+    overlay: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 1000
+    },
+    content: {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      padding: '20px',
+      borderRadius: '10px',
+      width: '90%',
+      maxWidth: '600px'
+    }
   };
 
   const chartData = {
@@ -97,6 +113,8 @@ const LansiaDetail = () => {
       ],
     },
   };
+
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -240,6 +258,24 @@ const LansiaDetail = () => {
           </div>
         </div>
       </div>
+      {/* Modal for selected Pemeriksaan details */}
+      {selectedPemeriksaan && (
+        <Modal isOpen={modalIsOpen} onRequestClose={closeModal} style={customModalStyles} contentLabel="Pemeriksaan Details">
+          <div className="relative bg-white p-6">
+            <button className="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onClick={closeModal}>
+              <FaTimes />
+            </button>
+            <h2 className="text-2xl font-bold text-blue-700 mb-4">Detail Pemeriksaan</h2>
+            <p><strong>Tanggal Kunjungan:</strong> {new Date(selectedPemeriksaan.tanggal_kunjungan).toLocaleDateString()}</p>
+            <p><strong>Berat Badan:</strong> {selectedPemeriksaan.berat_badan} kg</p>
+            <p><strong>Tinggi Badan:</strong> {selectedPemeriksaan.tinggi_badan} cm</p>
+            <p><strong>Gula Darah:</strong> {selectedPemeriksaan.gula_darah} mg/dL</p>
+            <p><strong>Kolesterol:</strong> {selectedPemeriksaan.kolestrol} mg/dL</p>
+            <p><strong>Kader:</strong> {selectedPemeriksaan.kaderDetail?.nama || '-'}</p>
+            <p><strong>Keterangan:</strong> {selectedPemeriksaan.keterangan}</p>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

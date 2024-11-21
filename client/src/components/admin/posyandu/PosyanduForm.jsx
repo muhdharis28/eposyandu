@@ -1,27 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
-import { createPosyandu, updatePosyandu, getPosyanduById } from '../../PosyanduService'; // API services
-import TopBar from '../TopBar'; // Adjust the path as necessary
+import { useNavigate, useParams } from 'react-router-dom';
+import { createPosyandu, updatePosyandu, getPosyanduById } from '../../PosyanduService';
+import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management
+import { useSidebar } from '../../SideBarContext';
 
 const PosyanduForm = () => {
-  const { id } = useParams(); // Get the ID from URL params
+  const { id } = useParams();
   const [nama, setNama] = useState('');
   const [alamat, setAlamat] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // For navigation
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state
+  const navigate = useNavigate();
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   useEffect(() => {
     if (id) {
-      loadPosyandu(); // Load posyandu data if editing
+      loadPosyandu();
     }
   }, [id]);
 
   const loadPosyandu = async () => {
     try {
-      const result = await getPosyanduById(id); // Fetch posyandu data by ID
+      const result = await getPosyanduById(id);
       const posyandu = result.data;
       setNama(posyandu.nama);
       setAlamat(posyandu.alamat);
@@ -32,8 +32,8 @@ const PosyanduForm = () => {
   };
 
   const isUserAuthorized = () => {
-    const userRole = localStorage.getItem('role'); // Assuming roles are stored in local storage
-    return userRole === 'admin'; // Only admin can edit or add posyandus
+    const userRole = localStorage.getItem('role');
+    return userRole === 'admin';
   };
 
   const handleSubmit = async (e) => {
@@ -41,19 +41,19 @@ const PosyanduForm = () => {
 
     if (!isUserAuthorized()) {
       alert('You are not authorized to perform this action.');
-      return; // Prevent submission
+      return;
     }
 
     const posyandu = { nama, alamat };
 
     try {
       if (id) {
-        await updatePosyandu(id, posyandu); // Update posyandu if editing
+        await updatePosyandu(id, posyandu);
       } else {
-        await createPosyandu(posyandu); // Create new posyandu if no ID is provided
+        await createPosyandu(posyandu);
       }
 
-      navigate('/posyandu'); // Navigate back to posyandu list
+      navigate('/posyandu');
     } catch (error) {
       setError('Failed to save posyandu data.');
       console.error('Error saving posyandu:', error);
@@ -61,7 +61,7 @@ const PosyanduForm = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/posyandu'); // Navigate back to the list
+    navigate('/posyandu');
   };
 
   return (
@@ -111,14 +111,7 @@ const PosyanduForm = () => {
                 type="submit"
                 className="text-white bg-blue-500 px-4 py-2 rounded"
               >
-                {id ? 'Update' : 'Tambah'}
-              </button>
-              <button
-                type="button"
-                onClick={handleBackToList}
-                className="text-gray-700 px-4 py-2 ml-4 rounded"
-              >
-                Batal
+                {id ? 'Edit' : 'Tambah'}
               </button>
             </div>
           </form>

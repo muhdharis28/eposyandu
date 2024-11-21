@@ -1,52 +1,47 @@
-import React, { useEffect, useState } from 'react';
-import { FaClinicMedical, FaBaby, FaUserMd, FaUserAlt, FaCalendarAlt } from 'react-icons/fa'; // Add necessary icons
+import React, {useEffect, useState} from 'react';
+import {FaClinicMedical, FaBaby, FaUserMd, FaUserAlt, FaCalendarAlt} from 'react-icons/fa';
 
-const Stats = () => {
-  const [stats, setStats] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const Stats = ({selectedPosyandu}) => {
+  const [stats,
+    setStats] = useState([]);
+  const [error,
+    setError] = useState(null);
 
   useEffect(() => {
-    // Fetch stats from the backend API
-    const fetchStats = async () => {
+    const fetchStats = async() => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/stats`); // Adjust the path as needed
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/stats?posyandu=${selectedPosyandu}`);
         const data = await response.json();
         setStats(data);
-        setLoading(false);
+
       } catch (error) {
         console.error('Error fetching stats:', error);
         setError('Failed to load stats.');
-        setLoading(false);
       }
     };
 
     fetchStats();
-  }, []);
 
-  if (loading) {
-    return <p className="text-center text-gray-500">Loading...</p>;
-  }
+  }, [selectedPosyandu]);
 
   if (error) {
     return <p className="text-center text-red-500">{error}</p>;
   }
 
-  // A function to dynamically map icons based on the label
   const getIcon = (label) => {
     switch (label) {
       case 'User':
-        return <FaUserAlt className="text-purple-500 text-3xl mb-2" />;
+        return <FaUserAlt className="text-purple-500 text-3xl mb-2"/>;
       case 'Kegiatan':
-        return <FaCalendarAlt className="text-blue-500 text-3xl mb-2" />;
+        return <FaCalendarAlt className="text-blue-500 text-3xl mb-2"/>;
       case 'Kader':
-        return <FaClinicMedical className="text-pink-500 text-3xl mb-2" />;
+        return <FaClinicMedical className="text-pink-500 text-3xl mb-2"/>;
       case 'Bayi':
-        return <FaBaby className="text-yellow-500 text-3xl mb-2" />;
+        return <FaBaby className="text-yellow-500 text-3xl mb-2"/>;
       case 'Lansia':
-        return <FaUserMd className="text-teal-500 text-3xl mb-2" />;
+        return <FaUserMd className="text-teal-500 text-3xl mb-2"/>;
       default:
-        return <FaUserAlt className="text-gray-500 text-3xl mb-2" />;
+        return <FaUserAlt className="text-gray-500 text-3xl mb-2"/>;
     }
   };
 
@@ -58,8 +53,7 @@ const Stats = () => {
           {stats.map(stat => (
             <div
               key={stat.label}
-              className="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transform transition-all duration-300 hover:scale-105"
-            >
+              className="p-4 bg-white rounded-xl shadow-md hover:shadow-lg transform transition-all duration-300 hover:scale-105">
               <div className="flex justify-center items-center mb-2">
                 {getIcon(stat.label)}
               </div>

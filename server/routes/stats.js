@@ -59,17 +59,19 @@ router.get('/authenticated', authenticateToken, async (req, res) => {
   }
 });
 
-// Unauthenticated route that returns general stats across all posyandu
 router.get('/', async (req, res) => {
   try {
-    const userCount = await User.count({ where: { role: 'user' } });
-    const kaderCount = await User.count({ where: { role: 'kader' } });
+    const { posyandu } = req.query;
+    const whereClause = posyandu ? { posyandu } : {};
+
+    const userCount = await User.count({ where: { ...whereClause, role: 'user' } });
+    const kaderCount = await User.count({ where: { ...whereClause, role: 'kader' } });
     const dokterCount = await Dokter.count();
-    const waliCount = await Wali.count();
-    const kegiatanCount = await Kegiatan.count();
-    const orangtuaCount = await OrangTua.count();
-    const bayiCount = await Bayi.count();
-    const lansiaCount = await Lansia.count();
+    const waliCount = await Wali.count({ where: { ...whereClause } });
+    const kegiatanCount = await Kegiatan.count({ where: { ...whereClause } });
+    const orangtuaCount = await OrangTua.count({ where: { ...whereClause } });
+    const bayiCount = await Bayi.count({ where: { ...whereClause } });
+    const lansiaCount = await Lansia.count({ where: { ...whereClause } });
 
     const stats = [
       { label: 'User', value: userCount, icon: '👤', bgColor: 'bg-purple-100', textColor: 'text-purple-700' },

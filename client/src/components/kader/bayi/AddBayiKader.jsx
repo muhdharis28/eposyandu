@@ -5,6 +5,7 @@ import { getOrangTua } from '../../OrangTuaService'; // Service to fetch all Ora
 import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
+import { getPenggunaById } from '../../PenggunaService';
 
 const AddBayiKader = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
@@ -21,12 +22,14 @@ const AddBayiKader = () => {
     berat_badan_awal_balita: '',
     tinggi_badan_awal_balita: '',
     keterangan_balita: '',
-    orangtua: '' // This will now be selected from a dropdown
+    orangtua: null,
+    posyandu: null
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
-  const [orangtuaOptions, setOrangtuaOptions] = useState([]); // For storing the list of Orangtua
+  const [orangtuaOptions, setOrangtuaOptions] = useState([]);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     const fetchOrangtuaOptions = async () => {
@@ -58,7 +61,12 @@ const AddBayiKader = () => {
 
     setIsSubmitting(true);
     try {
-      await createBayi(formData); // Create a new Bayi with the form data
+      const response = await getPenggunaById(userId);
+      const updatedFormData = {
+        ...formData,
+        posyandu: response.data.posyanduDetail.id
+      };
+      await createBayi(updatedFormData); // Create a new Bayi with the form data
       navigate('/kader-balita'); // Redirect to the Bayi list after successful submission
     } catch (error) {
       console.error('Error adding bayi:', error);
@@ -71,40 +79,38 @@ const AddBayiKader = () => {
     const errors = {};
 
     if (!formData.nama_balita) {
-      errors.nama_balita = 'Nama balita is required';
+      errors.nama_balita = 'Nama balita wajib diisi';
     }
 
-    if (!formData.nik_balita || formData.nik_balita.length !== 16) {
-      errors.nik_balita = 'NIK balita must be 16 digits';
+    if (!formData.nik_balita || !/^\d{16}$/.test(formData.nik_balita)) {
+      errors.nik_balita = 'NIK balita harus berupa 16 digit angka';
     }
 
     if (!formData.tempat_lahir_balita) {
-      errors.tempat_lahir_balita = 'Tempat lahir is required';
+      errors.tempat_lahir_balita = 'Tempat lahir wajib diisi';
     }
 
     if (!formData.tanggal_lahir_balita) {
-      errors.tanggal_lahir_balita = 'Tanggal lahir is required';
+      errors.tanggal_lahir_balita = 'Tanggal lahir wajib diisi';
     }
 
     if (!formData.jenis_kelamin_balita) {
-      errors.jenis_kelamin_balita = 'Jenis kelamin is required';
+      errors.jenis_kelamin_balita = 'Jenis kelamin wajib diisi';
     }
 
     if (formData.berat_badan_awal_balita <= 0) {
-      errors.berat_badan_awal_balita = 'Berat badan awal must be positive';
+      errors.berat_badan_awal_balita = 'Berat badan awal lebih dari 0';
     }
 
     if (formData.tinggi_badan_awal_balita <= 0) {
-      errors.tinggi_badan_awal_balita = 'Tinggi badan awal must be positive';
+      errors.tinggi_badan_awal_balita = 'Tinggi badan awal lebih dari 0';
     }
 
     if (!formData.orangtua) {
-      errors.orangtua = 'Orangtua is required. Please select an Orangtua';
+      errors.orangtua = 'Orangtua wajib diisi';
     }
 
     setErrors(errors);
-
-    // If there are no errors, return true (valid form), otherwise false
     return Object.keys(errors).length === 0;
   };
 
@@ -122,10 +128,37 @@ const AddBayiKader = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h1 className="text-2xl font-bold mb-4">Tambah Bayi</h1>
+            <div
+              className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+              <p className="text-sm font-bold">
+                <span className="text-red-500">*</span>
+                Wajib diisi
+              </p>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div>
+                  <label className="block text-sm font-semibold">Orangtua</label>
+                  <select
+                    name="orangtua"
+                    value={formData.orangtua}
+                    onChange={handleChange}
+                    required
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  >
+                    <option value="">Pilih Orangtua</option>
+                    {orangtuaOptions.map((orangtua) => (
+                      <option key={orangtua.id} value={orangtua.id}>
+                        {orangtua.nama_ayah} - {orangtua.nama_ibu}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.orangtua && <p className="text-red-500 text-sm">{errors.orangtua}</p>}
+                </div>
                 <div>
-                  <label className="block text-sm font-semibold">NIK Bayi</label>
+                  <label className="block text-sm font-semibold">NIK Bayi
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="nik_balita"
@@ -137,7 +170,9 @@ const AddBayiKader = () => {
                   {errors.nik_balita && <p className="text-red-500 text-sm">{errors.nik_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Nama Bayi</label>
+                  <label className="block text-sm font-semibold">Nama Bayi
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="nama_balita"
@@ -149,7 +184,9 @@ const AddBayiKader = () => {
                   {errors.nama_balita && <p className="text-red-500 text-sm">{errors.nama_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Tempat Lahir</label>
+                  <label className="block text-sm font-semibold">Tempat Lahir
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="text"
                     name="tempat_lahir_balita"
@@ -161,7 +198,9 @@ const AddBayiKader = () => {
                   {errors.tempat_lahir_balita && <p className="text-red-500 text-sm">{errors.tempat_lahir_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Tanggal Lahir</label>
+                  <label className="block text-sm font-semibold">Tanggal Lahir
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="date"
                     name="tanggal_lahir_balita"
@@ -173,7 +212,9 @@ const AddBayiKader = () => {
                   {errors.tanggal_lahir_balita && <p className="text-red-500 text-sm">{errors.tanggal_lahir_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Jenis Kelamin</label>
+                  <label className="block text-sm font-semibold">Jenis Kelamin
+                    <span className="text-red-500">*</span>
+                  </label>
                   <select
                     name="jenis_kelamin_balita"
                     value={formData.jenis_kelamin_balita}
@@ -188,7 +229,9 @@ const AddBayiKader = () => {
                   {errors.jenis_kelamin_balita && <p className="text-red-500 text-sm">{errors.jenis_kelamin_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Berat Badan Awal</label>
+                  <label className="block text-sm font-semibold">Berat Badan Awal (gram)
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="number"
                     name="berat_badan_awal_balita"
@@ -200,7 +243,9 @@ const AddBayiKader = () => {
                   {errors.berat_badan_awal_balita && <p className="text-red-500 text-sm">{errors.berat_badan_awal_balita}</p>}
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold">Tinggi Badan Awal</label>
+                  <label className="block text-sm font-semibold">Tinggi Badan Awal (cm)
+                    <span className="text-red-500">*</span>
+                  </label>
                   <input
                     type="number"
                     name="tinggi_badan_awal_balita"
@@ -226,7 +271,7 @@ const AddBayiKader = () => {
                 <div>
                   <label className="block text-sm font-semibold">Riwayat Kelahiran</label>
                   <input
-                    type="number"
+                    type="text"
                     name="riwayat_kelahiran_balita"
                     value={formData.riwayat_kelahiran_balita}
                     onChange={handleChange}
@@ -238,7 +283,7 @@ const AddBayiKader = () => {
                 <div>
                   <label className="block text-sm font-semibold">Keterangan</label>
                   <input
-                    type="number"
+                    type="text"
                     name="keterangan_balita"
                     value={formData.keterangan_balita}
                     onChange={handleChange}
@@ -247,24 +292,7 @@ const AddBayiKader = () => {
                   />
                   {errors.keterangan_balita && <p className="text-red-500 text-sm">{errors.keterangan_balita}</p>}
                 </div>
-                <div>
-                  <label className="block text-sm font-semibold">Orangtua</label>
-                  <select
-                    name="orangtua"
-                    value={formData.orangtua}
-                    onChange={handleChange}
-                    required
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                  >
-                    <option value="">Pilih Orangtua</option>
-                    {orangtuaOptions.map((orangtua) => (
-                      <option key={orangtua.id} value={orangtua.id}>
-                        {orangtua.nama_ayah} - {orangtua.nama_ibu}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.orangtua && <p className="text-red-500 text-sm">{errors.orangtua}</p>}
-                </div>
+                
               </div>
 
               <button
@@ -272,7 +300,7 @@ const AddBayiKader = () => {
                 className={`mt-6 px-6 py-2 rounded-lg text-white ${isSubmitting ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? 'Submitting...' : 'Add Bayi'}
+                {isSubmitting ? 'Mengirim...' : 'Tambah'}
               </button>
             </form>
           </div>

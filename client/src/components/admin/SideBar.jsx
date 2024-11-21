@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom'; // Import useLocation for active route
+import { Link, useLocation } from 'react-router-dom';
 import {
   FaHome,
   FaUserMd,
@@ -15,48 +15,84 @@ import {
   FaUser,
   FaUserShield,
   FaCamera,
-  FaClinicMedical
+  FaClinicMedical,
+  FaTrash
 } from 'react-icons/fa';
 
 const SideBar = ({ isCollapsed }) => {
-  const location = useLocation();  // Get the current route
+  const location = useLocation();
 
-  const navItems = [
-    { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' },  // Dashboard Home Icon
-    { icon: FaUserMd, label: 'Dokter', path: '/dokter' },  // Doctor Icon for Doctors
-    { icon: FaClinicMedical, label: 'Posyandu', path: '/posyandu' },
-    { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },  // Work Icon for Pekerjaan
-    { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },  // Graduation Cap for Education
-    { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },  // Calendar Icon for Events
-    { icon: FaUserFriends, label: 'Lansia', path: '/lansia' },  // Users Icon for Elderly (Lansia)
-    { icon: FaBaby, label: 'Balita', path: '/balita' },  // Baby Icon for Toddlers (Balita)
-    { icon: FaUserTie, label: 'Orang Tua', path: '/orangtua' },  // User Tie for Parents
-    { icon: FaUserShield, label: 'Wali', path: '/wali' },  // User Shield for Guardians
-    { icon: FaStethoscope, label: 'Pemeriksaan Lansia', path: '/pemeriksaan-lansia' },  // Stethoscope Icon for Elderly Checkups
-    { icon: FaHeartbeat, label: 'Perkembangan Balita', path: '/perkembangan-balita' },  // Heartbeat for Toddler Development
-    { icon: FaUser, label: 'Pengguna', path: '/pengguna' },  // User Icon for Users
-    { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' },  // Camera for Documentation
+  const groupedNavItems = [
+    {
+      groupLabel: 'Utama',
+      items: [
+        { icon: FaHome, label: 'Dashboard', path: '/admin-dashboard' }
+      ]
+    },
+    {
+      groupLabel: 'Manajemen',
+      items: [
+        { icon: FaUserMd, label: 'Dokter', path: '/dokter' },
+        { icon: FaClinicMedical, label: 'Posyandu', path: '/posyandu' },
+        { icon: FaBriefcase, label: 'Pekerjaan', path: '/pekerjaan' },
+        { icon: FaGraduationCap, label: 'Pendidikan', path: '/pendidikan' },
+        { icon: FaTrash, label: 'Penghapusan Data', path: '/penghapusan-data' }
+      ]
+    },
+    {
+      groupLabel: 'Aktifitas',
+      items: [
+        { icon: FaCalendarAlt, label: 'Kegiatan', path: '/kegiatan' },
+        { icon: FaCamera, label: 'Dokumentasi', path: '/dokumentasi' }
+      ]
+    },
+    {
+      groupLabel: 'Data',
+      items: [
+        { icon: FaUser, label: 'Pengguna', path: '/pengguna' },
+        { icon: FaUserFriends, label: 'Lansia', path: '/lansia' },
+        { icon: FaBaby, label: 'Balita', path: '/balita' },
+        { icon: FaUserTie, label: 'Orang Tua', path: '/orangtua' },
+        { icon: FaUserShield, label: 'Wali', path: '/wali' },
+        { icon: FaStethoscope, label: 'Pemeriksaan Lansia', path: '/pemeriksaan-lansia' },
+        { icon: FaHeartbeat, label: 'Perkembangan Balita', path: '/perkembangan-balita' }
+      ]
+    },
   ];
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div
       className={`h-full pt-24 ${isCollapsed ? 'w-20' : 'w-64'} bg-gradient-to-b from-blue-800 to-purple-900 p-5 flex flex-col justify-between transition-all duration-500 text-white shadow-xl rounded-tr-lg`}
     >
-      <ul className="space-y-6">
-        {navItems.map((item) => (
-          <li key={item.label}>
-            <Link
-              to={item.path}
-              className={`flex items-center p-2 rounded-lg transition-colors ${
-                location.pathname === item.path ? 'bg-blue-700' : 'hover:bg-blue-700'
-              }`}
-            >
-              <item.icon className="mr-2" size={18} />
-              {!isCollapsed && <span>{item.label}</span>}
-            </Link>
-          </li>
+      <div className="flex flex-col items-start">
+        {groupedNavItems.map((group) => (
+          <div key={group.groupLabel} className="w-full">
+            {!isCollapsed && (
+              <div className="text-gray-300 mb-2 mt-4 uppercase tracking-wider text-sm">
+                {group.groupLabel}
+              </div>
+            )}
+            <ul className="space-y-4">
+              {group.items.map((item) => (
+                <li key={item.label}>
+                  <Link
+                    to={item.path}
+                    className={`flex items-center p-2 rounded-lg transition-colors ${
+                      isActive(item.path) ? 'bg-blue-700' : 'hover:bg-blue-700'
+                    } ${isCollapsed ? 'justify-center' : ''}`}
+                  >
+                    <item.icon className="mr-2" size={18} />
+                    {!isCollapsed && <span>{item.label}</span>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <div className="border-b border-gray-600 my-4"></div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

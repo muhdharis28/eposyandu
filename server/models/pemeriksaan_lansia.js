@@ -3,6 +3,7 @@ const sequelize = require('../db.config');
 const Lansia = require('./lansia');
 const Pengguna = require('./pengguna');
 const Dokter = require('./dokter');
+const Posyandu = require('./posyandu');
 
 class PemeriksaanLansia extends Model {}
 
@@ -67,6 +68,14 @@ PemeriksaanLansia.init({
             key: 'id'
         }
     },
+    posyandu: {
+        type: DataTypes.INTEGER,
+        references: {
+            model: Posyandu,
+            key: 'id'
+        },
+        allowNull: false
+    },
 }, {
     sequelize,
     modelName: 'PemeriksaanLansia'
@@ -75,5 +84,6 @@ PemeriksaanLansia.init({
 PemeriksaanLansia.belongsTo(Lansia, { as: 'lansiaDetail', foreignKey: 'lansia' });
 PemeriksaanLansia.belongsTo(Pengguna, { as: 'kaderDetail', foreignKey: 'kader' });
 PemeriksaanLansia.belongsTo(Dokter, { as: 'dokterDetail', foreignKey: 'dokter' });
+PemeriksaanLansia.belongsTo(Posyandu, { as: 'posyanduDetail', foreignKey: 'posyandu' });
 
 module.exports = PemeriksaanLansia;

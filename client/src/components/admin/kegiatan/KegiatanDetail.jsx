@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getKegiatanById } from '../../KegiatanService'; // Assume this service fetches kegiatan details
-import TopBar from '../TopBar'; // Adjust the path if necessary
-import SideBar from '../SideBar'; // Adjust the path if necessary
-import { useSidebar } from '../../SideBarContext'; // Use context for sidebar state
+import { getKegiatanById } from '../../KegiatanService';
+import TopBar from '../TopBar';
+import SideBar from '../SideBar';
+import { useSidebar } from '../../SideBarContext';
 
 const KegiatanDetail = () => {
   const { id } = useParams();
@@ -18,7 +18,7 @@ const KegiatanDetail = () => {
 
   const loadKegiatanDetail = async () => {
     try {
-      const result = await getKegiatanById(id); // API call to get kegiatan details
+      const result = await getKegiatanById(id);
       setKegiatan(result.data);
     } catch (error) {
       setError('Failed to load kegiatan details.');
@@ -27,7 +27,7 @@ const KegiatanDetail = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/kegiatan'); // Navigate back to kegiatan list
+    navigate('/kegiatan');
   };
 
   if (error) {
@@ -40,16 +40,12 @@ const KegiatanDetail = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* TopBar with toggle button for sidebar */}
       <TopBar onToggle={toggleSidebar} className="w-full" />
 
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
-        {/* Sidebar with collapsible functionality */}
         <SideBar isCollapsed={isSidebarCollapsed} />
 
-        {/* Main content area */}
         <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
-          {/* Breadcrumb navigation */}
           <nav className="text-sm text-gray-600 mb-4">
             <button
               onClick={handleBackToList}
@@ -59,11 +55,9 @@ const KegiatanDetail = () => {
             </button>
           </nav>
 
-          {/* Detail section with two-column layout */}
           <div className="bg-white p-8 rounded-lg shadow-lg">
             <h2 className="text-2xl font-bold mb-6">Detail Kegiatan</h2>
             <div className="grid grid-cols-2 gap-6">
-              {/* Left Column */}
               <div className="col-span-1">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-700">Nama Kegiatan</h3>
@@ -79,7 +73,6 @@ const KegiatanDetail = () => {
                 </div>
               </div>
 
-              {/* Right Column */}
               <div className="col-span-1">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-700">Jenis Kegiatan</h3>
@@ -92,7 +85,7 @@ const KegiatanDetail = () => {
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-700">Posyandu</h3>
                   <p className="text-gray-600">
-                    {kegiatan.kaderDetail?.posyanduDetail?.nama || 'N/A'}
+                    {kegiatan.posyanduDetail?.nama || '-'}
                   </p>
                 </div>
               </div>

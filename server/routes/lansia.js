@@ -77,52 +77,36 @@ router.post('/', authenticateToken, async(req, res) => {
 });
 
 router.get('/', authenticateToken, async (req, res) => {
-  const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
-  const userRole = req.user.role; // Get the role of the authenticated user
-  const { wali } = req.query; // Get the wali parameter from the query string
-
+  const posyanduId = req.user.posyanduId;
+  const userRole = req.user.role;
+  const { wali } = req.query;
+  
   try {
-    // Define the base filter condition
+    // Define the base filter condition with includes
     const filterCondition = {
       include: [
         {
           model: Wali,
           as: 'waliDetail',
-          where: {}, // Initialize where condition for Wali
-          required: false // Allow results even if there's no matching Wali
-        },
-        {
-          model: Pengguna,
-          as: 'kaderDetail',
-          required: false // Allow results even if there's no matching Pengguna
+          where: wali ? { id: wali } : undefined,
+          required: !!wali, // Only required if `wali` is specified
         },
         {
           model: Posyandu,
           as: 'posyanduDetail',
-          required: false // Allow results even if there's no matching Posyandu
-        }
-      ]
+          where: userRole !== 'admin' ? { id: posyanduId } : undefined,
+          required: userRole !== 'admin', // Only required if the user is not an admin
+        },
+      ],
     };
 
-    // Apply posyandu filter only if the user is not an admin
-    if (userRole !== 'admin') {
-      filterCondition.include[2].where = { id: posyanduId };
-      filterCondition.include[2].required = true; // Ensure the Posyandu filter is applied
-    }
-
-    // Optionally filter by wali
-    if (wali) {
-      filterCondition.include[0].where.id = wali; // Assuming 'wali' refers to 'waliId'
-      filterCondition.include[0].required = true; // Ensure the Wali filter is applied
-    }
-
     const lansias = await Lansia.findAll(filterCondition);
+    
     res.status(200).json(lansias);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 // Get Lansia statistics
 router.get('/laporan', async(req, res) => {

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios'; // Import axios
-import posyanduLogo from '@/assets/posyandu.png';
+import posyanduLogo from '@/assets/silaba.png';
 
 const Register = ({ formData, setFormData }) => {
   const [errors, setErrors] = useState({});
@@ -111,7 +111,7 @@ const Register = ({ formData, setFormData }) => {
         <div className="flex justify-between items-center max-w-4xl mx-auto">
           <Link to="/" className="flex items-center">
             <img src={posyanduLogo} alt="Logo" className="h-10 w-auto" />
-            <span className="text-lg font-semibold ml-2 text-gray-700">ePosyandu Tanjungpinang</span>
+            <span className="text-lg font-semibold ml-2 text-gray-700">SiLaBa Tanjungpinang</span>
           </Link>
           <Link to="/" className="text-gray-600 text-sm font-medium hover:underline">
             Kembali ke Beranda
@@ -125,7 +125,7 @@ const Register = ({ formData, setFormData }) => {
             {/* Left side: Welcome back for existing users */}
             <div className="w-1/2 bg-gray-100 text-blue-800 flex flex-col justify-center items-center p-8 rounded-bl-3xl">
               <h1 className="text-4xl font-bold text-center" style={{ color: '#008EB3' }}>Sudah Punya Akun?</h1>
-              <p className="text-center mb-6">Masuk untuk mengakses akun anggota ePosyandu Tanjungpinang</p>
+              <p className="text-center mb-6">Masuk untuk mengakses akun anggota SiLaBa Tanjungpinang</p>
               <Link to="/login" className="py-2 px-6 rounded-full shadow-lg transition duration-300"
                 style={{ backgroundColor: '#008EB3', color: 'white' }}
               >
@@ -136,7 +136,7 @@ const Register = ({ formData, setFormData }) => {
             {/* Right side: Register new users */}
             <div className="w-1/2 bg-white text-blue-800 flex flex-col justify-center items-center p-8 rounded-br-3xl">
               <h1 className="text-4xl font-bold text-center" style={{ color: '#008EB3' }}>Buat Akun</h1>
-              <h3 className="text-xl font-bold mb-4 text-center" style={{ color: '#008EB3' }}>Anggota ePosyandu</h3>
+              <h3 className="text-xl font-bold mb-4 text-center" style={{ color: '#008EB3' }}>Anggota SiLaBa Tanjungpinang</h3>
               <p className="text-center mb-6">Isi semua data yang diperlukan untuk mendaftar</p>
               <form className="w-full" onSubmit={handleSubmit}>
                 <div className="mb-4">

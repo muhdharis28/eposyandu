@@ -14,7 +14,7 @@ const KegiatanKaderForm = () => {
     nama: '',
     tanggal: '',
     deskripsi: '',
-    jenis: '', // Options: 'balita', 'lansia'
+    jenis: '',
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);

@@ -67,7 +67,7 @@ const LansiaCard = () => {
               onClick={handleAddLansia}
               disabled={!user?.wali || !user?.verifikasi} // Disable button if user does not have Orangtua data
               className={`flex items-center px-6 py-2 rounded-lg shadow-md transition-all duration-300 ${
-                user?.wali || !user?.verifikasi ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                user?.wali && user?.verifikasi ? 'bg-blue-500 hover:bg-blue-600 text-white' : 'bg-gray-300 text-gray-600 cursor-not-allowed'
               }`}
             >
               <FaPlus className="mr-2" /> Tambah Data Lansia
@@ -87,7 +87,7 @@ const LansiaCard = () => {
           {!user?.verifikasi && (
             <div className="mb-6 p-4 bg-yellow-100 text-yellow-800 rounded-lg">
               <p>
-                Anda harus memverifikasi akun terlebih dahulu sebelum dapat menambah atau mengakses data lansia. Silakan hubungi admin untuk verifikasi.
+                Akun anda sedang diverifikasi sebelum dapat menambah atau mengakses data lansia. Silakan hubungi admin untuk verifikasi.
               </p>
             </div>
           )}
@@ -97,7 +97,7 @@ const LansiaCard = () => {
 
             {lansiaData.length === 0 ? (
               <div className="text-center py-10">
-                <p className="text-gray-500">Belum ada data lansia yang terkait dengan user ini.</p>
+                <p className="text-gray-500">Tambhakan data lansia anda.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

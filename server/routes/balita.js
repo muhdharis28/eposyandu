@@ -53,46 +53,31 @@ router.post('/', authenticateToken, async(req, res) => {
 
 // Get all Balita records, filtered by posyandu
 router.get('/', authenticateToken, async (req, res) => {
-  const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
-  const userRole = req.user.role; // Get the role of the authenticated user
-  const { orangtua } = req.query; // Get the orangtua parameter from the query string
-
+  const posyanduId = req.user.posyanduId;
+  const userRole = req.user.role;
+  const { orangtua } = req.query;
+  console.log('pppppppppppppppppppppp', orangtua)
   try {
-    // Define the base filter condition
+    // Define the base filter condition with includes
     const filterCondition = {
       include: [
         {
           model: OrangTua,
           as: 'orangtuaDetail',
-          where: {}, // Initialize where condition for OrangTua
-          required: false // Allow results even if there's no matching OrangTua
-        },
-        {
-          model: Pengguna,
-          as: 'kaderDetail',
-          required: false // Allow results even if there's no matching Pengguna
+          where: orangtua ? { id: orangtua } : undefined,
+          required: !!orangtua, // Only required if `orangtua` is specified
         },
         {
           model: Posyandu,
           as: 'posyanduDetail',
-          required: false // Allow results even if there's no matching Posyandu
-        }
-      ]
+          where: userRole !== 'admin' ? { id: posyanduId } : undefined,
+          required: userRole !== 'admin', // Only required if the user is not an admin
+        },
+      ],
     };
 
-    // Apply posyandu filter only if the user is not an admin
-    if (userRole !== 'admin') {
-      filterCondition.include[2].where = { id: posyanduId };
-      filterCondition.include[2].required = true; // Ensure the Posyandu filter is applied
-    }
-
-    // Optionally filter by orangtua
-    if (orangtua) {
-      filterCondition.include[0].where.id = orangtua;
-      filterCondition.include[0].required = true; // Ensure the Wali filter is applied
-    }
-
     const balitas = await Balita.findAll(filterCondition);
+    
     res.status(200).json(balitas);
   } catch (error) {
     res.status(500).json({ error: error.message });

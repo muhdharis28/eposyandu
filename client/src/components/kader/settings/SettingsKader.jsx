@@ -7,11 +7,13 @@ import SideBar from '../SideBar';
 import { getPenggunaById, updatePengguna } from '../../PenggunaService';
 import user from '@/assets/user-avatar.png';
 import axios from 'axios';
+import api from '../../../api'; // Import the Axios instance
 
 const SettingsKader = () => {
   const userId = localStorage.getItem('userId');
   const [pengguna, setPengguna] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRequested, setIsRequested] = useState(false);
   const [file, setFile] = useState(null);
   const [fotoKKPreview, setFotoKKPreview] = useState(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState('');
@@ -50,7 +52,23 @@ const SettingsKader = () => {
       }
     };
 
+    const fetchLastPenghapusanData = async () => {
+      try {
+        const response = await api.get(`/penghapusan-data/${userId}`); // Adjust the endpoint accordingly
+        const deletionRequests = response.data; // Assuming response.data is an array
+        console.log(deletionRequests);
+        // Check if the last deletion request status is 'diminta'
+        if (deletionRequests.length > 0) {
+          const lastRequest = deletionRequests[deletionRequests.length - 1];
+          setIsRequested(lastRequest.status === 'diminta');
+        }
+      } catch (error) {
+        console.error('Error checking deletion requests:', error);
+      }
+    };
+
     fetchPengguna();
+    fetchLastPenghapusanData(); // Call the new function
   }, [userId]);
 
   const handleFileChange = (e) => {
@@ -61,6 +79,29 @@ const SettingsKader = () => {
     if (selectedFile) {
       const previewUrl = URL.createObjectURL(selectedFile);
       setFotoKKPreview(previewUrl);
+    }
+  };
+
+  const requestDataDeletion = async () => {
+    const isConfirmed = window.confirm('Are you sure you want to request data deletion? This action cannot be undone.');
+
+    if (!isConfirmed) {
+        return; // If the user cancels, exit the function
+    }
+
+    try {
+        const response = await api.post('/penghapusan-data', {
+            pengguna: userId,
+            nama: userDetails.nama,
+            status: 'diminta'
+        });
+        if (response.status === 201) {
+            setIsRequested(true);
+            alert('Request for data deletion has been submitted to admin.');
+        }
+    } catch (error) {
+        console.error('Failed to request data deletion:', error);
+        alert('Failed to request data deletion.');
     }
   };
 
@@ -129,6 +170,14 @@ const SettingsKader = () => {
                   >
                     {pengguna.verifikasi ? 'Terverifikasi' : 'Belum Diverifikasi'}
                   </span>
+
+                  {/* Button to request data deletion */}
+                  <button
+                    onClick={requestDataDeletion}
+                    className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md"
+                    disabled={isRequested}>
+                    {isRequested ? 'Request Submitted' : 'Request Delete Data'}
+                  </button>
                 </div>
               </div>
 
@@ -180,7 +229,7 @@ const SettingsKader = () => {
                       <div>
                         <label className="block text-sm font-semibold">Email</label>
                         <input
-                          type="text"
+                          type="email"
                           value={userDetails.email}
                           onChange={(e) => setUserDetails({ ...userDetails, email: e.target.value })}
                           className="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -190,9 +239,9 @@ const SettingsKader = () => {
                         <label className="block text-sm font-semibold">Foto KK</label>
                         <input
                           type="file"
-                          className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                          onChange={handleFileChange}
                           accept="image/*"
+                          onChange={handleFileChange}
+                          className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                         />
                         {(fotoKKPreview || uploadedFileUrl) && (
                           <div className="mt-4">
@@ -209,28 +258,27 @@ const SettingsKader = () => {
 
                     <button
                       onClick={handleUpdateUser}
-                      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md"
-                    >
-                      Update User
+                      className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md">
+                      Update Data
                     </button>
                   </TabPanel>
                 </Tabs>
-
-                {isPreviewOpen && (
-                  <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-                    <div className="relative">
-                      <button className="absolute top-2 right-2 text-white text-2xl" onClick={handleClosePreview}>
-                        &times;
-                      </button>
-                      <img src={fotoKKPreview || uploadedFileUrl} alt="Full Preview" className="max-w-full max-h-screen" />
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {isPreviewOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg">
+            <img src={fotoKKPreview} alt="KK Preview" className="max-w-full h-auto" />
+            <button onClick={handleClosePreview} className="mt-2 bg-red-500 text-white px-4 py-2 rounded-md">
+              Close Preview
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

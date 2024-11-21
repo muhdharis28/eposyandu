@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaBars, FaUserCircle, FaCog, FaPowerOff } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import posyandu from '@/assets/posyandu.png';
+import posyandu from '@/assets/silaba.png';
 
 const TopBar = ({ onToggle, isCollapsed }) => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -38,7 +38,7 @@ const TopBar = ({ onToggle, isCollapsed }) => {
   return (
     <div className="bg-white h-16 flex items-center justify-between pl-4 pr-6 shadow-lg fixed top-0 left-0 w-full z-10">
       <div className="flex items-center">
-        <div className={`text-gray-600 ${isCollapsed ? 'w-20' : 'w-64'} text-2xl font-bold`}>
+        <div className={`text-gray-600 ${isCollapsed ? 'w-20' : 'w-64'} text-md font-bold`}>
           {isCollapsed ? (
             <img
               src={posyandu}
@@ -52,7 +52,7 @@ const TopBar = ({ onToggle, isCollapsed }) => {
                 alt="Posyandu Logo"
                 className="w-12 mr-2"
               />
-              ePosyandu
+              SiLaBa Tanjungpinang
             </div>
           )}
         </div>

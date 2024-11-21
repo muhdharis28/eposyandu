@@ -8,7 +8,7 @@ import { FaPlus, FaPrint } from 'react-icons/fa';
 import ClipLoader from 'react-spinners/ClipLoader';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import posyandu from '@/assets/posyandu.png';
+import posyandu from '@/assets/silaba.png';
 
 const WaliCardKader = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
@@ -61,7 +61,7 @@ const WaliCardKader = () => {
 
     doc.setFontSize(18);
     doc.setTextColor('#007ACC');
-    doc.text('ePosyandu Tanjungpinang', 40, 20);
+    doc.text('SiLaBa Tanjungpinang', 40, 20);
 
     doc.setLineWidth(1);
     doc.setDrawColor(0, 122, 204);

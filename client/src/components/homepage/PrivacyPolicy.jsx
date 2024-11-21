@@ -1,4 +1,3 @@
-// src/PrivacyPolicy.jsx
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
@@ -11,10 +10,10 @@ const PrivacyPolicy = () =>{
       <div className="container mx-auto flex flex-col items-center text-center md:text-left">
         <div className="md:w-2/3 lg:w-1/2">
           <button
-            onClick={() => navigate(-1)} // Go back to the previous page
+            onClick={() => navigate(-1)}
             className="mb-8 flex items-center px-6 py-2 bg-white text-[#008EB3] font-semibold rounded-full shadow-md hover:bg-gray-100 transition duration-300"
           >
-            <FaArrowLeft className="mr-2" /> {/* Icon added here */}
+            <FaArrowLeft className="mr-2" />
             Kembali
           </button>
           <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-6">

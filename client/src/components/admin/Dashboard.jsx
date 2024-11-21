@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import api from '../../api'; // Import the Axios instance, adjust the path as necessary
+import api from '../../api';
+import {getPosyandus} from '../PosyanduService';
 
-const API_URL = '/stats'; // Define the endpoint for pengguna
+const API_URL = '/stats';
 
 const Dashboard = () => {
   const [stats, setStats] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [posyanduList, setPosyanduList] = useState([]);
+  const [selectedPosyandu, setSelectedPosyandu] = useState('');
 
-  const fetchStats = async () => {
+  const fetchStats = async (posyandu = '') => {
     try {
-      const response = await api.get(API_URL);
-      console.log(response)
+      setLoading(true);
+      const response = await api.get(API_URL, {
+        params: { posyandu },
+      });
       setStats(response.data);
       setLoading(false);
     } catch (err) {
@@ -20,9 +25,25 @@ const Dashboard = () => {
     }
   };
 
+  const fetchPosyanduList = async () => {
+    try {
+      const response = await getPosyandus();
+      setPosyanduList(response.data);
+    } catch (err) {
+      console.error('Failed to fetch posyandu list:', err);
+    }
+  };
+
   useEffect(() => {
+    fetchPosyanduList();
     fetchStats();
   }, []);
+
+  const handlePosyanduChange = (e) => {
+    const posyandu = e.target.value;
+    setSelectedPosyandu(posyandu);
+    fetchStats(posyandu);
+  };
 
   if (loading) {
     return <div className="flex items-center justify-center h-64">Loading...</div>;
@@ -36,6 +57,18 @@ const Dashboard = () => {
     <div className="p-6 min-h-screen mt-12">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
+        <select
+          className="p-2 border rounded-md"
+          value={selectedPosyandu}
+          onChange={handlePosyanduChange}
+        >
+          <option value="">Semua Posyandu</option>
+          {posyanduList.map((posyandu) => (
+            <option key={posyandu.id} value={posyandu.id}>
+              {posyandu.nama}
+            </option>
+          ))}
+        </select>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {stats.map((stat) => (

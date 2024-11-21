@@ -24,8 +24,8 @@ const PerkembanganBalitaForm = () => {
     tipe_imunisasi: '',
     tipe_vitamin: '',
     keterangan: '',
-    kader: '', // Will be automatically filled with logged-in user
-    dokter: '',
+    kader: null,
+    dokter: null,
     status_gizi: ''  // Add status_gizi to the form data
   });
 
@@ -34,8 +34,6 @@ const PerkembanganBalitaForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  const [selectedBalita, setSelectedBalita] = useState(null);
-  const [umurDalamBulan, setUmurDalamBulan] = useState(null);
   const [selectedAntropometri, setSelectedAntropometri] = useState(null);
   const [zScore, setZScore] = useState(null);
   const [statusGizi, setStatusGizi] = useState(null);
@@ -63,6 +61,16 @@ const PerkembanganBalitaForm = () => {
     try {
       const result = await getPerkembanganBalitaById(id);
       setFormData(result.data);
+      const response = await getBayi(result.data.id);
+      const balitaData = response.data;
+      
+      const { tanggal_lahir_balita, jenis_kelamin_balita } = balitaData;
+      const umur = calculateAgeInMonths(tanggal_lahir_balita);
+      const selectedAntropometri = selectAntropometri(jenis_kelamin_balita, umur);
+      setSelectedAntropometri(selectedAntropometri);
+      if (result.data.berat_badan) {
+        calculateZScoreAndStatusGizi(result.data.berat_badan, selectedAntropometri);
+    }
     } catch (error) {
       console.error('Failed to load perkembangan balita data:', error);
     }
@@ -95,7 +103,6 @@ const PerkembanganBalitaForm = () => {
 
     if (name === 'balita') {
         const balitaId = value;
-        setSelectedBalita(balitaId);
 
         if (balitaId) {
             try {
@@ -104,7 +111,6 @@ const PerkembanganBalitaForm = () => {
                 
                 const { tanggal_lahir_balita, jenis_kelamin_balita } = balitaData;
                 const umur = calculateAgeInMonths(tanggal_lahir_balita);
-                setUmurDalamBulan(umur);
 
                 const selectedAntropometri = selectAntropometri(jenis_kelamin_balita, umur);
                 setSelectedAntropometri(selectedAntropometri);
@@ -133,10 +139,13 @@ const selectAntropometri = (gender, ageInMonths) => {
 };
 
 const calculateZScoreAndStatusGizi = (weight, antropometri) => {
+  console.log(weight)
   if (antropometri) {
       const medianBB = antropometri.median;
       const sd = (antropometri["+1SD"] - medianBB) / 1;
       const zScore = (weight - medianBB) / sd;
+      console.log(weight, medianBB, sd)
+      console.log(zScore)
       setZScore(zScore);
 
       let statusGizi;
@@ -171,7 +180,6 @@ useEffect(() => {
     let newErrors = {};
     if (!formData.balita) newErrors.balita = 'Balita is required';
     if (!formData.tanggal_kunjungan) newErrors.tanggal_kunjungan = 'Tanggal Kunjungan is required';
-    if (!formData.dokter) newErrors.dokter = 'Dokter is required';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -181,7 +189,6 @@ useEffect(() => {
     if (!validateForm()) {
       return;
     }
-    console.log('gggggggggggggggg', formData, 'dff', id)
     setIsSubmitting(true);
     try {
       if (id) {
@@ -210,15 +217,23 @@ useEffect(() => {
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h1 className="text-2xl font-bold mb-4">{id ? 'Edit Perkembangan Balita' : 'Tambah Perkembangan Balita'}</h1>
+            <div
+              className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+              <p className="text-sm font-bold">
+                <span className="text-red-500">*</span>
+                Wajib diisi
+              </p>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold">Balita</label>
+                  <label className="block text-sm font-semibold">Balita
+                    <span className="text-red-500">*</span>
+                  </label>
                   <select
                     name="balita"
                     value={formData.balita}
                     onChange={handleChange}
-                    required
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   >
                     <option value="">Pilih Balita</option>
@@ -230,14 +245,25 @@ useEffect(() => {
                   </select>
                   {errors.balita && <p className="text-red-500 text-sm">{errors.balita}</p>}
                 </div>
-
+                <div>
+                  <label className="block text-sm font-semibold">Tanggal Kunjungan
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="tanggal_kunjungan"
+                    value={formData.tanggal_kunjungan}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  />
+                  {errors.tanggal_kunjungan && <p className="text-red-500 text-sm">{errors.tanggal_kunjungan}</p>}
+                </div>
                 <div>
                   <label className="block text-sm font-semibold">Dokter</label>
                   <select
                     name="dokter"
                     value={formData.dokter}
                     onChange={handleChange}
-                    required
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   >
                     <option value="">Pilih Dokter</option>
@@ -247,22 +273,7 @@ useEffect(() => {
                       </option>
                     ))}
                   </select>
-                  {errors.dokter && <p className="text-red-500 text-sm">{errors.dokter}</p>}
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold">Tanggal Kunjungan</label>
-                  <input
-                    type="date"
-                    name="tanggal_kunjungan"
-                    value={formData.tanggal_kunjungan}
-                    onChange={handleChange}
-                    required
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                  />
-                  {errors.tanggal_kunjungan && <p className="text-red-500 text-sm">{errors.tanggal_kunjungan}</p>}
-                </div>
-
                 <div>
                   <label className="block text-sm font-semibold">Berat Badan (kg)</label>
                   <input
@@ -327,6 +338,34 @@ useEffect(() => {
                     <option value="Cacing">Vitamin Cacing</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-sm font-semibold">Keterangan</label>
+                  <textarea
+                    name="keterangan"
+                    value={formData.keterangan}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+                <div>
+                  <label className="block text-sm font-semibold">Z-Score</label>
+                  <input
+                    type="text"
+                    value={zScore !== null && zScore !== undefined ? zScore.toFixed(2) : ''}
+                    readOnly
+                    className={`mt-1 p-2 w-full border rounded-md bg-gray-100 ${
+                      zScore !== null
+                        ? zScore < -3
+                          ? 'text-red-600 border-red-400'
+                          : zScore > 2
+                          ? 'text-orange-600 border-orange-400'
+                          : 'text-green-600 border-green-400'
+                        : 'text-gray-500 border-gray-300'
+                    }`}
+                  />
+                </div>
 
                 <div>
                   <label className="block text-sm font-semibold">Status Gizi</label>
@@ -338,32 +377,33 @@ useEffect(() => {
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md bg-gray-100"
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold">Keterangan</label>
-                  <textarea
-                    name="keterangan"
-                    value={formData.keterangan}
-                    onChange={handleChange}
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                  />
-                </div>
+              </div>
+              
+              <div className="mt-6 bg-white p-4 rounded-lg shadow-lg border w-1/2">
+                <h2 className="text-lg font-semibold">Petunjuk</h2>
+                <ul className="mt-2 space-y-2">
+                  <li className="flex items-center">
+                    <span className="w-4 h-4 inline-block bg-red-400 rounded-full mr-2"></span>
+                    <span>Z-Score &lt; -3: Buruk</span>
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-4 h-4 inline-block bg-green-400 rounded-full mr-2"></span>
+                    <span>-3 ≤ Z-Score ≤ 2: Normal</span>
+                  </li>
+                  <li className="flex items-center">
+                    <span className="w-4 h-4 inline-block bg-orange-400 rounded-full mr-2"></span>
+                    <span>Z-Score &gt; 2: Obesitas</span>
+                  </li>
+                </ul>
               </div>
 
-              <div className="mt-6 flex justify-end space-x-4">
+              <div className="mt-6 flex justify-start space-x-4">
                 <button
                   type="submit"
                   className={`px-4 py-2 rounded-lg text-white ${isSubmitting ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Submitting...' : id ? 'Update Perkembangan' : 'Tambah Perkembangan'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/kader-perkembangan-balita')}
-                  className="px-4 py-2 rounded-lg bg-gray-500 text-white"
-                >
-                  Batal
+                  {isSubmitting ? 'Memproses...' : id ? 'Edit' : 'Tambah'}
                 </button>
               </div>
             </form>

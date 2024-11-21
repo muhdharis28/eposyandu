@@ -7,20 +7,16 @@ const Dokter = require('../models/dokter');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new PerkembanganBalita record
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
-            tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter
+            tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter, posyandu
         } = req.body;
-
-        // Ensure the perkembangan is associated with the authenticated user's posyandu
-        const posyanduId = req.user.posyanduId;
 
         const newPerkembanganBalita = await PerkembanganBalita.create({
             balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
-            tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter, posyandu: posyanduId // Associate with posyandu
+            tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter, posyandu
         });
 
         res.status(201).json(newPerkembanganBalita);
@@ -29,24 +25,36 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
     }
 });
 
-// Get all PerkembanganBalita records, filtered by posyandu
 router.get('/', authenticateToken, async (req, res) => {
-    try {
-        const posyanduId = req.user.posyanduId;  // Get posyanduId from authenticated user
-        const userRole = req.user.role;  // Get the role of the authenticated user
+    const posyanduId = req.user.posyanduId;
+    const userRole = req.user.role;
+    const { balita } = req.query;
 
+    try {
         const filterCondition = {
             include: [
-                { model: Balita, as: 'balitaDetail', attributes: ['id', 'nama_balita'] },
-                { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] },
-                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'] },
+                {
+                    model: Balita,
+                    as: 'balitaDetail',
+                    where: balita ? { id: balita } : undefined,
+                    required: !!balita
+                },
+                {
+                    model: Posyandu,
+                    as: 'posyanduDetail',
+                    where: userRole !== 'admin' ? { id: posyanduId } : undefined,
+                    required: userRole !== 'admin'
+                },
+                {
+                    model: Pengguna,
+                    as: 'kaderDetail'
+                },
+                {
+                    model: Dokter,
+                    as: 'dokterDetail'
+                }
             ]
         };
-
-        // Apply posyandu filter only if the user is not an admin
-        if (userRole !== 'admin') {
-            filterCondition.where = { '$kaderDetail.posyandu$': posyanduId };
-        }
 
         const perkembanganBalitas = await PerkembanganBalita.findAll(filterCondition);
         res.status(200).json(perkembanganBalitas);
@@ -55,26 +63,36 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
-// Get all perkembangan records for a specific Balita, filtered by posyandu
 router.get('/balita/:balita', authenticateToken, async (req, res) => {
     try {
         const { balita } = req.params;
         const posyanduId = req.user.posyanduId;
-        const userRole = req.user.role;  // Get the role of the authenticated user
+        const userRole = req.user.role;
 
         const filterCondition = {
-            where: { balita }, // Filter by balita
-            order: [['tanggal_kunjungan', 'DESC']],
             include: [
-                { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] },
-                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'] },
+                {
+                    model: Balita,
+                    as: 'balitaDetail',
+                    where: balita ? { id: balita } : undefined,
+                    required: !!balita
+                },
+                {
+                    model: Posyandu,
+                    as: 'posyanduDetail',
+                    where: userRole !== 'admin' ? { id: posyanduId } : undefined,
+                    required: userRole !== 'admin'
+                },
+                {
+                    model: Pengguna,
+                    as: 'kaderDetail'
+                },
+                {
+                    model: Dokter,
+                    as: 'dokterDetail'
+                }
             ]
         };
-
-        // Apply posyandu filter only if the user is not an admin
-        if (userRole !== 'admin') {
-            filterCondition.where['$kaderDetail.posyandu$'] = posyanduId;
-        }
 
         const perkembangans = await PerkembanganBalita.findAll(filterCondition);
 
@@ -84,28 +102,20 @@ router.get('/balita/:balita', authenticateToken, async (req, res) => {
             res.status(404).json({ message: 'No Perkembangan found for this balita' });
         }
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch Perkembangan' });
+        res.status(500).json({ error: 'Failed to fetch Perkembangan', error });
     }
 });
 
-// Get a single PerkembanganBalita record by ID
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
-        const posyanduId = req.user.posyanduId;
-        const userRole = req.user.role;  // Get the role of the authenticated user
-
         const filterCondition = {
             include: [
-                { model: Balita, as: 'balitaDetail', attributes: ['id', 'nama_balita'] },
-                { model: Pengguna, as: 'kaderDetail', include: [{ model: Posyandu, as: 'posyanduDetail' }] },
-                { model: Dokter, as: 'dokterDetail', attributes: ['id', 'nama'] },
+                { model: Balita, as: 'balitaDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
+                { model: Pengguna, as: 'kaderDetail' },
+                { model: Dokter, as: 'dokterDetail' },
             ]
         };
-
-        // Apply posyandu filter only if the user is not an admin
-        if (userRole !== 'admin') {
-            filterCondition.where = { '$kaderDetail.posyandu$': posyanduId };
-        }
 
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id, filterCondition);
 
@@ -119,25 +129,18 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Update a PerkembanganBalita record
 router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const {
             balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
-            tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter
+            tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter, posyandu
         } = req.body;
 
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
         if (perkembanganBalita) {
-            // Ensure the update is within the authenticated user's posyandu
-            // const posyanduId = req.user.posyanduId;
-            // if (perkembanganBalita.posyandu !== posyanduId) {
-            //     return res.status(403).json({ error: 'Unauthorized action: PerkembanganBalita does not belong to your posyandu.' });
-            // }
-
             await perkembanganBalita.update({
                 balita, tanggal_kunjungan, berat_badan, tinggi_badan, status_gizi, keterangan,
-                tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter
+                tipe_imunisasi, tipe_vitamin, lingkar_kepala, kader, dokter, posyandu
             });
             res.status(200).json(perkembanganBalita);
         } else {
@@ -148,17 +151,10 @@ router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (r
     }
 });
 
-// Delete a PerkembanganBalita record
 router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const perkembanganBalita = await PerkembanganBalita.findByPk(req.params.id);
         if (perkembanganBalita) {
-            // Ensure the delete is within the authenticated user's posyandu
-            // const posyanduId = req.user.posyanduId;
-            // if (perkembanganBalita.posyandu !== posyanduId) {
-            //     return res.status(403).json({ error: 'Unauthorized action: PerkembanganBalita does not belong to your posyandu.' });
-            // }
-
             await perkembanganBalita.destroy();
             res.status(204).end();
         } else {

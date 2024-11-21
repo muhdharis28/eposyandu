@@ -3,9 +3,9 @@ import TopBar from '../TopBar';
 import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
 import { createDokumentasi, updateDokumentasi, getDokumentasiById } from '../../DokumentasiService';
-import { getKader } from '../../PenggunaService'; // Assume this fetches users with the 'kader' role
+import { getPosyandus } from '../../PosyanduService';
 import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios'; // Axios to handle the file upload
+import axios from 'axios';
 
 const DokumentasiForm = () => {
   const [dokumentasi, setDokumentasi] = useState({
@@ -13,7 +13,8 @@ const DokumentasiForm = () => {
     deskripsi: '',
     tanggal: '',
     foto: null,
-    kader: '',
+    kader: null,
+    posyandu: null,
   });
   const { id } = useParams();
   const [error, setError] = useState(null);
@@ -23,23 +24,22 @@ const DokumentasiForm = () => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
-  const [kader, setKader] = useState(''); // Store selected kader
-  const [kaderOptions, setKaderOptions] = useState([]); // Store list of kader options
+  const [posyanduOptions, setPosyanduOptions] = useState([]);
 
   useEffect(() => {
     if (id) {
       loadDokumentasi();
     }
-    loadKaders(); // Load kader options
+    loadPosyandu();
   }, [id]);
 
-  const loadKaders = async () => {
+  const loadPosyandu = async () => {
     try {
-      const result = await getKader(); // Fetch kader data (users with the role 'kader')
-      setKaderOptions(result.data);
+      const result = await getPosyandus();
+      console.log(result)
+      setPosyanduOptions(result.data);
     } catch (error) {
-      setError('Failed to load kader options.');
-      console.error('Failed to load kader options:', error);
+      console.error('Failed to load posyandu data:', error);
     }
   };
 
@@ -48,7 +48,7 @@ const DokumentasiForm = () => {
       const result = await getDokumentasiById(id);
       const doc = result.data;
 
-      // Format the date properly for the input field (yyyy-MM-dd)
+    
       const formattedDate = new Date(doc.tanggal).toISOString().split('T')[0];
 
       setDokumentasi({ ...doc, tanggal: formattedDate });
@@ -62,7 +62,7 @@ const DokumentasiForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dokumentasiToSubmit = { ...dokumentasi, kader };
+    const dokumentasiToSubmit = { ...dokumentasi };
 
     try {
       const uploadedFilePath = await uploadFile();
@@ -141,7 +141,6 @@ const DokumentasiForm = () => {
           {error && <p className="text-red-500">{error}</p>}
 
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* First Column */}
             <div className="col-span-1">
               <div className="mb-4">
                 <label className="block text-gray-700">Judul Dokumentasi</label>
@@ -166,9 +165,25 @@ const DokumentasiForm = () => {
                   required
                 />
               </div>
+              <div className="mb-4">
+                <label className="block text-gray-700">Posyandu</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded"
+                  value={dokumentasi.posyandu}
+                  onChange={handleChange}
+                  name="posyandu"
+                  required
+                >
+                  <option value="">Pilih Posyandu</option>
+                  {posyanduOptions.map((posyandu) => (
+                    <option key={posyandu.id} value={posyandu.id}>
+                      {posyandu.nama}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
-            {/* Second Column */}
             <div className="col-span-1">
               <div className="mb-4">
                 <label className="block text-gray-700">Deskripsi</label>
@@ -197,36 +212,15 @@ const DokumentasiForm = () => {
                   </div>
                 )}
               </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">Kader</label>
-                <select
-                  className="w-full p-2 border border-gray-300 rounded"
-                  value={kader}
-                  onChange={(e) => setKader(e.target.value)}
-                  name="kader"
-                  required
-                >
-                  <option value="">Pilih Kader</option>
-                  {kaderOptions.map((kader) => (
-                    <option key={kader.id} value={kader.id}>
-                      {kader.nama} - {kader.posyanduDetail?.nama}
-                    </option>
-                  ))}
-                </select>
-              </div>
             </div>
 
-            <div className="col-span-2 flex justify-end">
+            <div className="col-span-2 flex justify-start">
               <button type="submit" className="text-white bg-blue-500 px-4 py-2 rounded">
-                {id ? 'Update' : 'Tambah'}
-              </button>
-              <button type="button" onClick={handleBackToList} className="text-gray-700 px-4 py-2 ml-4 rounded">
-                Batal
+                {id ? 'Edit' : 'Tambah'}
               </button>
             </div>
           </form>
 
-          {/* Modal for Image Preview */}
           {isPreviewOpen && (
             <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
               <div className="relative">

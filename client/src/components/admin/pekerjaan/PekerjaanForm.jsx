@@ -1,26 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL parameters
-import { createJob, updateJob, getJobById } from '../../PekerjaanService'; // API services
-import TopBar from '../TopBar'; // Adjust the path as necessary
+import { useNavigate, useParams } from 'react-router-dom';
+import { createJob, updateJob, getJobById } from '../../PekerjaanService';
+import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management
+import { useSidebar } from '../../SideBarContext';
 
 const PekerjaanForm = () => {
-  const { id } = useParams(); // Get the ID from URL params
+  const { id } = useParams();
   const [nama, setNama] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // For navigation
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state
+  const navigate = useNavigate();
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   useEffect(() => {
     if (id) {
-      loadJob(); // Load job data if editing
+      loadJob();
     }
   }, [id]);
 
   const loadJob = async () => {
     try {
-      const result = await getJobById(id); // Fetch job data by ID
+      const result = await getJobById(id);
       const job = result.data;
       setNama(job.nama);
     } catch (error) {
@@ -30,8 +30,8 @@ const PekerjaanForm = () => {
   };
 
   const isUserAuthorized = () => {
-    const userRole = localStorage.getItem('role'); // Assuming roles are stored in local storage
-    return userRole === 'admin'; // Only admin can edit or add jobs
+    const userRole = localStorage.getItem('role');
+    return userRole === 'admin';
   };
 
   const handleSubmit = async (e) => {
@@ -39,19 +39,19 @@ const PekerjaanForm = () => {
 
     if (!isUserAuthorized()) {
       alert('You are not authorized to perform this action.');
-      return; // Prevent submission
+      return;
     }
 
     const job = { nama };
 
     try {
       if (id) {
-        await updateJob(id, job); // Update job if editing
+        await updateJob(id, job);
       } else {
-        await createJob(job); // Create new job if no ID is provided
+        await createJob(job);
       }
 
-      navigate('/pekerjaan'); // Navigate back to job list
+      navigate('/pekerjaan');
     } catch (error) {
       setError('Failed to save job data.');
       console.error('Error saving job:', error);
@@ -59,7 +59,7 @@ const PekerjaanForm = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/pekerjaan'); // Navigate back to the list
+    navigate('/pekerjaan');
   };
 
   return (
@@ -68,7 +68,6 @@ const PekerjaanForm = () => {
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
         <SideBar isCollapsed={isSidebarCollapsed} />
         <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
-          {/* Breadcrumb */}
           <nav className="text-sm text-gray-600 mb-4">
             <button onClick={handleBackToList} className="text-blue-500 hover:underline">
               &lt; Kembali ke Daftar Pekerjaan
@@ -96,14 +95,7 @@ const PekerjaanForm = () => {
                 type="submit"
                 className="text-white bg-blue-500 px-4 py-2 rounded"
               >
-                {id ? 'Update' : 'Tambah'}
-              </button>
-              <button
-                type="button"
-                onClick={handleBackToList}
-                className="text-gray-700 px-4 py-2 ml-4 rounded"
-              >
-                Batal
+                {id ? 'Edit' : 'Tambah'}
               </button>
             </div>
           </form>

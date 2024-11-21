@@ -25,6 +25,18 @@ export const updatePenggunaWali = (id, pengguna) => {
   return api.post(`${API_URL}/${id}/wali`, pengguna); // Authenticated request via interceptor
 };
 
+export const updatePenggunaVerifikasi = (id) => {
+  return api.post(`${API_URL}/${id}/verifikasi`); // Authenticated request via interceptor
+};
+
+export const getPenggunabyOrtu = (orangtuaId) => {
+  return api.get(`${API_URL}/?orangtua=${orangtuaId}`); // Use params to send query parameters
+};
+
+export const getPenggunabyWali = (waliId) => {
+  return api.get(`${API_URL}/?wali=${waliId}`); // Authenticated request via interceptor
+};
+
 // Delete a pengguna
 export const deletePengguna = (id) => {
   return api.delete(`${API_URL}/${id}`); // Authenticated request via interceptor

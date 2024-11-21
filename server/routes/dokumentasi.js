@@ -5,106 +5,25 @@ const Pengguna = require('../models/pengguna');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Fetch all dokumentasi records, filtered by posyandu
-router.get('/', authenticateToken, async (req, res) => {
-  try {
-    const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
-    const userRole = req.user.role; // Get the role of the authenticated user
-
-    const includeOptions = {
-      model: Pengguna,
-      as: 'kaderDetail',
-      include: [
-        {
-          model: Posyandu,
-          as: 'posyanduDetail'
-        }
-      ]
-    };
-
-    // Apply posyandu filter only if the user is not an admin
-    if (userRole !== 'admin') {
-      includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
-    }
-
-    const dokumentasiList = await Dokumentasi.findAll({
-      include: [includeOptions]
-    });
-
-    res.json(dokumentasiList);
-  } catch (error) {
-    console.error('Error fetching dokumentasi:', error);
-    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
-  }
-});
-
-router.get('/all', async (req, res) => {
-  try {
-    // Define the base include options
-    const includeOptions = {
-      model: Pengguna,
-      as: 'kaderDetail',
-      include: [
-        {
-          model: Posyandu,
-          as: 'posyanduDetail'
-        }
-      ]
-    };
-
-    const dokumentasiList = await Dokumentasi.findAll({
-      include: [includeOptions]
-    });
-
-    res.json(dokumentasiList);
-  } catch (error) {
-    console.error('Error fetching dokumentasi:', error);
-    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
-  }
-});
-
-// Fetch a single dokumentasi record by ID, filtered by posyandu
-router.get('/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const posyanduId = req.user.posyanduId; // Get posyanduId from authenticated user
-  const userRole = req.user.role; // Get the role of the authenticated user
-
-  try {
-    const includeOptions = {
-      model: Pengguna,
-      as: 'kaderDetail',
-      include: [
-        {
-          model: Posyandu,
-          as: 'posyanduDetail'
-        }
-      ]
-    };
-
-    // Apply posyandu filter only if the user is not an admin
-    if (userRole !== 'admin') {
-      includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
-    }
-
-    const dokumentasi = await Dokumentasi.findByPk(id, { include: [includeOptions] });
-
-    if (dokumentasi) {
-      res.json(dokumentasi);
-    } else {
-      res.status(404).json({ error: 'Dokumentasi not found.' });
-    }
-  } catch (error) {
-    console.error('Error fetching dokumentasi:', error);
-    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
-  }
-});
-
-// Create a new dokumentasi record
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
-  const { judul, deskripsi, tanggal, foto, kader } = req.body;
-
   try {
-    const newDokumentasi = await Dokumentasi.create({ judul, deskripsi, foto, tanggal, kader });
+    const { judul, deskripsi, tanggal, foto, kader, posyandu } = req.body;
+
+    if (req.user.role !== 'admin') {
+      const authenticatedUserPosyanduId = req.user.posyanduId;
+      if (authenticatedUserPosyanduId !== posyandu) {
+        return res.status(403).json({ error: 'Unauthorized action: posyandu mismatch.' });
+      }
+    }
+
+    const newDokumentasi = await Dokumentasi.create({
+      judul,
+      deskripsi,
+      tanggal,
+      foto,
+      kader,
+      posyandu,
+    });
     res.status(201).json(newDokumentasi);
   } catch (error) {
     console.error('Error creating dokumentasi:', error);
@@ -112,42 +31,131 @@ router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req
   }
 });
 
-// Update an existing dokumentasi record
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
-  const { id } = req.params;
-  const { judul, deskripsi, tanggal, foto, kader } = req.body;
-
+router.get('/all', async (req, res) => {
   try {
-    const dokumentasi = await Dokumentasi.findByPk(id);
-    if (dokumentasi) {
-      dokumentasi.judul = judul;
-      dokumentasi.deskripsi = deskripsi;
-      dokumentasi.kader = kader;
-      if (foto) dokumentasi.foto = foto;
-      dokumentasi.tanggal = tanggal;
+    const dokumentasiList = await Dokumentasi.findAll({
+      include: [
+        { model: Pengguna, as: 'kaderDetail' },
+        { model: Posyandu, as: 'posyanduDetail' },
+      ],
+    });
+    res.status(200).json(dokumentasiList);
+  } catch (error) {
+    console.error('Error fetching dokumentasi:', error);
+    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
+  }
+});
 
-      await dokumentasi.save();
-      res.json(dokumentasi);
-    } else {
-      res.status(404).json({ error: 'Dokumentasi not found.' });
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    const posyanduId = req.user.posyanduId;
+    const userRole = req.user.role;
+
+    const whereClause = userRole === 'admin' ? {} : { posyanduId };
+
+    const dokumentasiList = await Dokumentasi.findAll({
+      where: whereClause,
+      include: [
+        { model: Pengguna, as: 'kaderDetail' },
+        { model: Posyandu, as: 'posyanduDetail' },
+      ],
+    });
+    res.status(200).json(dokumentasiList);
+  } catch (error) {
+    console.error('Error fetching dokumentasi:', error);
+    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
+  }
+});
+
+router.get('/dashboard', async (req, res) => {
+  try {
+    const { posyandu } = req.query;
+    const whereClause = posyandu ? { posyandu } : {};
+
+    const dokumentasiList = await Dokumentasi.findAll({
+      where: whereClause,
+      include: [
+        { model: Pengguna, as: 'kaderDetail' },
+        { model: Posyandu, as: 'posyanduDetail' },
+      ],
+    });
+    res.status(200).json(dokumentasiList);
+  } catch (error) {
+    console.error('Error fetching dokumentasi:', error);
+    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
+  }
+});
+
+router.get('/:id', authenticateToken, async (req, res) => {
+  try {
+    const posyanduId = req.user.posyanduId;
+    const userRole = req.user.role;
+
+    const whereClause = userRole === 'admin' ? { id: req.params.id } : { id: req.params.id, posyandu: posyanduId };
+
+    const dokumentasi = await Dokumentasi.findOne({
+      where: whereClause,
+      include: [
+        { model: Pengguna, as: 'kaderDetail' },
+        { model: Posyandu, as: 'posyanduDetail' },
+      ],
+    });
+
+    if (!dokumentasi) {
+      return res.status(404).json({ error: 'Dokumentasi not found' });
     }
+
+    res.status(200).json(dokumentasi);
+  } catch (error) {
+    console.error('Error fetching dokumentasi:', error);
+    res.status(500).json({ error: 'Failed to fetch dokumentasi.' });
+  }
+});
+
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+  try {
+    const { judul, deskripsi, tanggal, foto, kader, posyandu } = req.body;
+    const posyanduId = req.user.posyanduId;
+    const userRole = req.user.role;
+
+    const whereClause = userRole === 'admin' ? { id: req.params.id } : { id: req.params.id, posyandu: posyanduId };
+
+    const dokumentasi = await Dokumentasi.findOne({ where: whereClause });
+
+    if (!dokumentasi) {
+      return res.status(404).json({ error: 'Dokumentasi not found' });
+    }
+
+    dokumentasi.judul = judul;
+    dokumentasi.deskripsi = deskripsi;
+    dokumentasi.tanggal = tanggal;
+    if (foto) dokumentasi.foto = foto;
+    dokumentasi.kader = kader;
+    dokumentasi.posyandu = posyandu;
+    await dokumentasi.save();
+
+    res.status(200).json(dokumentasi);
   } catch (error) {
     console.error('Error updating dokumentasi:', error);
     res.status(500).json({ error: 'Failed to update dokumentasi.' });
   }
 });
 
-// Delete a dokumentasi record
 router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
-  const { id } = req.params;
   try {
-    const dokumentasi = await Dokumentasi.findByPk(id);
-    if (dokumentasi) {
-      await dokumentasi.destroy();
-      res.json({ message: 'Dokumentasi deleted successfully.' });
-    } else {
-      res.status(404).json({ error: 'Dokumentasi not found.' });
+    const posyanduId = req.user.posyanduId;
+    const userRole = req.user.role;
+
+    const whereClause = userRole === 'admin' ? { id: req.params.id } : { id: req.params.id, posyandu: posyanduId };
+
+    const dokumentasi = await Dokumentasi.findOne({ where: whereClause });
+
+    if (!dokumentasi) {
+      return res.status(404).json({ error: 'Dokumentasi not found' });
     }
+
+    await dokumentasi.destroy();
+    res.status(204).end();
   } catch (error) {
     console.error('Error deleting dokumentasi:', error);
     res.status(500).json({ error: 'Failed to delete dokumentasi.' });

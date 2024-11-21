@@ -46,6 +46,7 @@ import PemeriksaanLansiaDetail from './components/admin/pemeriksaan_lansia/Pemer
 import PerkembanganBalitaForm from './components/admin/perkembangan_balita/PerkembanganBalitaForm';
 import PerkembanganBalitaDashboard from './components/admin/perkembangan_balita/PerkembanganBalitaDashboard';
 import PerkembanganBalitaDetail from './components/admin/perkembangan_balita/PerkembanganBalitaDetail';
+import PenghapusanDataDashboard from './components/admin/penghapusan_data/PenghapusanDataDashboard';
 import KaderDashboard from './components/kader/KaderDashboard';
 import UserDashboard from './components/user/UserDashboard';
 import Settings from './components/user/settings/Settings';
@@ -150,6 +151,7 @@ const App = () => (
           <Route path="/posyandu/baru" element={<PosyanduForm />} />
           <Route path="/posyandu/edit/:id" element={<PosyanduForm />} />
           <Route path="/posyandu/:id" element={<PosyanduDetail />} />
+          <Route path="/penghapusan-data" element={<PenghapusanDataDashboard />} />
         </Route>
 
         <Route element={<ProtectedRoute role="kader" />}>

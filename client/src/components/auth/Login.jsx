@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import posyandu from '@/assets/posyandu.png';
+import posyandu from '@/assets/silaba.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
@@ -67,7 +67,7 @@ const Login = () => {
         <div className="flex justify-between items-center max-w-4xl mx-auto">
           <Link to="/" className="flex items-center">
             <img src={posyandu} alt="Logo" className="h-10 w-auto" />
-            <span className="text-lg font-semibold ml-2 text-gray-700">ePosyandu Tanjungpinang</span>
+            <span className="text-lg font-semibold ml-2 text-gray-700">SiLaBa Tanjungpinang</span>
           </Link>
           <Link to="/" className="text-gray-600 text-sm font-medium hover:underline">
             Kembali ke Beranda
@@ -83,7 +83,7 @@ const Login = () => {
             {/* Left side: Login form */}
             <div className="w-1/2 bg-white text-blue-800 flex flex-col justify-center items-center p-8 rounded-bl-3xl">
               <h1 className="text-4xl font-bold text-center" style={{ color: '#008EB3' }}>Selamat Datang</h1>
-              <h3 className="text-xl font-bold mb-4 text-center" style={{ color: '#008EB3' }}>Anggota ePosyandu</h3>
+              <h3 className="text-xl font-bold mb-4 text-center" style={{ color: '#008EB3' }}>Anggota SiLaBa Tanjungpinang</h3>
               <p className="text-center mb-6 text-gray-600">Masukkan No HP dan kata sandi Anda untuk masuk</p>
               <form className="w-full" onSubmit={handleLogin}>
                 <input
@@ -125,7 +125,7 @@ const Login = () => {
             {/* Right side: Register invitation */}
             <div className="w-1/2 bg-gray-100 text-blue-800 flex flex-col justify-center items-center p-8 rounded-br-3xl">
               <h1 className="text-4xl font-bold mb-4 text-center" style={{ color: '#008EB3' }}>Belum Punya Akun?</h1>
-              <p className="text-center mb-6">Daftar sekarang dan bergabung menjadi anggota ePosyandu Tanjungpinang.</p>
+              <p className="text-center mb-6">Daftar sekarang dan bergabung menjadi anggota SiLaBa Tanjungpinang.</p>
               <Link to="/register" className="py-2 px-6 rounded-full shadow-lg transition duration-300"
                 style={{ backgroundColor: '#008EB3', color: 'white' }}
               >

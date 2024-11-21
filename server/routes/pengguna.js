@@ -14,7 +14,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 router.post('/', async (req, res) => {
     try {
         const {
-            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu
+            nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu, verifikasi
         } = req.body;
 
         const hashedPassword = await bcrypt.hash(kata_sandi, 10);
@@ -29,7 +29,8 @@ router.post('/', async (req, res) => {
             foto_kk,
             orangtua,
             wali,
-            posyandu
+            posyandu,
+            verifikasi
         });
 
         res.status(201).json(newUser);
@@ -87,18 +88,28 @@ router.get('/', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
         const userRole = req.user.role;  // Get the role of the authenticated user
+        const { orangtua, wali } = req.query;
 
         const filterCondition = {
             include: [
                 { model: OrangTua, as: 'orangTuaDetail' },
                 { model: Wali, as: 'waliDetail' },
                 { model: Posyandu, as: 'posyanduDetail' },
-            ]
+            ],
+            where: {} // Initialize an empty where condition
         };
 
         // Apply posyandu filter only if the user is not an admin
         if (userRole !== 'admin') {
-            filterCondition.where = { posyandu: posyanduId };
+            filterCondition.where.posyandu = posyanduId;
+        }
+
+        // Apply additional filters if orangtua or wali is provided
+        if (orangtua) {
+            filterCondition.where.orangtua = orangtua;
+        }
+        if (wali) {
+            filterCondition.where.wali = wali;
         }
 
         const users = await Pengguna.findAll(filterCondition);
@@ -113,7 +124,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
         const userRole = req.user.role;  // Get the role of the authenticated user
-
+        console.log(req.user.posyanduId)
         const filterCondition = {
             include: [
                 { model: OrangTua, as: 'orangTuaDetail' },
@@ -161,6 +172,22 @@ router.post('/check-nik', async (req, res) => {
     }
 });
 
+router.get('/orangtua', async (req, res) => {
+    try {
+        console.log('Fetching user by orangtua ID');
+        const { orangtua } = req.query; // Use req.query for GET request
+        if (!orangtua) {
+            return res.status(400).json({ error: 'Orangtua ID is required' });
+        }
+
+        const user = await Pengguna.findOne({ where: { orangtua } });
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user by orangtua ID:', error);
+        res.status(500).json({ error: 'Failed to get Orangtua' });
+    }
+});
+
 // Update pengguna by ID (scoped by posyandu)
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
@@ -168,9 +195,10 @@ router.put('/:id', authenticateToken, async (req, res) => {
             nama, email, kata_sandi, role, no_hp, no_kk, no_ktp, foto_kk, orangtua, wali, posyandu
         } = req.body;
         const posyanduId = req.user.posyanduId;
+        const userRole = req.user.role;
         const user = await Pengguna.findByPk(req.params.id);
-
-        if (user && user.posyandu === posyanduId) {
+        
+        if (user && (userRole === 'admin' || user.posyandu === posyanduId)) {
             user.nama = nama;
             user.email = email;
 
@@ -237,6 +265,19 @@ router.post('/:id/wali', authenticateToken, async (req, res) => {
     }
 });
 
+router.post('/:id/verifikasi', authenticateToken, async (req, res) => {
+    try {
+        const user = await Pengguna.findByPk(req.params.id); // Find the user by the provided id
+
+        user.verifikasi = true;
+        await user.save(); // Save the updated user
+
+        res.status(200).json(user); // Send the updated user object as a response
+    } catch (error) {
+        res.status(500).json({ error: error.message }); // Handle any errors
+    }
+});
+
 // Delete pengguna by ID (admin only, scoped by posyandu)
 router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
@@ -254,13 +295,12 @@ router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, re
     }
 });
 
-// Get all pengguna with role 'kader' (scoped by posyandu)
 router.get('/role/kader', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
 
         const kaderUsers = await Pengguna.findAll({
-            where: { role: 'kader', posyandu: posyanduId }, // Filter by posyandu
+            where: { role: 'kader', posyandu: posyanduId },
             include: [
                 { model: Posyandu, as: 'posyanduDetail' },
             ]

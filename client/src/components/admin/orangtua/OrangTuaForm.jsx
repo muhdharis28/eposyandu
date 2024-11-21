@@ -1,90 +1,424 @@
-import React, { useState, useEffect } from 'react';
-import TopBar from '../TopBar'; // Adjust the path if necessary
+import React, {useState, useEffect} from 'react';
+import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
-import { createOrangTua, updateOrangTua, getOrangTuaById } from '../../OrangTuaService'; // Service functions
-import { getPosyandus } from '../../PosyanduService'; // Assume this fetches users with the 'kader' role
-import { useNavigate, useParams } from 'react-router-dom'; // For navigation and URL params
+import {useSidebar} from '../../SideBarContext';
+import {createOrangTua, updateOrangTua, getOrangTuaById} from '../../OrangTuaService';
+import {getPosyandus} from '../../PosyanduService';
+import {useNavigate, useParams} from 'react-router-dom';
 import axios from 'axios';
+import { createPengguna, updatePengguna, getPenggunabyOrtu } from '../../PenggunaService';
 
 const OrangtuaForm = () => {
-  const { id } = useParams(); // Get ID if it's an edit form
-  const [formData, setFormData] = useState({
+  const {id} = useParams();
+  const [formData,
+    setFormData] = useState({
     no_kk: '',
     nik_ibu: '',
     nama_ibu: '',
     tempat_lahir_ibu: '',
     tanggal_lahir_ibu: '',
     alamat_ktp_ibu: '',
-    kelurahan_ktp_ibu: '',
-    kecamatan_ktp_ibu: '',
-    kota_ktp_ibu: '',
-    provinsi_ktp_ibu: '',
+    kelurahan_ktp_ibu: null,
+    kecamatan_ktp_ibu: null,
+    kota_ktp_ibu: null,
+    provinsi_ktp_ibu: null,
     alamat_domisili_ibu: '',
-    kelurahan_domisili_ibu: '',
-    kecamatan_domisili_ibu: '',
-    kota_domisili_ibu: '',
-    provinsi_domisili_ibu: '',
+    kelurahan_domisili_ibu: null,
+    kecamatan_domisili_ibu: null,
+    kota_domisili_ibu: null,
+    provinsi_domisili_ibu: null,
     no_hp_ibu: '',
     email_ibu: '',
-    pekerjaan_ibu: '',
-    pendidikan_ibu: '',
+    pekerjaan_ibu: null,
+    pendidikan_ibu: null,
     nik_ayah: '',
     nama_ayah: '',
     tempat_lahir_ayah: '',
     tanggal_lahir_ayah: '',
     alamat_ktp_ayah: '',
-    kelurahan_ktp_ayah: '',
-    kecamatan_ktp_ayah: '',
-    kota_ktp_ayah: '',
-    provinsi_ktp_ayah: '',
+    kelurahan_ktp_ayah: null,
+    kecamatan_ktp_ayah: null,
+    kota_ktp_ayah: null,
+    provinsi_ktp_ayah: null,
     alamat_domisili_ayah: '',
-    kelurahan_domisili_ayah: '',
-    kecamatan_domisili_ayah: '',
-    kota_domisili_ayah: '',
-    provinsi_domisili_ayah: '',
+    kelurahan_domisili_ayah: null,
+    kecamatan_domisili_ayah: null,
+    kota_domisili_ayah: null,
+    provinsi_domisili_ayah: null,
     no_hp_ayah: '',
     email_ayah: '',
-    pekerjaan_ayah: '',
-    pendidikan_ayah: '',
-    posyandu: '',
+    pekerjaan_ayah: null,
+    pendidikan_ayah: null,
+    posyandu: null,
+    foto_kk: null,
+    kata_sandi: null
   });
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state management
-  const navigate = useNavigate(); // For navigation
-  const [pekerjaanOptions, setPekerjaanOptions] = useState([]);
-  const [pendidikanOptions, setPendidikanOptions] = useState([]);
-  const [posyanduOptions, setPosyanduOptions] = useState([]); // Store list of kader options
+  const {isSidebarCollapsed, toggleSidebar} = useSidebar();
+  const navigate = useNavigate();
+  const [pekerjaanOptions,
+    setPekerjaanOptions] = useState([]);
+  const [pendidikanOptions,
+    setPendidikanOptions] = useState([]);
+  const [posyanduOptions,
+    setPosyanduOptions] = useState([]);
+  const [errors,
+    setErrors] = useState({});
 
-  useEffect(() => {
-    if (id) {
-      loadOrangtua(); // Load orangtua data if editing
-    }
-    loadPosyandu(); // Load kader options
-  }, [id]);
+  const [provinsiIbu,
+    setProvinsiIbu] = useState([]);
+  const [regenciesIbu,
+    setRegenciesIbu] = useState([]);
+  const [districtsIbu,
+    setDistrictsIbu] = useState([]);
+  const [villagesIbu,
+    setVillagesIbu] = useState([]);
+  const [provinsiIbuDom,
+    setProvinsiIbuDom] = useState([]);
+  const [regenciesIbuDom,
+    setRegenciesIbuDom] = useState([]);
+  const [districtsIbuDom,
+    setDistrictsIbuDom] = useState([]);
+  const [villagesIbuDom,
+    setVillagesIbuDom] = useState([]);
+
+  const [provinsiAyah,
+    setProvinsiAyah] = useState([]);
+  const [regenciesAyah,
+    setRegenciesAyah] = useState([]);
+  const [districtsAyah,
+    setDistrictsAyah] = useState([]);
+  const [villagesAyah,
+    setVillagesAyah] = useState([]);
+  const [provinsiAyahDom,
+    setProvinsiAyahDom] = useState([]);
+  const [regenciesAyahDom,
+    setRegenciesAyahDom] = useState([]);
+  const [districtsAyahDom,
+    setDistrictsAyahDom] = useState([]);
+  const [villagesAyahDom,
+    setVillagesAyahDom] = useState([]);
+
+  const handleProvinsiIbuChange = (e) => {
+    const selectedProvinsiId = e.target.value;
+    setFormData({
+      ...formData,
+      provinsi_ktp_ibu: selectedProvinsiId
+    })
+
   
-  const loadPosyandu = async () => {
-    try {
-      const result = await getPosyandus(); // Fetch kader data (users with the role 'kader')
-      setPosyanduOptions(result.data);
-    } catch (error) {
-      setError('Failed to load kader options.');
-      console.error('Failed to load kader options:', error);
-    }
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiId}/regencies`)
+      .then((response) => {
+        setRegenciesIbu(response.data);
+        setDistrictsIbu([]);
+        setVillagesIbu([]);
+      })
+      .catch((error) => console.error('Error fetching regencies:', error));
+  };
+
+  const handleProvinsiIbuChangeDom = (e) => {
+    const selectedProvinsiDomId = e.target.value;
+    setFormData({
+      ...formData,
+      provinsi_domisili_ibu: selectedProvinsiDomId
+    })
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiDomId}/regencies`)
+      .then((response) => {
+        setRegenciesIbuDom(response.data);
+        setDistrictsIbuDom([]);
+        setVillagesIbuDom([]);
+      })
+      .catch((error) => console.error('Error fetching regencies dom:', error));
+  };
+
+  const handleRegencyIbuChange = (e) => {
+    const selectedRegencyId = e.target.value;
+    setFormData({
+      ...formData,
+      kota_ktp_ibu: selectedRegencyId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyId}/districts`)
+      .then((response) => {
+        setDistrictsIbu(response.data);
+        setVillagesIbu([]);
+      })
+      .catch((error) => console.error('Error fetching districts:', error));
+  };
+
+  const handleRegencyIbuChangeDom = (e) => {
+    const selectedRegencyDomId = e.target.value;
+    setFormData({
+      ...formData,
+      kota_domisili_ibu: selectedRegencyDomId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyDomId}/districts`)
+      .then((response) => {
+        setDistrictsIbuDom(response.data);
+        setVillagesIbuDom([]);
+      })
+      .catch((error) => console.error('Error fetching districts dom:', error));
+  };
+
+  const handleDistrictIbuChange = (e) => {
+    const selectedDistrictId = e.target.value;
+    setFormData({
+      ...formData,
+      kecamatan_ktp_ibu: selectedDistrictId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictId}/villages`)
+      .then((response) => {
+        setVillagesIbu(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages:', error));
+  };
+
+  const handleDistrictIbuChangeDom = (e) => {
+    const selectedDistrictDomId = e.target.value;
+    setFormData({
+      ...formData,
+      kecamatan_domisili_ibu: selectedDistrictDomId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictDomId}/villages`)
+      .then((response) => {
+        setVillagesIbuDom(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages dom:', error));
+  };
+
+  const handleProvinsiAyahChange = (e) => {
+    const selectedProvinsiId = e.target.value;
+    setFormData({
+      ...formData,
+      provinsi_ktp_ayah: selectedProvinsiId
+    })
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiId}/regencies`)
+      .then((response) => {
+        setRegenciesAyah(response.data);
+        setDistrictsAyah([]);
+        setVillagesAyah([]);
+      })
+      .catch((error) => console.error('Error fetching regencies:', error));
+  };
+
+  const handleProvinsiAyahChangeDom = (e) => {
+    const selectedProvinsiDomId = e.target.value;
+    setFormData({
+      ...formData,
+      provinsi_domisili_ayah: selectedProvinsiDomId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${selectedProvinsiDomId}/regencies`)
+      .then((response) => {
+        setRegenciesAyahDom(response.data);
+        setDistrictsAyahDom([]);
+        setVillagesAyahDom([]);
+      })
+      .catch((error) => console.error('Error fetching regencies dom:', error));
+  };
+
+  const handleRegencyAyahChange = (e) => {
+    const selectedRegencyId = e.target.value;
+    setFormData({
+      ...formData,
+      kota_ktp_ayah: selectedRegencyId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyId}/districts`)
+      .then((response) => {
+        setDistrictsAyah(response.data);
+        setVillagesAyah([]);
+      })
+      .catch((error) => console.error('Error fetching districts:', error));
+  };
+
+  const handleRegencyAyahChangeDom = (e) => {
+    const selectedRegencyDomId = e.target.value;
+    setFormData({
+      ...formData,
+      kota_domisili_ayah: selectedRegencyDomId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${selectedRegencyDomId}/districts`)
+      .then((response) => {
+        setDistrictsAyahDom(response.data);
+        setVillagesAyahDom([]);
+      })
+      .catch((error) => console.error('Error fetching districts dom:', error));
+  };
+
+  const handleDistrictAyahChange = (e) => {
+    const selectedDistrictId = e.target.value;
+    setFormData({
+      ...formData,
+      kecamatan_ktp_ayah: selectedDistrictId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictId}/villages`)
+      .then((response) => {
+        setVillagesAyah(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages:', error));
+  };
+
+  const handleDistrictAyahChangeDom = (e) => {
+    const selectedDistrictDomId = e.target.value;
+    setFormData({
+      ...formData,
+      kecamatan_domisili_ayah: selectedDistrictDomId
+    });
+
+  
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/districts/${selectedDistrictDomId}/villages`)
+      .then((response) => {
+        setVillagesAyahDom(response.data);
+      })
+      .catch((error) => console.error('Error fetching villages dom:', error));
   };
 
   useEffect(() => {
-    const fetchPekerjaan = async () => {
+    if (id) {
+      loadOrangtua();
+    }
+    loadPosyandu();
+    loadWilayah();
+  }, [id]);
+
+  const loadPosyandu = async() => {
+    try {
+      const result = await getPosyandus();
+      setPosyanduOptions(result.data);
+    } catch (error) {
+      setErrors('Failed to load posyandu options.');
+      console.error('Failed to load posyandu options:', error);
+    }
+  };
+
+  const loadWilayah = async() => {
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/location/provinsi`)
+      .then(response => {
+        setProvinsiIbu(response.data);
+        setProvinsiIbuDom(response.data);
+        setProvinsiAyah(response.data);
+        setProvinsiAyahDom(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching provinces:', error);
+      });
+
+    if (formData.provinsi_ktp_ibu) {
+      const regencyResponse = await
+      axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${formData.provinsi_ktp_ibu}/regencies`);
+      setRegenciesIbu(regencyResponse.data);
+
+      if (formData.kota_ktp_ibu) {
+        const districtResponse = await
+        axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${formData.kota_ktp_ibu}/districts`);
+        setDistrictsIbu(districtResponse.data);
+
+        if (formData.kecamatan_ktp_ibu) {
+          const villageResponse = await
+          axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${formData.kecamatan_ktp_ibu}/villages`);
+          setVillagesIbu(villageResponse.data);
+        }
+      }
+    }
+
+    if (formData.provinsi_domisili_ibu) {
+      const regencyDomResponse = await
+      axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${formData.provinsi_domisili_ibu}/regencies`);
+      setRegenciesIbuDom(regencyDomResponse.data);
+
+      if (formData.kota_domisili_ibu) {
+        const districtDomResponse = await
+        axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${formData.kota_domisili_ibu}/districts`);
+        setDistrictsIbuDom(districtDomResponse.data);
+
+        if (formData.kecamatan_domisili_ibu) {
+          const villageDomResponse = await
+          axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${formData.kecamatan_domisili_ibu}/villages`);
+          setVillagesIbuDom(villageDomResponse.data);
+        }
+      }
+    }
+
+    if (formData.provinsi_ktp_ayah) {
+      const regencyResponse = await
+      axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${formData.provinsi_ktp_ayah}/regencies`);
+      setRegenciesAyah(regencyResponse.data);
+
+      if (formData.kota_ktp_ayah) {
+        const districtResponse = await
+        axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${formData.kota_ktp_ayah}/districts`);
+        setDistrictsAyah(districtResponse.data);
+
+        if (formData.kecamatan_ktp_ayah) {
+          const villageResponse = await
+          axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${formData.kecamatan_ktp_ayah}/villages`);
+          setVillagesAyah(villageResponse.data);
+        }
+      }
+    }
+
+    if (formData.provinsi_domisili_ayah) {
+      const regencyDomResponse = await
+      axios.get(`${import.meta.env.VITE_API_URL}/api/location/provinsi/${formData.provinsi_domisili_ayah}/regencies`);
+      setRegenciesAyahDom(regencyDomResponse.data);
+
+      if (formData.kota_domisili_ayah) {
+        const districtDomResponse = await
+        axios.get(`${import.meta.env.VITE_API_URL}/api/location/regencies/${formData.kota_domisili_ayah}/districts`);
+        setDistrictsAyahDom(districtDomResponse.data);
+
+        if (formData.kecamatan_domisili_ayah) {
+          const villageDomResponse = await
+          axios.get(`${import.meta.env.VITE_API_URL}/api/location/districts/${formData.kecamatan_domisili_ayah}/villages`);
+          setVillagesAyahDom(villageDomResponse.data);
+        }
+      }
+    }
+  }
+
+  useEffect(() => {
+    const fetchPekerjaan = async() => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pekerjaan`);
         setPekerjaanOptions(response.data);
       } catch (error) {
         console.error('Failed to fetch Pekerjaan data:', error);
       }
     };
 
-    const fetchPendidikan = async () => {
+    const fetchPendidikan = async() => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`); // Adjust the API path as needed
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/pendidikan`);
         setPendidikanOptions(response.data);
       } catch (error) {
         console.error('Failed to fetch Pendidikan data:', error);
@@ -95,437 +429,1013 @@ const OrangtuaForm = () => {
     fetchPendidikan();
   }, []);
 
-  const loadOrangtua = async () => {
+  const loadOrangtua = async() => {
     try {
-      const result = await getOrangTuaById(id); // Fetch orangtua data by ID
-      setFormData(result.data); // Set form data based on response
+      const result = await getOrangTuaById(id);
+      setFormData(result.data);
     } catch (error) {
       console.error('Failed to load orangtua data:', error);
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+  const createLogin = async(ortu_id) => {
+    try {
+      const uploadedFilePath = await uploadFile();
+      formData.foto_kk = uploadedFilePath;
+      await createPengguna({
+        'nama': formData.nama_ibu,
+        'email': formData.email_ibu,
+        'kata_sandi': formData.nik_ibu.slice(-6),
+        'role': 'user',
+        'no_hp': formData.no_hp_ibu,
+        'no_kk': formData.no_kk,
+        'no_ktp': formData.nik_ibu,
+        'foto_kk': uploadedFilePath,
+        'orangtua': ortu_id,
+        'posyandu': formData.posyandu,
+        'verifikasi': true,
+      });
+    } catch (error) {
+      console.error('Error submitting pengguna data:', error);
+    }
+  }
+
+  const updateLogin = async (ortu_id) => {
+    try {
+        const uploadedFilePath = await uploadFile();
+        if (uploadedFilePath) {
+            formData.foto_kk = uploadedFilePath;
+        }
+
+        const pengguna = await getPenggunabyOrtu(ortu_id);
+        if (!pengguna || !pengguna.data[0] || !pengguna.data[0].id) {
+            console.error('Pengguna not found for orangtua ID:', ortu_id);
+            return;
+        }
+
+        const nikIbu = formData.nik_ibu ? String(formData.nik_ibu) : "";
+        const slicedNikIbu = nikIbu.slice(-6);
+        
+        const data = {
+            'nama': formData.nama_ibu,
+            'email': formData.email_ibu,
+            'kata_sandi': slicedNikIbu,
+            'role': 'user',
+            'no_hp': formData.no_hp_ibu,
+            'no_kk': formData.no_kk,
+            'no_ktp': formData.nik_ibu,
+            'posyandu': formData.posyandu,
+            'verifikasi': true,
+        };
+
+      
+        if (uploadedFilePath) {
+            data.foto_kk = uploadedFilePath;
+        }
+
+        await updatePengguna(pengguna.data[0].id, data);
+        console.log('Pengguna updated successfully');
+    } catch (error) {
+        console.error('Error updating pengguna data:', error);
+    }
   };
 
-  const handleSubmit = async (e) => {
+  const uploadFile = async () => {
+    if (!formData.foto_kk) return null;
+    const formDataPengguna = new FormData();
+    formDataPengguna.append('file', formData.foto_kk);
+
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/upload`, formDataPengguna);
+      const filePath = `/uploads/${response.data.fileName}`;
+      return filePath;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    }
+  };
+
+  const handleSubmit = async(e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
     try {
       if (id) {
-        await updateOrangTua(id, formData); // Update orangtua data
+        await updateOrangTua(id, formData);
+        await updateLogin(id);
       } else {
-        await createOrangTua(formData); // Create new orangtua data
+        const ortu = await createOrangTua(formData);
+        await createLogin(ortu.data.id);
       }
-      navigate('/orangtua'); // Navigate back to orangtua list
+      navigate('/orangtua');
     } catch (error) {
       console.error('Error submitting orangtua data:', error);
     }
   };
 
   const handleBackToList = () => {
-    navigate('/orangtua'); // Navigate back to orangtua list
+    navigate('/orangtua');
+  };
+
+  const validateForm = () => {
+    let formErrors = {};
+
+    if (!formData.posyandu) {
+      formErrors.posyandu = 'Posyandu wajib diisi';
+    }
+
+    if (!formData.no_kk) {
+      formErrors.no_kk = 'No KK wajib diisi';
+    } else if (!/^\d{16}$/.test(formData.no_kk)) {
+      formErrors.no_kk = 'Nomor Kartu Keluarga harus 16 digit';
+    }
+
+    if (!formData.nik_ibu) {
+      formErrors.nik_ibu = 'NIK Ibu wajib diisi';
+    } else if (!/^\d{16}$/.test(formData.nik_ibu)) {
+      formErrors.nik_ibu = 'NIK Ibu harus 16 digit';
+    }
+
+    if (!formData.nama_ibu) {
+      formErrors.nama_ibu = 'Nama Ibu wajib diisi';
+    }
+
+    if (!formData.tempat_lahir_ibu) {
+      formErrors.tempat_lahir_ibu = 'Tempat Lahir Ibu wajib diisi';
+    }
+
+    if (!formData.tanggal_lahir_ibu) {
+      formErrors.tanggal_lahir_ibu = 'Tanggal Lahir Ibu wajib diisi';
+    }
+
+    if (!formData.no_hp_ibu) {
+      formErrors.no_hp_ibu = 'No HP Ibu wajib diisi';
+    } else if (!/^\d+$/.test(formData.no_hp_ibu)) {
+      formErrors.no_hp_ibu = 'No HP Ibu nomor valid';
+    }
+
+    if (!formData.alamat_ktp_ibu) {
+      formErrors.alamat_ktp_ibu = 'Alamat KTP Ibu wajib diisi';
+    }
+
+    if (!formData.alamat_domisili_ibu) {
+      formErrors.alamat_domisili_ibu = 'Alamat Domisili Ibu wajib diisi';
+    }
+
+  
+
+    if (!formData.nik_ayah) {
+      formErrors.nik_ayah = 'NIK Ayah wajib diisi';
+    } else if (!/^\d{16}$/.test(formData.nik_ayah)) {
+      formErrors.nik_ayah = 'NIK Ayah harus 16 digit';
+    }
+
+    if (!formData.nama_ayah) {
+      formErrors.nama_ayah = 'Nama Ayah wajib diisi';
+    }
+
+    if (!formData.tempat_lahir_ayah) {
+      formErrors.tempat_lahir_ayah = 'Tempat Lahir Ayah wajib diisi';
+    }
+
+    if (!formData.tanggal_lahir_ayah) {
+      formErrors.tanggal_lahir_ayah = 'Tanggal Lahir Ayah wajib diisi';
+    }
+
+    if (!formData.no_hp_ayah) {
+      formErrors.no_hp_ayah = 'No HP Ayah wajib diisi';
+    } else if (!/^\d+$/.test(formData.no_hp_ayah)) {
+      formErrors.no_hp_ayah = 'No HP Ayah nomor valid';
+    }
+
+    if (!formData.alamat_ktp_ayah) {
+      formErrors.alamat_ktp_ayah = 'Alamat KTP Ayah wajib diisi';
+    }
+
+    if (!formData.alamat_domisili_ayah) {
+      formErrors.alamat_domisili_ayah = 'Alamat Domisili Ayah wajib diisi';
+    }
+
+    setErrors(formErrors);
+    return Object
+      .keys(formErrors)
+      .length === 0;
+  };
+
+  const [sameAsKtpIbu,
+    setSameAsKtpIbu] = useState(false);
+  const [sameAsKtpAyah,
+    setSameAsKtpAyah] = useState(false);
+
+  const handleCheckboxChangeIbu = (e) => {
+    setSameAsKtpIbu(e.target.checked);
+    if (e.target.checked) {
+      setFormData((prevState) => {
+
+        return {
+          ...prevState,
+          provinsi_domisili_ibu: prevState.provinsi_ktp_ibu,
+          kota_domisili_ibu: prevState.kota_ktp_ibu,
+          kecamatan_domisili_ibu: prevState.kecamatan_ktp_ibu,
+          kelurahan_domisili_ibu: prevState.kelurahan_ktp_ibu,
+          alamat_domisili_ibu: prevState.alamat_ktp_ibu
+        };
+      });
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        provinsi_domisili_ibu: '',
+        kota_domisili_ibu: '',
+        kecamatan_domisili_ibu: '',
+        kelurahan_domisili_ibu: '',
+        alamat_domisili_ibu: ''
+      }));
+    }
+  };
+
+  const handleCheckboxChangeAyah = (e) => {
+    setSameAsKtpAyah(e.target.checked);
+    if (e.target.checked) {
+      setFormData((prevState) => ({
+        ...prevState,
+        provinsi_domisili_ayah: prevState.provinsi_ktp_ayah,
+        kota_domisili_ayah: prevState.kota_ktp_ayah,
+        kecamatan_domisili_ayah: prevState.kecamatan_ktp_ayah,
+        kelurahan_domisili_ayah: prevState.kelurahan_ktp_ayah,
+        alamat_domisili_ayah: prevState.alamat_ktp_ayah
+      }));
+    } else {
+      setFormData((prevState) => ({
+        ...prevState,
+        provinsi_domisili_ayah: '',
+        kota_domisili_ayah: '',
+        kecamatan_domisili_ayah: '',
+        kelurahan_domisili_ayah: '',
+        alamat_domisili_ayah: ''
+      }));
+    }
   };
 
   return (
     <div className="h-screen flex flex-col">
-      <TopBar onToggle={toggleSidebar} className="w-full" />
+      <TopBar onToggle={toggleSidebar} className="w-full"/>
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
-        <SideBar isCollapsed={isSidebarCollapsed} />
-        <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
+        <SideBar isCollapsed={isSidebarCollapsed}/>
+        <div
+          className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
           <nav className="text-sm text-gray-600 mb-4">
             <button onClick={handleBackToList} className="text-blue-500 hover:underline">
               &lt; Kembali ke Daftar Orangtua
             </button>
           </nav>
 
-          <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Orangtua' : 'Tambah Orangtua'}</h2>
+          <h2 className="text-2xl font-bold mb-4">{id
+              ? 'Edit Orangtua'
+              : 'Tambah Orangtua'}</h2>
+            <div
+              className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+              <p className="text-sm font-bold">
+                <span className="text-red-500">*</span>
+                Wajib diisi
+              </p>
+            </div>
+          <form className="space-y-6">
+            {/* Data Ibu Section */}
+            <div className="p-4 border border-gray-200 rounded-md">
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold">No KK
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="no_kk"
+                    value={formData.no_kk}
+                    onChange={(e) => setFormData({
+                    ...formData,
+                    no_kk: e.target.value
+                  })}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.no_kk && <p className="text-red-500 text-sm mt-1">{errors.no_kk}</p>}
+                </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Data Ibu Section */}
-        <div className="p-4 border border-gray-200 rounded-md">
-          <h2 className="text-xl font-semibold mb-3 text-blue-600">Data Ibu</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="no_kk"
-              value={formData.no_kk}
-              onChange={handleChange}
-              placeholder="No KK"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="nik_ibu"
-              value={formData.nik_ibu}
-              onChange={handleChange}
-              placeholder="NIK Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="nama_ibu"
-              value={formData.nama_ibu}
-              onChange={handleChange}
-              placeholder="Nama Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="tempat_lahir_ibu"
-              value={formData.tempat_lahir_ibu}
-              onChange={handleChange}
-              placeholder="Tempat Lahir Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="date"
-              name="tanggal_lahir_ibu"
-              value={formData.tanggal_lahir_ibu}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="alamat_ktp_ibu"
-              value={formData.alamat_ktp_ibu}
-              onChange={handleChange}
-              placeholder="Alamat KTP Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kelurahan_ktp_ibu"
-              value={formData.kelurahan_ktp_ibu}
-              onChange={handleChange}
-              placeholder="Kelurahan KTP Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kecamatan_ktp_ibu"
-              value={formData.kecamatan_ktp_ibu}
-              onChange={handleChange}
-              placeholder="Kecamatan KTP Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kota_ktp_ibu"
-              value={formData.kota_ktp_ibu}
-              onChange={handleChange}
-              placeholder="Kota KTP Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="provinsi_ktp_ibu"
-              value={formData.provinsi_ktp_ibu}
-              onChange={handleChange}
-              placeholder="Provinsi KTP Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="alamat_domisili_ibu"
-              value={formData.alamat_domisili_ibu}
-              onChange={handleChange}
-              placeholder="Alamat Domisili Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kelurahan_domisili_ibu"
-              value={formData.kelurahan_domisili_ibu}
-              onChange={handleChange}
-              placeholder="Kelurahan Domisili Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kecamatan_domisili_ibu"
-              value={formData.kecamatan_domisili_ibu}
-              onChange={handleChange}
-              placeholder="Kecamatan Domisili Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kota_domisili_ibu"
-              value={formData.kota_domisili_ibu}
-              onChange={handleChange}
-              placeholder="Kota Domisili Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="provinsi_domisili_ibu"
-              value={formData.provinsi_domisili_ibu}
-              onChange={handleChange}
-              placeholder="Provinsi Domisili Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="no_hp_ibu"
-              value={formData.no_hp_ibu}
-              onChange={handleChange}
-              placeholder="No HP Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="email"
-              name="email_ibu"
-              value={formData.email_ibu}
-              onChange={handleChange}
-              placeholder="Email Ibu"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <select
-              name="pekerjaan_ibu"
-              value={formData.pekerjaan_ibu}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Pilih Pekerjaan Ibu</option>
-              {pekerjaanOptions.map((pekerjaan) => (
-                <option key={pekerjaan.id} value={pekerjaan.id}>
-                  {pekerjaan.nama}
-                </option>
-              ))}
-            </select>
-            <select
-              name="pendidikan_ibu"
-              value={formData.pendidikan_ibu}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Pilih Pendidikan Ibu</option>
-              {pendidikanOptions.map((pendidikan) => (
-                <option key={pendidikan.id} value={pendidikan.id}>
-                  {pendidikan.nama}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+                <div>
+                  <label className="block text-sm font-semibold">Posyandu
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    name="posyandu"
+                    value={formData.posyandu}
+                    onChange={(e) => setFormData({
+                      ...formData,
+                      posyandu: e.target.value
+                    })}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                    <option value="">Pilih Posyandu</option>
+                    {posyanduOptions.length > 0 && posyanduOptions.map(d => (
+                      <option key={d.id} value={d.id}>
+                        {d.nama}
+                      </option>
+                    ))}
+                  </select> {errors.posyandu && <p className="text-red-500 text-sm mt-1">{errors.posyandu}</p>}
+                </div>
+              </div>
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mb-5">
+                <div>
+                  <label className="block text-sm font-semibold">Foto Kartu Keluarga
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="file"
+                    name="foto_kk"
+                    onChange={(e) => setFormData({
+                    ...formData,
+                    foto_kk: e.target.files[0]
+                  })}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.foto_kk && <p className="text-red-500 text-sm mt-1">{errors.foto_kk}</p>}
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between">
+                  <h3 className="text-xl font-bold text-gray-700 mb-3">Data Ibu</h3>
+                </div>
 
-        {/* Data Ayah Section */}
-        <div className="p-4 border border-gray-200 rounded-md">
-          <h2 className="text-xl font-semibold mb-3 text-blue-600">Data Ayah</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              name="nik_ayah"
-              value={formData.nik_ayah}
-              onChange={handleChange}
-              placeholder="NIK Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="nama_ayah"
-              value={formData.nama_ayah}
-              onChange={handleChange}
-              placeholder="Nama Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="tempat_lahir_ayah"
-              value={formData.tempat_lahir_ayah}
-              onChange={handleChange}
-              placeholder="Tempat Lahir Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="date"
-              name="tanggal_lahir_ayah"
-              value={formData.tanggal_lahir_ayah}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="alamat_ktp_ayah"
-              value={formData.alamat_ktp_ayah}
-              onChange={handleChange}
-              placeholder="Alamat KTP Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kelurahan_ktp_ayah"
-              value={formData.kelurahan_ktp_ayah}
-              onChange={handleChange}
-              placeholder="Kelurahan KTP Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kecamatan_ktp_ayah"
-              value={formData.kecamatan_ktp_ayah}
-              onChange={handleChange}
-              placeholder="Kecamatan KTP Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kota_ktp_ayah"
-              value={formData.kota_ktp_ayah}
-              onChange={handleChange}
-              placeholder="Kota KTP Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="provinsi_ktp_ayah"
-              value={formData.provinsi_ktp_ayah}
-              onChange={handleChange}
-              placeholder="Provinsi KTP Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="alamat_domisili_ayah"
-              value={formData.alamat_domisili_ayah}
-              onChange={handleChange}
-              placeholder="Alamat Domisili Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kelurahan_domisili_ayah"
-              value={formData.kelurahan_domisili_ayah}
-              onChange={handleChange}
-              placeholder="Kelurahan Domisili Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kecamatan_domisili_ayah"
-              value={formData.kecamatan_domisili_ayah}
-              onChange={handleChange}
-              placeholder="Kecamatan Domisili Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="kota_domisili_ayah"
-              value={formData.kota_domisili_ayah}
-              onChange={handleChange}
-              placeholder="Kota Domisili Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="provinsi_domisili_ayah"
-              value={formData.provinsi_domisili_ayah}
-              onChange={handleChange}
-              placeholder="Provinsi Domisili Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-            <input
-              type="text"
-              name="no_hp_ayah"
-              value={formData.no_hp_ayah}
-              onChange={handleChange}
-              placeholder="No HP Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="email"
-              name="email_ayah"
-              value={formData.email_ayah}
-              onChange={handleChange}
-              placeholder="Email Ayah"
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <select
-              name="pekerjaan_ayah"
-              value={formData.pekerjaan_ayah}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Pilih Pekerjaan Ayah</option>
-              {pekerjaanOptions.map((pekerjaan) => (
-                <option key={pekerjaan.id} value={pekerjaan.id}>
-                  {pekerjaan.nama}
-                </option>
-              ))}
-            </select>
-            <select
-              name="pendidikan_ayah"
-              value={formData.pendidikan_ayah}
-              onChange={handleChange}
-              className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Pilih Pendidikan Ayah</option>
-              {pendidikanOptions.map((pendidikan) => (
-                <option key={pendidikan.id} value={pendidikan.id}>
-                  {pendidikan.nama}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">Posyandu</label>
-            <select
-              className="w-full p-2 border border-gray-300 rounded"
-              value={formData.posyandu}
-              onChange={handleChange}
-              name="posyandu"
-              required
-            >
-              <option value="">Pilih Posyandu</option>
-              {posyanduOptions.map((posyandu) => (
-                <option key={posyandu.id} value={posyandu.id}>
-                  {posyandu.nama}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">NIK Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nik_ibu"
+                      value={formData.nik_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      nik_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nik_ibu && <p className="text-red-500 text-sm mt-1">{errors.nik_ibu}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Nama Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nama_ibu"
+                      value={formData.nama_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      nama_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nama_ibu && <p className="text-red-500 text-sm mt-1">{errors.nama_ibu}</p>}
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Tempat Lahir Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="tempat_lahir_ibu"
+                      value={formData.tempat_lahir_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      tempat_lahir_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tempat_lahir_ibu && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir_ibu}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Tanggal Lahir Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="tanggal_lahir_ibu"
+                      value={formData.tanggal_lahir_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      tanggal_lahir_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tanggal_lahir_ibu && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir_ibu}</p>}
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Provinsi KTP Ibu</label>
+                    <select
+                      name="provinsi_ktp_ibu"
+                      value={formData.provinsi_ktp_ibu}
+                      onChange={handleProvinsiIbuChange}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                      <option value="">Pilih Provinsi</option>
+                      {provinsiIbu.length > 0 && provinsiIbu.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Kota KTP Ibu</label>
+                    <select
+                      name="kota_ktp_ibu"
+                      value={formData.kota_ktp_ibu}
+                      onChange={handleRegencyIbuChange}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                      disabled={!regenciesIbu.length}>
+                      <option value="">Pilih Kota</option>
+                      {regenciesIbu.length > 0 && regenciesIbu.map(r => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div className="space-y-2">
+                    <div>
+                      <label className="block text-sm font-semibold">Kecamatan KTP Ibu</label>
+                      <select
+                        name="kecamatan_ktp_ibu"
+                        value={formData.kecamatan_ktp_ibu}
+                        onChange={handleDistrictIbuChange}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={!districtsIbu.length}>
+                        <option value="">Pilih Kecamatan</option>
+                        {districtsIbu.length > 0 && districtsIbu.map(d => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">Kelurahan KTP Ibu</label>
+                      <select
+                        name="kelurahan_ktp_ibu"
+                        value={formData.kelurahan_ktp_ibu}
+                        onChange={(e) => setFormData({
+                        ...formData,
+                        kelurahan_ktp_ibu: e.target.value
+                      })}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={!villagesIbu.length}>
+                        <option value="">Pilih Kelurahan</option>
+                        {villagesIbu.length > 0 && villagesIbu.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">
+                      Alamat KTP Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      name="alamat_ktp_ibu"
+                      value={formData.alamat_ktp_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      alamat_ktp_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                      rows="4"/> {errors.alamat_ktp_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_ktp_ibu}</p>}
+                  </div>
+                </div>
+                <div className="col-span-2 mt-5">
+                  <label className="block text-sm font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={sameAsKtpIbu}
+                      onChange={handleCheckboxChangeIbu}
+                      className="mr-2"/>
+                    Sama dengan Alamat KTP Ibu
+                  </label>
+                </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition-colors"
-        >
-          Submit
-        </button>
-      </form>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Provinsi Domisili Ibu</label>
+                    <select
+                      name="provinsi_domisili_ibu"
+                      value={formData.provinsi_domisili_ibu}
+                      onChange={handleProvinsiIbuChangeDom}
+                      disabled={sameAsKtpIbu}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                      <option value="">Pilih Provinsi</option>
+                      {provinsiIbuDom.length > 0 && provinsiIbuDom.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Kota Domisili Ibu</label>
+                    <select
+                      name="kota_domisili_ibu"
+                      value={formData.kota_domisili_ibu}
+                      onChange={handleRegencyIbuChangeDom}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                      disabled={sameAsKtpIbu || !regenciesIbuDom.length}>
+                      <option value="">Pilih Kota</option>
+                      {regenciesIbuDom.length > 0 && regenciesIbuDom.map(r => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div className="space-y-2">
+                    <div>
+                      <label className="block text-sm font-semibold">Kecamatan Domisili Ibu</label>
+                      <select
+                        name="kecamatan_domisili_ibu"
+                        value={formData.kecamatan_domisili_ibu}
+                        onChange={handleDistrictIbuChangeDom}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={sameAsKtpIbu || !districtsIbuDom.length}>
+                        <option value="">Pilih Kecamatan</option>
+                        {districtsIbuDom.length > 0 && districtsIbuDom.map(d => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">Kelurahan Domisili Ibu</label>
+                      <select
+                        name="kelurahan_domisili_ibu"
+                        value={formData.kelurahan_domisili_ibu}
+                        onChange={(e) => setFormData({
+                        ...formData,
+                        kelurahan_domisili_ibu: e.target.value
+                      })}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={sameAsKtpIbu || !villagesIbuDom.length}>
+                        <option value="">Pilih Kelurahan</option>
+                        {villagesIbuDom.length > 0 && villagesIbuDom.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Alamat Domisili Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      type="text"
+                      name="alamat_domisili_ibu"
+                      disabled={sameAsKtpIbu}
+                      value={formData.alamat_domisili_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      alamat_domisili_ibu: e.target.value
+                    })}
+                      rows="4"
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.alamat_domisili_ibu && <p className="text-red-500 text-sm mt-1">{errors.alamat_domisili_ibu}</p>}
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">No Handphone Ibu
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="no_hp_ibu"
+                      value={formData.no_hp_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      no_hp_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.no_hp_ibu && <p className="text-red-500 text-sm mt-1">{errors.no_hp_ibu}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Email Ibu</label>
+                    <input
+                      type="text"
+                      name="email_ibu"
+                      value={formData.email_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      email_ibu: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/>
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Pekerjaan Ibu</label>
+                    <select
+                      name="pekerjaan_ibu"
+                      value={formData.pekerjaan_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      pekerjaan_ibu: e.target.value
+                    })}
+                      className="w-full p-2 border border-gray-300 rounded">
+                      <option value="">Pilih Pekerjaan Ibu</option>
+                      {pekerjaanOptions.map((pekerjaan) => (
+                        <option key={pekerjaan.id} value={pekerjaan.id}>
+                          {pekerjaan.nama}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Pendidikan Ibu</label>
+                    <select
+                      name="pendidikan_ibu"
+                      value={formData.pendidikan_ibu}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      pendidikan_ibu: e.target.value
+                    })}
+                      className="w-full p-2 border border-gray-300 rounded">
+                      <option value="">Pilih Pendidikan Ibu</option>
+                      {pendidikanOptions.map((pendidikan) => (
+                        <option key={pendidikan.id} value={pendidikan.id}>
+                          {pendidikan.nama}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Data Ayah Section */}
+            <div className="p-4 border border-gray-200 rounded-md">
+              <div>
+                <div className="flex justify-between mt-4">
+                  <h3 className="text-xl font-bold text-gray-700 mb-3">Data Ayah</h3>
+                </div>
+
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">NIK Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nik_ayah"
+                      value={formData.nik_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      nik_ayah: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nik_ayah && <p className="text-red-500 text-sm mt-1">{errors.nik_ayah}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Nama Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="nama_ayah"
+                      value={formData.nama_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      nama_ayah: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.nama_ayah && <p className="text-red-500 text-sm mt-1">{errors.nama_ayah}</p>}
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Tempat Lahir Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="tempat_lahir_ayah"
+                      value={formData.tempat_lahir_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      tempat_lahir_ayah: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tempat_lahir_ayah && <p className="text-red-500 text-sm mt-1">{errors.tempat_lahir_ayah}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Tanggal Lahir Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      name="tanggal_lahir_ayah"
+                      value={formData.tanggal_lahir_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      tanggal_lahir_ayah: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.tanggal_lahir_ayah && <p className="text-red-500 text-sm mt-1">{errors.tanggal_lahir_ayah}</p>}
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+
+                  <div>
+                    <label className="block text-sm font-semibold">Provinsi KTP Ayah</label>
+                    <select
+                      name="provinsi_ktp_ayah"
+                      value={formData.provinsi_ktp_ayah}
+                      onChange={handleProvinsiAyahChange}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                      <option value="">Pilih Provinsi</option>
+                      {provinsiAyah.length > 0 && provinsiAyah.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Kota KTP Ayah</label>
+                    <select
+                      name="kota_ktp_ayah"
+                      value={formData.kota_ktp_ayah}
+                      onChange={handleRegencyAyahChange}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                      disabled={!regenciesAyah.length}>
+                      <option value="">Pilih Kota</option>
+                      {regenciesAyah.length > 0 && regenciesAyah.map(r => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div className="space-y-2">
+                    <div>
+                      <label className="block text-sm font-semibold">Kecamatan KTP Ayah</label>
+                      <select
+                        name="kecamatan_ktp_ayah"
+                        value={formData.kecamatan_ktp_ayah}
+                        onChange={handleDistrictAyahChange}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={!districtsAyah.length}>
+                        <option value="">Pilih Kecamatan</option>
+                        {districtsAyah.length > 0 && districtsAyah.map(d => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">Kelurahan KTP Ayah</label>
+                      <select
+                        name="kelurahan_ktp_ayah"
+                        value={formData.kelurahan_ktp_ayah}
+                        onChange={(e) => setFormData({
+                        ...formData,
+                        kelurahan_ktp_ayah: e.target.value
+                      })}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={!villagesAyah.length}>
+                        <option value="">Pilih Kelurahan</option>
+                        {villagesAyah.length > 0 && villagesAyah.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Alamat KTP Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      type="text"
+                      name="alamat_ktp_ayah"
+                      value={formData.alamat_ktp_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      alamat_ktp_ayah: e.target.value
+                    })}
+                      rows="4"
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.alamat_ktp_ayah && <p className="text-red-500 text-sm mt-1">{errors.alamat_ktp_ayah}</p>}
+                  </div>
+                </div>
+                <div className="col-span-2 mt-5">
+                  <label className="block text-sm font-semibold">
+                    <input
+                      type="checkbox"
+                      checked={sameAsKtpAyah}
+                      onChange={handleCheckboxChangeAyah}
+                      className="mr-2"/>
+                    Sama dengan Alamat KTP Ayah
+                  </label>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Provinsi Domisili Ayah</label>
+                    <select
+                      name="provinsi_domisili_ayah"
+                      value={formData.provinsi_domisili_ayah}
+                      disabled={sameAsKtpAyah}
+                      onChange={handleProvinsiAyahChangeDom}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md">
+                      <option value="">Pilih Provinsi</option>
+                      {provinsiAyahDom.length > 0 && provinsiAyahDom.map(p => (
+                        <option key={p.id} value={p.id}>
+                          {p.name}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Kota Domisili Ayah</label>
+                    <select
+                      name="kota_domisili_ayah"
+                      value={formData.kota_domisili_ayah}
+                      onChange={handleRegencyAyahChangeDom}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                      disabled={!regenciesAyahDom.length || sameAsKtpAyah}>
+                      <option value="">Pilih Kota</option>
+                      {regenciesAyahDom.length > 0 && regenciesAyahDom.map(r => (
+                        <option key={r.id} value={r.id}>
+                          {r.name}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div className="space-y-2">
+                    <div>
+                      <label className="block text-sm font-semibold">Kecamatan Domisili Ayah</label>
+                      <select
+                        name="kecamatan_domisili_ayah"
+                        value={formData.kecamatan_domisili_ayah}
+                        onChange={handleDistrictAyahChangeDom}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={!districtsAyahDom.length || sameAsKtpAyah}>
+                        <option value="">Pilih Kecamatan</option>
+                        {districtsAyahDom.length > 0 && districtsAyahDom.map(d => (
+                          <option key={d.id} value={d.id}>
+                            {d.name}
+                          </option>
+                        ))}
+                      </select>
+
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold">Kelurahan Domisili Ayah</label>
+                      <select
+                        name="kelurahan_domisili_ayah"
+                        value={formData.kelurahan_domisili_ayah}
+                        onChange={(e) => setFormData({
+                        ...formData,
+                        kelurahan_domisili_ayah: e.target.value
+                      })}
+                        className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                        disabled={sameAsKtpAyah || !villagesAyahDom.length}>
+                        <option value="">Pilih Kelurahan</option>
+                        {villagesAyahDom.length > 0 && villagesAyahDom.map(v => (
+                          <option key={v.id} value={v.id}>
+                            {v.name}
+                          </option>
+                        ))}
+                      </select>
+
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Alamat Domisili Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      type="text"
+                      name="alamat_domisili_ayah"
+                      value={formData.alamat_domisili_ayah}
+                      disabled={sameAsKtpAyah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      alamat_domisili_ayah: e.target.value
+                    })}
+                      rows="4"
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.alamat_domisili_ayah && <p className="text-red-500 text-sm mt-1">{errors.alamat_domisili_ayah}</p>}
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">No Handphone Ayah
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="no_hp_ayah"
+                      value={formData.no_hp_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      no_hp_ayah: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/> {errors.no_hp_ayah && <p className="text-red-500 text-sm mt-1">{errors.no_hp_ayah}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Email Ayah</label>
+                    <input
+                      type="text"
+                      name="email_ayah"
+                      value={formData.email_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      email_ayah: e.target.value
+                    })}
+                      className="mt-1 p-2 w-full border border-gray-300 rounded-md"/>
+                  </div>
+                </div>
+                <div
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 space-y-4 md:space-y-0 mt-5">
+                  <div>
+                    <label className="block text-sm font-semibold">Pekerjaan Ayah</label>
+                    <select
+                      name="pekerjaan_ayah"
+                      value={formData.pekerjaan_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      pekerjaan_ayah: e.target.value
+                    })}
+                      className="w-full p-2 border border-gray-300 rounded">
+                      <option value="">Pilih Pekerjaan Ayah</option>
+                      {pekerjaanOptions.map((pekerjaan) => (
+                        <option key={pekerjaan.id} value={pekerjaan.id}>
+                          {pekerjaan.nama}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold">Pendidikan Ayah</label>
+                    <select
+                      name="pendidikan_ayah"
+                      value={formData.pendidikan_ayah}
+                      onChange={(e) => setFormData({
+                      ...formData,
+                      pendidikan_ayah: e.target.value
+                    })}
+                      className="w-full p-2 border border-gray-300 rounded">
+                      <option value="">Pilih Pendidikan Ayah</option>
+                      {pendidikanOptions.map((pendidikan) => (
+                        <option key={pendidikan.id} value={pendidikan.id}>
+                          {pendidikan.nama}
+                        </option>
+                      ))}
+                    </select>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={handleSubmit}
+              className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md">
+              {id
+              ? 'Edit'
+              : 'Tambah'}
+            </button>
+          </div>
         </div>
       </div>
     </div>

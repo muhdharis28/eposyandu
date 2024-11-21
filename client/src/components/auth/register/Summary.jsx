@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import posyandu from '@/assets/posyandu.png';
+import posyandu from '@/assets/silaba.png';
 
 const Summary = () => {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ const Summary = () => {
               className="w-40 mr-2 bg-white rounded-3xl shadow-md"
             />
               <h1 className="text-white text-3xl font-extrabold mt-4">
-                ePosyandu Tanjungpinang
+                SiLaBa Tanjungpinang
               </h1>
             </div>
           </div>

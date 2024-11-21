@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { createPerkembanganBalita, updatePerkembanganBalita, getPerkembanganBalitaById } from '../../PerkembanganBalitaService'; // Adjust the path if needed
-import { getBayi } from '../../BayiService'; // Service to fetch Balita options
-import { getKader } from '../../PenggunaService'; // Service to fetch Kader options
-import { getDoctors } from '../../DokterService'; // Service to fetch Doctor options
-import TopBar from '../TopBar'; // Adjust the path as necessary
+import { createPerkembanganBalita, updatePerkembanganBalita, getPerkembanganBalitaById } from '../../PerkembanganBalitaService';
+import { getBayi } from '../../BayiService';
+import { getDoctors } from '../../DokterService';
+import TopBar from '../TopBar';
 import SideBar from '../SideBar';
-import { useSidebar } from '../../SideBarContext'; // Sidebar context for state management
+import { useSidebar } from '../../SideBarContext';
+import {getPosyandus} from '../../PosyanduService';
 
 const PerkembanganBalitaForm = () => {
-  const { id } = useParams(); // Get the ID from the URL params if editing
-  const navigate = useNavigate(); // For navigation
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     balita: '',
     tanggal_kunjungan: '',
@@ -21,31 +21,41 @@ const PerkembanganBalitaForm = () => {
     tipe_imunisasi: '',
     tipe_vitamin: '',
     keterangan: '',
-    kader: '',
-    dokter: '',
+    kader: null,
+    dokter: null,
+    posyandu: null
   });
+
   const [balitaOptions, setBalitaOptions] = useState([]);
-  const [kaderOptions, setKaderOptions] = useState([]);
   const [dokterOptions, setDokterOptions] = useState([]);
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Sidebar state
-  const [error, setError] = useState('');
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
+  const [posyanduOptions,
+    setPosyanduOptions] = useState([]);
 
   useEffect(() => {
     if (id) {
-      loadPerkembanganBalita(); // Load Perkembangan Balita data if editing
+      loadPerkembanganBalita();
     }
     loadBalitaOptions();
-    loadKaderOptions();
+    loadPosyandu();
     loadDokterOptions();
   }, [id]);
 
   const loadPerkembanganBalita = async () => {
     try {
       const result = await getPerkembanganBalitaById(id);
-      setFormData(result.data); // Set the data in form for editing
+      setFormData(result.data);
     } catch (error) {
-      setError('Failed to load Perkembangan Balita data.');
       console.error('Failed to load data:', error);
+    }
+  };
+
+  const loadPosyandu = async() => {
+    try {
+      const result = await getPosyandus();
+      setPosyanduOptions(result.data);
+    } catch (error) {
+      console.error('Failed to load posyandu options:', error);
     }
   };
 
@@ -55,15 +65,6 @@ const PerkembanganBalitaForm = () => {
       setBalitaOptions(result.data);
     } catch (error) {
       console.error('Failed to load Balita data:', error);
-    }
-  };
-
-  const loadKaderOptions = async () => {
-    try {
-      const result = await getKader();
-      setKaderOptions(result.data);
-    } catch (error) {
-      console.error('Failed to load Kader data:', error);
     }
   };
 
@@ -88,19 +89,18 @@ const PerkembanganBalitaForm = () => {
     e.preventDefault();
     try {
       if (id) {
-        await updatePerkembanganBalita(id, formData); // Update existing Perkembangan Balita
+        await updatePerkembanganBalita(id, formData);
       } else {
-        await createPerkembanganBalita(formData); // Create a new Perkembangan Balita
+        await createPerkembanganBalita(formData);
       }
-      navigate('/perkembangan-balita'); // Navigate back to the list
+      navigate('/perkembangan-balita');
     } catch (error) {
-      setError('Failed to save Perkembangan Balita data.');
       console.error('Error saving Perkembangan Balita:', error);
     }
   };
 
   const handleBackToList = () => {
-    navigate('/perkembangan-balita'); // Navigate back to the list
+    navigate('/perkembangan-balita');
   };
 
   return (
@@ -117,10 +117,7 @@ const PerkembanganBalitaForm = () => {
 
           <h2 className="text-2xl font-bold mb-4">{id ? 'Edit Perkembangan Balita' : 'Tambah Perkembangan Balita'}</h2>
 
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
-            {/* Balita Dropdown */}
             <div className="col-span-1">
               <label className="block text-gray-700">Balita</label>
               <select
@@ -139,7 +136,6 @@ const PerkembanganBalitaForm = () => {
               </select>
             </div>
 
-            {/* Tanggal Kunjungan */}
             <div className="col-span-1">
               <label className="block text-gray-700">Tanggal Kunjungan</label>
               <input
@@ -152,7 +148,6 @@ const PerkembanganBalitaForm = () => {
               />
             </div>
 
-            {/* Berat Badan */}
             <div className="col-span-1">
               <label className="block text-gray-700">Berat Badan (kg)</label>
               <input
@@ -164,7 +159,6 @@ const PerkembanganBalitaForm = () => {
               />
             </div>
 
-            {/* Tinggi Badan */}
             <div className="col-span-1">
               <label className="block text-gray-700">Tinggi Badan (cm)</label>
               <input
@@ -176,7 +170,6 @@ const PerkembanganBalitaForm = () => {
               />
             </div>
 
-            {/* Lingkar Kepala */}
             <div className="col-span-1">
               <label className="block text-gray-700">Lingkar Kepala (cm)</label>
               <input
@@ -188,7 +181,6 @@ const PerkembanganBalitaForm = () => {
               />
             </div>
 
-            {/* Status Gizi */}
             <div className="col-span-1">
               <label className="block text-gray-700">Status Gizi</label>
               <select
@@ -206,7 +198,6 @@ const PerkembanganBalitaForm = () => {
               </select>
             </div>
 
-            {/* Tipe Imunisasi */}
             <div className="col-span-1">
               <label className="block text-gray-700">Tipe Imunisasi</label>
               <select
@@ -226,7 +217,6 @@ const PerkembanganBalitaForm = () => {
               </select>
             </div>
 
-            {/* Tipe Vitamin */}
             <div className="col-span-1">
               <label className="block text-gray-700">Tipe Vitamin</label>
               <select
@@ -241,7 +231,6 @@ const PerkembanganBalitaForm = () => {
               </select>
             </div>
 
-            {/* Keterangan */}
             <div className="col-span-2">
               <label className="block text-gray-700">Keterangan</label>
               <textarea
@@ -252,25 +241,24 @@ const PerkembanganBalitaForm = () => {
               />
             </div>
 
-            {/* Kader Dropdown */}
-            <div className="col-span-1">
-              <label className="block text-gray-700">Kader</label>
-              <select
-                name="kader"
-                value={formData.kader}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded"
-              >
-                <option value="">Pilih Kader</option>
-                {kaderOptions.map((kader) => (
-                  <option key={kader.id} value={kader.id}>
-                    {kader.nama}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <label className="block">
+                <span className="text-gray-700">Posyandu</span>
+                <select
+                  name="posyandu"
+                  value={formData.posyandu}
+                  onChange={handleChange}
+                  className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
+                  required
+                  >
+                  <option value="">Pilih Posyandu</option>
+                  {posyanduOptions.map((posyandu) => (
+                      <option key={posyandu.id} value={posyandu.id}>
+                      {posyandu.nama}
+                      </option>
+                  ))}
+                </select>
+            </label>
 
-            {/* Dokter Dropdown */}
             <div className="col-span-1">
               <label className="block text-gray-700">Dokter</label>
               <select
@@ -288,13 +276,9 @@ const PerkembanganBalitaForm = () => {
               </select>
             </div>
 
-            {/* Submit and Cancel Buttons */}
-            <div className="col-span-2 flex justify-end">
+            <div className="col-span-2 flex justify-start">
               <button type="submit" className="text-white bg-blue-500 px-4 py-2 rounded">
-                {id ? 'Update' : 'Tambah'}
-              </button>
-              <button type="button" onClick={handleBackToList} className="text-gray-700 px-4 py-2 ml-4 rounded">
-                Batal
+                {id ? 'Edit' : 'Tambah'}
               </button>
             </div>
           </form>

@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getPemeriksaanLansiaById, createPemeriksaanLansia, updatePemeriksaanLansia } from '../../PemeriksaanLansiaService'; // You need to implement this service
-import { getLansia } from '../../LansiaService'; // Fetch Lansia data
-import { getDoctors } from '../../DokterService'; // Fetch Dokter data
-import { getKader } from '../../PenggunaService'; // Fetch Kader data
-import TopBar from '../TopBar'; // Import the TopBar
-import SideBar from '../SideBar'; // Import the SideBar
+import { getPemeriksaanLansiaById, createPemeriksaanLansia, updatePemeriksaanLansia } from '../../PemeriksaanLansiaService';
+import { getLansia } from '../../LansiaService';
+import { getDoctors } from '../../DokterService';
+import TopBar from '../TopBar';
+import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext'; 
+import {getPosyandus} from '../../PosyanduService';
 
 const PemeriksaanLansiaForm = () => {
   const { id } = useParams();
@@ -24,24 +24,35 @@ const PemeriksaanLansiaForm = () => {
     keterangan: '',
     riwayat_obat: '',
     riwayat_penyakit: '',
-    kader: '',
-    dokter: '',
+    posyandu: null,
+    dokter: null,
+    kader: null
   });
 
   const [lansiaOptions, setLansiaOptions] = useState([]);
   const [dokterOptions, setDokterOptions] = useState([]);
-  const [kaderOptions, setKaderOptions] = useState([]);
   const navigate = useNavigate();
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
+  const [posyanduOptions,
+    setPosyanduOptions] = useState([]);
 
   useEffect(() => {
     if (id) {
-      loadPemeriksaanLansia(); // Load Pemeriksaan Lansia data if editing
+      loadPemeriksaanLansia();
     }
     loadLansiaOptions();
     loadDokterOptions();
-    loadKaderOptions();
+    loadPosyandu();
   }, [id]);
+  
+  const loadPosyandu = async() => {
+    try {
+      const result = await getPosyandus();
+      setPosyanduOptions(result.data);
+    } catch (error) {
+      console.error('Failed to load posyandu options:', error);
+    }
+  };
 
   const loadPemeriksaanLansia = async () => {
     try {
@@ -70,15 +81,6 @@ const PemeriksaanLansiaForm = () => {
     }
   };
 
-  const loadKaderOptions = async () => {
-    try {
-      const result = await getKader();
-      setKaderOptions(result.data);
-    } catch (error) {
-      console.error('Failed to fetch Kader data:', error);
-    }
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -91,30 +93,25 @@ const PemeriksaanLansiaForm = () => {
     e.preventDefault();
     try {
       if (id) {
-        await updatePemeriksaanLansia(id, formData); // Update if editing
+        await updatePemeriksaanLansia(id, formData);
       } else {
-        await createPemeriksaanLansia(formData); // Create new record
+        await createPemeriksaanLansia(formData);
       }
-      navigate('/pemeriksaan-lansia'); // Navigate back to the list after form submission
+      navigate('/pemeriksaan-lansia');
     } catch (error) {
       console.error('Error submitting pemeriksaan lansia data:', error);
     }
   };
 
   const handleBackToList = () => {
-    navigate('/pemeriksaan-lansia'); // Navigate back to list
+    navigate('/pemeriksaan-lansia');
   };
 
   return (
     <div className="h-screen flex flex-col">
-      {/* TopBar with toggle button for sidebar */}
       <TopBar onToggle={toggleSidebar} className="w-full" />
-
       <div className="flex flex-grow transition-all duration-500 ease-in-out">
-        {/* Sidebar with collapsible functionality */}
         <SideBar isCollapsed={isSidebarCollapsed} />
-
-        {/* Main content area */}
         <div className="flex-1 bg-gray-100 p-6 transition-all duration-500 ease-in-out mt-16">
             <nav className="text-sm text-gray-600 mb-4">
                 <button onClick={handleBackToList} className="text-blue-500 hover:underline">
@@ -267,18 +264,18 @@ const PemeriksaanLansiaForm = () => {
                 </label>
 
                 <label className="block">
-                    <span className="text-gray-700">Kader</span>
+                    <span className="text-gray-700">Posyandu</span>
                     <select
-                    name="kader"
-                    value={formData.kader}
+                    name="posyandu"
+                    value={formData.posyandu}
                     onChange={handleChange}
                     className="block w-full mt-1 p-2 border border-gray-300 rounded-md"
                     required
                     >
-                    <option value="">Pilih Kader</option>
-                    {kaderOptions.map((kader) => (
-                        <option key={kader.id} value={kader.id}>
-                        {kader.nama}
+                    <option value="">Pilih Posyandu</option>
+                    {posyanduOptions.map((posyandu) => (
+                        <option key={posyandu.id} value={posyandu.id}>
+                        {posyandu.nama}
                         </option>
                     ))}
                     </select>
@@ -302,16 +299,9 @@ const PemeriksaanLansiaForm = () => {
                 </label>
                 </div>
 
-                <div className="flex justify-end">
+                <div className="flex justify-start">
                 <button type="submit" className="text-white bg-blue-500 px-4 py-2 rounded">
-                    {id ? 'Update' : 'Tambah'}
-                </button>
-                <button
-                    type="button"
-                    onClick={handleBackToList}
-                    className="text-gray-700 px-4 py-2 ml-4 rounded"
-                >
-                    Batal
+                    {id ? 'Edit' : 'Tambah'}
                 </button>
                 </div>
             </form>

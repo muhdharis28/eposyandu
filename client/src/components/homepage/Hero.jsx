@@ -1,5 +1,5 @@
 import React from 'react';
-import heroImage from '@/assets/hero.png'; // Import the image
+import heroImage from '@/assets/hero.png';
 import { Link } from 'react-router-dom';
 
 const Hero = () => (
@@ -7,10 +7,10 @@ const Hero = () => (
     <div className="container mx-auto flex flex-col md:flex-row items-center">
       <div className="md:w-1/2 text-left md:pr-10 lg:pr-16">
         <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight mb-10">
-          Selamat Datang Di Website <span className="text-white">ePosyandu Tanjungpinang</span>
+          Selamat Datang Di Website <span className="text-white">SiLaBa Tanjungpinang</span>
         </h2>
         <p className="text-white mt-4 leading-relaxed mb-6">
-          Website posyandu Tanjungpinang menyediakan informasi kesehatan meliputi data balita, ibu hamil, dokumentasi kegiatan dan jadwal kesehatan.
+          <b>SiLaBa (Sistem Lansia dan Balita)</b> Tanjungpinang, menyediakan informasi kesehatan yang mencakup data balita, lansia, ibu hamil, dokumentasi kegiatan, dan jadwal layanan kesehatan.
         </p>
         <Link
           to="/register"

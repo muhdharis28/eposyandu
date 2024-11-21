@@ -100,16 +100,11 @@ router.put('/:id', authenticateToken, async (req, res) => {
             pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
             kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
             kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-            pendidikan_ayah
+            pendidikan_ayah, posyandu
         } = req.body;
 
         const orangTua = await OrangTua.findByPk(req.params.id);
         if (orangTua) {
-            // Ensure the update is within the authenticated user's posyandu
-            // const posyanduId = req.user.posyanduId;
-            // if (orangTua.posyandu !== posyanduId) {
-            //     return res.status(403).json({ error: 'Unauthorized action: OrangTua does not belong to your posyandu.' });
-            // }
 
             await orangTua.update({
                 no_kk, nik_ibu, nama_ibu, tempat_lahir_ibu, tanggal_lahir_ibu, alamat_ktp_ibu, kelurahan_ktp_ibu,
@@ -118,7 +113,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
                 pendidikan_ibu, nik_ayah, nama_ayah, tempat_lahir_ayah, tanggal_lahir_ayah, alamat_ktp_ayah, kelurahan_ktp_ayah,
                 kecamatan_ktp_ayah, kota_ktp_ayah, provinsi_ktp_ayah, alamat_domisili_ayah, kelurahan_domisili_ayah,
                 kecamatan_domisili_ayah, kota_domisili_ayah, provinsi_domisili_ayah, no_hp_ayah, email_ayah, pekerjaan_ayah,
-                pendidikan_ayah, posyandu: posyanduId  // Ensure the posyandu is updated
+                pendidikan_ayah, posyandu: posyandu
             });
             res.status(200).json(orangTua);
         } else {

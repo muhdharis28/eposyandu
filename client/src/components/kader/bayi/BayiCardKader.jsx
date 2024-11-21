@@ -9,7 +9,7 @@ import { FaPlus, FaPrint } from 'react-icons/fa';
 import ClipLoader from 'react-spinners/ClipLoader'; // Loading spinner
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import posyandu from '@/assets/posyandu.png';
+import posyandu from '@/assets/silaba.png';
 
 const BayiCardKader = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
@@ -72,7 +72,7 @@ const BayiCardKader = () => {
     // Add title next to the logo
     doc.setFontSize(18);
     doc.setTextColor('#007ACC'); // Set color similar to the blue in the header
-    doc.text('ePosyandu Tanjungpinang', 40, 20); // Title beside logo
+    doc.text('SiLaBa Tanjungpinang', 40, 20); // Title beside logo
   
     // Line under the header
     doc.setLineWidth(1);

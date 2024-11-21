@@ -4,7 +4,6 @@ const Wali = require('../models/wali');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Wali record
 router.post('/', async (req, res) => {
     try {
         const {

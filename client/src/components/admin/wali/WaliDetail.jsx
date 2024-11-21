@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getWaliById } from '../../WaliService'; // Import your service for fetching Wali details
-import { getJobById } from '../../PekerjaanService'; // Import Pekerjaan service to fetch name
-import { getPendidikanById } from '../../PendidikanService'; // Import Pendidikan service to fetch name
-import TopBar from '../TopBar'; // Adjust the path if necessary
-import SideBar from '../SideBar'; // Adjust the path if necessary
-import { useSidebar } from '../../SideBarContext'; // Use context for sidebar state
+import { getWaliById } from '../../WaliService';
+import { getJobById } from '../../PekerjaanService';
+import { getPendidikanById } from '../../PendidikanService';
+import TopBar from '../TopBar';
+import SideBar from '../SideBar';
+import { useSidebar } from '../../SideBarContext';
 
 const WaliDetail = () => {
-  const { id } = useParams(); // Assuming you get Wali ID from the route params
+  const { id } = useParams();
   const [wali, setWali] = useState(null);
   const [pekerjaan, setPekerjaan] = useState('');
   const [pendidikan, setPendidikan] = useState('');
@@ -23,16 +23,16 @@ const WaliDetail = () => {
 
   const fetchWaliDetail = async () => {
     try {
-      const result = await getWaliById(id); // Fetch Wali data by ID
-      setWali(result.data); // Set the retrieved Wali data
-      // Fetch pekerjaan and pendidikan names by their IDs
+      const result = await getWaliById(id);
+      setWali(result.data);
+    
       if (result.data.pekerjaan_wali) {
         const pekerjaanResult = await getJobById(result.data.pekerjaan_wali);
-        setPekerjaan(pekerjaanResult.data.nama); // Assuming the name is under `nama`
+        setPekerjaan(pekerjaanResult.data.nama);
       }
       if (result.data.pendidikan_wali) {
         const pendidikanResult = await getPendidikanById(result.data.pendidikan_wali);
-        setPendidikan(pendidikanResult.data.nama); // Assuming the name is under `nama`
+        setPendidikan(pendidikanResult.data.nama);
       }
     } catch (error) {
       console.error('Failed to fetch wali details:', error);
@@ -40,7 +40,7 @@ const WaliDetail = () => {
   };
 
   const handleBackToList = () => {
-    navigate('/wali'); // Navigate back to Wali list
+    navigate('/wali');
   };
 
   if (!wali) {

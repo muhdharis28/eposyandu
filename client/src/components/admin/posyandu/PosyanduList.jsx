@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { InputText } from 'primereact/inputtext'; // For search input
-import { useNavigate } from 'react-router-dom'; // For navigation
-import { getPosyandus, deletePosyandu } from '../../PosyanduService'; // Your API services
+import { InputText } from 'primereact/inputtext';
+import { useNavigate } from 'react-router-dom';
+import { getPosyandus, deletePosyandu } from '../../PosyanduService';
 
 const PosyanduList = () => {
   const [jobs, setPosyandus] = useState([]);
-  const [globalFilter, setGlobalFilter] = useState(''); // For global filtering
+  const [globalFilter, setGlobalFilter] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Initialize navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadPosyandus();
@@ -32,11 +32,11 @@ const PosyanduList = () => {
   };
 
   const handleAddPosyandu = () => {
-    navigate('/posyandu/baru'); // Navigate to the create posyandu form
+    navigate('/posyandu/baru');
   };
 
   const handleEditPosyandu = (id) => {
-    navigate(`/posyandu/edit/${id}`); // Navigate to the edit posyandu form
+    navigate(`/posyandu/edit/${id}`);
   };
 
   const handleDelete = async (id) => {
@@ -53,21 +53,27 @@ const PosyanduList = () => {
   };
 
   const handleViewDetail = (id) => {
-    navigate(`/posyandu/${id}`); // Navigate to the detail page
+    navigate(`/posyandu/${id}`);
   };
 
   const onGlobalFilterChange = (e) => {
-    setGlobalFilter(e.target.value); // Update filter state
+    setGlobalFilter(e.target.value);
   };
 
   const renderHeader = () => {
     return (
       <div className="flex justify-between items-center mb-4">
+        <Button
+          className="bg-green-500 text-white hover:bg-green-600 rounded-md flex items-center"
+          onClick={handleAddPosyandu}
+        >
+          <span className="fas fa-plus mr-2"></span> Tambah
+        </Button>
         <InputText
           value={globalFilter}
           onChange={onGlobalFilterChange}
-          placeholder="Keyword Search"
-          className="p-inputtext-sm w-full md:w-30rem"
+          placeholder="Cari Kata Kunci"
+          className="p-inputtext-sm md:w-30rem ml-3"
         />
       </div>
     );
@@ -77,23 +83,17 @@ const PosyanduList = () => {
     return (
       <div className="flex justify-end gap-2">
         <Button
-          label="Detail"
-          icon="pi pi-eye"
-          className="p-button-text bg-blue-400 text-white hover:bg-blue-500 px-3 py-2"
-          onClick={() => handleViewDetail(rowData.id)}
-        />
-        <Button
-          label="Edit"
-          icon="pi pi-pencil"
-          className="p-button-text bg-blue-500 text-white hover:bg-blue-600 px-3 py-2"
-          onClick={() => handleEditPosyandu(rowData.id)}
-        />
-        <Button
-          label="Delete"
-          icon="pi pi-trash"
-          className="p-button-text bg-red-500 text-white hover:bg-red-600 px-3 py-2"
-          onClick={() => handleDelete(rowData.id)}
-        />
+        className="p-button-text bg-blue-400 text-white hover:bg-blue-500"
+        onClick={() => handleViewDetail(rowData.id)}
+      ><span className="fas fa-circle-info mr-3"></span> Detail </Button>
+      <Button
+        className="p-button-text bg-blue-500 text-white hover:bg-blue-600"
+        onClick={() => handleEditPosyandu(rowData.id)}
+      ><span className="fas fa-edit mr-3"></span> Edit </Button>
+      <Button
+        className="p-button-text bg-red-500 text-white hover:bg-red-600"
+        onClick={() => handleDelete(rowData.id)}
+      ><span className="fas fa-trash mr-3"></span> Hapus </Button>
       </div>
     );
   };
@@ -102,12 +102,6 @@ const PosyanduList = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Data Master Posyandu</h2>
-        <Button
-          label="Tambah Posyandu"
-          icon="pi pi-plus"
-          className="bg-green-500 text-white hover:bg-green-600 p-2 rounded-md"
-          onClick={handleAddPosyandu}
-        />
       </div>
 
       {error && <p className="text-red-500 mb-4">{error}</p>}
@@ -117,7 +111,7 @@ const PosyanduList = () => {
         paginator
         rows={10}
         globalFilter={globalFilter}
-        emptyMessage="No posyandu found."
+        emptyMessage="Data tidak ditemukan"
         header={renderHeader()}
       >
         <Column

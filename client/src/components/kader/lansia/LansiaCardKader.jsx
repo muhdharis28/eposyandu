@@ -8,7 +8,7 @@ import { FaPlus, FaPrint } from 'react-icons/fa'; // Icon for the Add button
 import ClipLoader from 'react-spinners/ClipLoader'; // Import a spinner for loading state
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import posyandu from '@/assets/posyandu.png';
+import posyandu from '@/assets/silaba.png';
 
 const LansiaCard = () => {
   const { isSidebarCollapsed, toggleSidebar } = useSidebar();
@@ -63,7 +63,7 @@ const LansiaCard = () => {
     // Add title next to the logo
     doc.setFontSize(18);
     doc.setTextColor('#007ACC'); // Set color similar to the blue in the header
-    doc.text('ePosyandu Tanjungpinang', 40, 20); // Title beside logo
+    doc.text('SiLaBa Tanjungpinang', 40, 20); // Title beside logo
 
     // Line under the header
     doc.setLineWidth(1);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios'; // Make sure to import axios
 import user from '@/assets/user-avatar.png';
 import { getPenggunaById, updatePengguna } from '../../PenggunaService';
+import api from '../../../api'; // Import the Axios instance
 
 const Profile = () => {
   const userId = localStorage.getItem('userId');
@@ -18,8 +19,7 @@ const Profile = () => {
   const [fotoKKPreview, setFotoKKPreview] = useState(null);
   const [uploadedFileUrl, setUploadedFileUrl] = useState('');
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [isLoading,
-    setIsLoading] = useState(true);
+  const [isRequested, setIsRequested] = useState(false);
 
   useEffect(() => {
     const fetchPengguna = async () => {
@@ -34,6 +34,9 @@ const Profile = () => {
           no_kk: response.data.no_kk || '',
           email: response.data.email || '',
         });
+
+        // Check if there is a deletion request
+        await checkDeletionRequest(response.data);
       } catch (error) {
         console.error('Error fetching pengguna:', error);
       }
@@ -41,6 +44,44 @@ const Profile = () => {
 
     fetchPengguna();
   }, [userId]);
+
+  const checkDeletionRequest = async (penggunaData) => {
+    try {
+      const response = await api.get(`/penghapusan-data/${penggunaData.id}`); // Adjust the endpoint accordingly
+      const deletionRequests = response.data; // Assuming response.data is an array
+      console.log(deletionRequests);
+      // Check if the last deletion request status is 'diminta'
+      if (deletionRequests.length > 0) {
+        const lastRequest = deletionRequests[deletionRequests.length - 1];
+        setIsRequested(lastRequest.status === 'diminta');
+      }
+    } catch (error) {
+      console.error('Error checking deletion requests:', error);
+    }
+  };
+
+  const requestDataDeletion = async () => {
+    const isConfirmed = window.confirm('Are you sure you want to request data deletion? This action cannot be undone.');
+
+    if (!isConfirmed) {
+      return; // If the user cancels, exit the function
+    }
+
+    try {
+      const response = await api.post('/penghapusan-data', {
+        pengguna: userId,
+        nama: userDetails.nama,
+        status: 'diminta'
+      });
+      if (response.status === 201) {
+        setIsRequested(true);
+        alert('Request for data deletion has been submitted to admin.');
+      }
+    } catch (error) {
+      console.error('Failed to request data deletion:', error);
+      alert('Failed to request data deletion.');
+    }
+  };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -106,54 +147,64 @@ const Profile = () => {
             : 'bg-red-200 text-red-800'}`}>
           {pengguna.verifikasi ? 'Terverifikasi' : 'Belum Diverifikasi'}
         </span>
-      </div>
 
+        {/* Button to request data deletion */}
+        <button
+          onClick={requestDataDeletion}
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md"
+          disabled={isRequested}>
+          {isRequested ? 'Request Submitted' : 'Request Delete Data'}
+        </button>
+      </div>
+      <div
+        className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 mt-4">
+        <p className="text-sm font-bold">
+          <span className="text-red-500">*</span>
+          Wajib diisi
+        </p>
+      </div>
       <div className="mt-6 space-y-4">
         <div>
-          <label className="block text-sm font-semibold">NIK</label>
+          <label className="block text-sm font-semibold">NIK
+            <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             value={userDetails.no_ktp}
-            onChange={(e) => setUserDetails({
-              ...userDetails,
-              no_ktp: e.target.value
-            })}
+            onChange={(e) => setUserDetails({ ...userDetails, no_ktp: e.target.value })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold">No Kartu Keluarga</label>
+          <label className="block text-sm font-semibold">No Kartu Keluarga
+            <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             value={userDetails.no_kk}
-            onChange={(e) => setUserDetails({
-              ...userDetails,
-              no_kk: e.target.value
-            })}
+            onChange={(e) => setUserDetails({ ...userDetails, no_kk: e.target.value })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold">Nama</label>
+          <label className="block text-sm font-semibold">Nama
+            <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             value={userDetails.nama}
-            onChange={(e) => setUserDetails({
-              ...userDetails,
-              nama: e.target.value
-            })}
+            onChange={(e) => setUserDetails({ ...userDetails, nama: e.target.value })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold">No Handphone</label>
+          <label className="block text-sm font-semibold">No Handphone
+            <span className="text-red-500">*</span>
+          </label>
           <input
             type="text"
             value={userDetails.no_hp}
-            onChange={(e) => setUserDetails({
-              ...userDetails,
-              no_hp: e.target.value
-            })}
+            onChange={(e) => setUserDetails({ ...userDetails, no_hp: e.target.value })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"
           />
         </div>
@@ -162,15 +213,14 @@ const Profile = () => {
           <input
             type="text"
             value={userDetails.email}
-            onChange={(e) => setUserDetails({
-              ...userDetails,
-              email: e.target.value
-            })}
+            onChange={(e) => setUserDetails({ ...userDetails, email: e.target.value })}
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold">Foto KK</label>
+          <label className="block text-sm font-semibold">Foto KK
+            <span className="text-red-500">*</span>
+          </label>
           <input
             type="file"
             className="mt-1 p-2 w-full border border-gray-300 rounded-md"
@@ -196,8 +246,7 @@ const Profile = () => {
         </button>
 
         {isPreviewOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
             <div className="relative">
               <button
                 className="absolute top-2 right-2 text-white text-2xl"

@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '@/assets/posyandu.png';
+import logo from '@/assets/silaba.png';
 import { Link } from 'react-router-dom';
 
 const Footer = () => (
@@ -9,9 +9,9 @@ const Footer = () => (
       <div className="sm:flex sm:items-center sm:justify-between">
         <a href="#" className="flex items-center mb-4 sm:mb-0 space-x-4">
           <div className="bg-white h-14 w-14 rounded-2xl flex items-center justify-center shadow-lg">
-            <img src={logo} className="h-10" alt="ePosyandu Tanjungpinang Logo" />
+            <img src={logo} className="h-10" alt="SiLaBa Tanjungpinang Logo" />
           </div>
-          <span className="self-center text-xl font-semibold whitespace-nowrap">ePosyandu Tanjungpinang</span>
+          <span className="self-center text-xl font-semibold whitespace-nowrap">SiLaBa Tanjungpinang</span>
         </a>
         <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-200 sm:mb-0">
           <li>
@@ -30,7 +30,7 @@ const Footer = () => (
       </div>
       <hr className="my-6 border-gray-500 sm:mx-auto dark:border-gray-400 lg:my-8" />
       <span className="block text-sm text-gray-200 text-center mt-4">
-        &copy; {new Date().getFullYear()} <a href="#" className="hover:underline">ePosyandu Tanjungpinang™</a>. All Rights Reserved.
+        &copy; {new Date().getFullYear()} <a href="#" className="hover:underline">SiLaBa Tanjungpinang™</a>. All Rights Reserved.
       </span>
       <span className="block text-sm text-gray-200 text-center">
         Designed and developed by STTI

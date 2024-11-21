@@ -26,8 +26,8 @@ const PemeriksaanLansiaKaderForm = () => {
     keterangan: '',
     riwayat_obat: '',
     riwayat_penyakit: '',
-    kader: '', // Will be automatically filled with logged-in user
-    dokter: ''
+    kader: null,
+    dokter: null
   });
 
   const [lansiaOptions, setLansiaOptions] = useState([]);
@@ -35,13 +35,12 @@ const PemeriksaanLansiaKaderForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Get logged-in user ID from localStorage
   useEffect(() => {
     const loggedInUserId = localStorage.getItem('userId'); // Assuming userId is stored in localStorage
     if (loggedInUserId) {
       setFormData((prevData) => ({
         ...prevData,
-        kader: loggedInUserId // Set the kader field to the logged-in user ID
+        kader: loggedInUserId
       }));
     }
   }, []);
@@ -91,9 +90,8 @@ const PemeriksaanLansiaKaderForm = () => {
 
   const validateForm = () => {
     let newErrors = {};
-    if (!formData.lansia) newErrors.lansia = 'Lansia is required';
-    if (!formData.tanggal_kunjungan) newErrors.tanggal_kunjungan = 'Tanggal Kunjungan is required';
-    if (!formData.dokter) newErrors.dokter = 'Dokter is required';
+    if (!formData.lansia) newErrors.lansia = 'Lansia wajib diisi';
+    if (!formData.tanggal_kunjungan) newErrors.tanggal_kunjungan = 'Tanggal Kunjungan wajib diisi';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -132,15 +130,23 @@ const PemeriksaanLansiaKaderForm = () => {
 
           <div className="bg-white p-6 rounded-lg shadow-lg">
             <h1 className="text-2xl font-bold mb-4">{id ? 'Edit Pemeriksaan Lansia' : 'Tambah Pemeriksaan Lansia'}</h1>
+            <div
+              className="bg-yellow-50 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4">
+              <p className="text-sm font-bold">
+                <span className="text-red-500">*</span>
+                Wajib diisi
+              </p>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold">Lansia</label>
+                  <label className="block text-sm font-semibold">Lansia
+                    <span className="text-red-500">*</span>
+                  </label>
                   <select
                     name="lansia"
                     value={formData.lansia}
                     onChange={handleChange}
-                    required
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   >
                     <option value="">Pilih Lansia</option>
@@ -152,14 +158,25 @@ const PemeriksaanLansiaKaderForm = () => {
                   </select>
                   {errors.lansia && <p className="text-red-500 text-sm">{errors.lansia}</p>}
                 </div>
-
+                <div>
+                  <label className="block text-sm font-semibold">Tanggal Kunjungan
+                    <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    name="tanggal_kunjungan"
+                    value={formData.tanggal_kunjungan}
+                    onChange={handleChange}
+                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
+                  />
+                  {errors.tanggal_kunjungan && <p className="text-red-500 text-sm">{errors.tanggal_kunjungan}</p>}
+                </div>
                 <div>
                   <label className="block text-sm font-semibold">Dokter</label>
                   <select
                     name="dokter"
                     value={formData.dokter}
                     onChange={handleChange}
-                    required
                     className="mt-1 p-2 w-full border border-gray-300 rounded-md"
                   >
                     <option value="">Pilih Dokter</option>
@@ -171,20 +188,6 @@ const PemeriksaanLansiaKaderForm = () => {
                   </select>
                   {errors.dokter && <p className="text-red-500 text-sm">{errors.dokter}</p>}
                 </div>
-
-                <div>
-                  <label className="block text-sm font-semibold">Tanggal Kunjungan</label>
-                  <input
-                    type="date"
-                    name="tanggal_kunjungan"
-                    value={formData.tanggal_kunjungan}
-                    onChange={handleChange}
-                    required
-                    className="mt-1 p-2 w-full border border-gray-300 rounded-md"
-                  />
-                  {errors.tanggal_kunjungan && <p className="text-red-500 text-sm">{errors.tanggal_kunjungan}</p>}
-                </div>
-
                 <div>
                   <label className="block text-sm font-semibold">Berat Badan (kg)</label>
                   <input
@@ -304,20 +307,13 @@ const PemeriksaanLansiaKaderForm = () => {
                 </div>
               </div>
 
-              <div className="mt-6 flex justify-end space-x-4">
+              <div className="mt-6 flex justify-start space-x-4">
                 <button
                   type="submit"
                   className={`px-4 py-2 rounded-lg text-white ${isSubmitting ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Submitting...' : id ? 'Update Pemeriksaan' : 'Tambah Pemeriksaan'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/kader-pemeriksaan-lansia')}
-                  className="px-4 py-2 rounded-lg bg-gray-500 text-white"
-                >
-                  Batal
+                  {isSubmitting ? 'Memproses...' : id ? 'Edit' : 'Tambah'}
                 </button>
               </div>
             </form>

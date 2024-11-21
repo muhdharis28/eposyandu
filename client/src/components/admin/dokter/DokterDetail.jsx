@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getDoctorById } from '../../DokterService'; // Assuming you have this API service
-import TopBar from '../TopBar'; // Adjust the path as necessary
-import SideBar from '../SideBar'; // Adjust the path as necessary
-import { useSidebar } from '../../SideBarContext'; // Import the sidebar context
+import { getDoctorById } from '../../DokterService';
+import TopBar from '../TopBar';
+import SideBar from '../SideBar';
+import { useSidebar } from '../../SideBarContext';
 
 const DokterDetail = () => {
   const { id } = useParams();
   const [doctor, setDoctor] = useState(null);
   const [error, setError] = useState('');
-  const { isSidebarCollapsed, toggleSidebar } = useSidebar(); // Use context for sidebar state
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const DokterDetail = () => {
 
   const loadDoctorDetail = async () => {
     try {
-      const result = await getDoctorById(id); // API call to get doctor details
+      const result = await getDoctorById(id);
       setDoctor(result.data);
     } catch (error) {
       setError('Failed to load doctor details.');
@@ -35,7 +35,7 @@ const DokterDetail = () => {
   }
 
   const handleBackToList = () => {
-    navigate('/dokter'); // Navigate back to the list
+    navigate('/dokter');
   };
 
   return (
@@ -65,7 +65,7 @@ const DokterDetail = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <img
-                  src="https://via.placeholder.com/150" // Placeholder image, replace with actual image if available
+                  src="https://via.placeholder.com/150"
                   alt={doctor.nama}
                   className="w-24 h-24 rounded-full object-cover shadow-md"
                 />

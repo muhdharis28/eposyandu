@@ -5,22 +5,25 @@ const Pengguna = require('../models/pengguna');
 const Posyandu = require('../models/posyandu');
 const { authenticateToken, authorizeRoles } = require('./middleware/authMiddleware');
 
-// Create a new Kegiatan record
 router.post('/', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
-        const { nama, tanggal, jenis, deskripsi, kader } = req.body;
-
-        // Ensure that the kader belongs to the same posyandu as the authenticated user
-        const authenticatedUserPosyanduId = req.user.posyanduId;
-        const kaderUser = await Pengguna.findByPk(kader, {
-            include: [{ model: Posyandu, as: 'posyanduDetail' }]
-        });
-
-        if (kaderUser.posyandu !== authenticatedUserPosyanduId) {
-            return res.status(403).json({ error: 'Unauthorized action: kader does not belong to your posyandu.' });
+        const { nama, tanggal, jenis, deskripsi, kader, posyandu } = req.body;
+        
+        if (req.user.role !== 'admin') {
+            const authenticatedUserPosyanduId = req.user.posyanduId;
+            if (authenticatedUserPosyanduId !== posyandu) {
+                return res.status(403).json({ error: 'Unauthorized action: posyandu mismatch.' });
+            }
         }
 
-        const newKegiatan = await Kegiatan.create({ nama, tanggal, jenis, deskripsi, kader });
+        const newKegiatan = await Kegiatan.create({
+            nama,
+            tanggal,
+            jenis,
+            deskripsi,
+            kader,
+            posyandu,
+        });
         res.status(201).json(newKegiatan);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -31,17 +34,9 @@ router.get('/all', async (req, res) => {
     try {
         const kegiatans = await Kegiatan.findAll({
             include: [
-                {
-                    model: Pengguna,
-                    as: 'kaderDetail',
-                    include: [
-                        {
-                            model: Posyandu,
-                            as: 'posyanduDetail'
-                        }
-                    ]
-                }
-            ]
+                { model: Pengguna, as: 'kaderDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
+            ],
         });
         res.status(200).json(kegiatans);
     } catch (error) {
@@ -49,138 +44,114 @@ router.get('/all', async (req, res) => {
     }
 });
 
-// Get all Kegiatan records associated with the authenticated user's posyandu
 router.get('/', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
-        const userRole = req.user.role; // Get the role of the authenticated user
+        const userRole = req.user.role;
 
-        // Define the base include options
-        const includeOptions = {
-            model: Pengguna,
-            as: 'kaderDetail',
-            include: [
-                {
-                    model: Posyandu,
-                    as: 'posyanduDetail'
-                }
-            ]
-        };
 
-        // Apply the posyandu filter only if the user is not an admin
-        if (userRole !== 'admin') {
-            includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
-        }
+        const whereClause = userRole === 'admin' ? {} : { posyanduId };
 
         const kegiatans = await Kegiatan.findAll({
-            include: [includeOptions]
+            where: whereClause,
+            include: [
+                { model: Pengguna, as: 'kaderDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
+            ],
         });
-        
         res.status(200).json(kegiatans);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
+router.get('/dashboard', async (req, res) => {
+    try {
+        const { posyandu } = req.query;
+        const whereClause = posyandu ? { posyandu } : {};
 
-// Get a specific Kegiatan record by ID, filtered by posyandu
+        const kegiatans = await Kegiatan.findAll({
+            where: whereClause,
+            include: [
+                { model: Pengguna, as: 'kaderDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
+            ],
+        });
+        res.status(200).json(kegiatans);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
-        const userRole = req.user.role; // Get the role of the authenticated user
+        const userRole = req.user.role;
 
-        const includeOptions = {
-            model: Pengguna,
-            as: 'kaderDetail',
+
+        const whereClause = userRole === 'admin' ? { id: req.params.id } : { id: req.params.id, posyanduId };
+
+        const kegiatan = await Kegiatan.findOne({
+            where: whereClause,
             include: [
-                {
-                    model: Posyandu,
-                    as: 'posyanduDetail'
-                }
-            ]
-        };
-
-        // Apply posyandu filter only if the user is not an admin
-        if (userRole !== 'admin') {
-            includeOptions.where = { '$kaderDetail.posyandu$': posyanduId };
-        }
-
-        const kegiatan = await Kegiatan.findByPk(req.params.id, { include: [includeOptions] });
-
-        if (kegiatan) {
-            res.status(200).json(kegiatan);
-        } else {
-            res.status(404).json({ error: 'Kegiatan not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Update a specific Kegiatan record by ID
-router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
-    try {
-        const { nama, tanggal, jenis, deskripsi } = req.body;
-
-        const posyanduId = req.user.posyanduId;
-        const kegiatan = await Kegiatan.findByPk(req.params.id, {
-            include: [
-                {
-                    model: Pengguna,
-                    as: 'kaderDetail',
-                    include: [
-                        {
-                            model: Posyandu,
-                            as: 'posyanduDetail',
-                            where: { id: posyanduId }
-                        }
-                    ]
-                }
-            ]
+                { model: Pengguna, as: 'kaderDetail' },
+                { model: Posyandu, as: 'posyanduDetail' },
+            ],
         });
 
-        if (kegiatan) {
-            kegiatan.nama = nama;
-            kegiatan.tanggal = tanggal;
-            kegiatan.jenis = jenis;
-            kegiatan.deskripsi = deskripsi;
-            await kegiatan.save();
-            res.status(200).json(kegiatan);
-        } else {
-            res.status(404).json({ error: 'Kegiatan not found' });
+        if (!kegiatan) {
+            return res.status(404).json({ error: 'Kegiatan not found' });
         }
+
+        res.status(200).json(kegiatan);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Delete a specific Kegiatan record by ID
+router.put('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
+    try {
+        const { nama, tanggal, jenis, deskripsi, kader, posyandu } = req.body;
+        const posyanduId = req.user.posyanduId;
+        const userRole = req.user.role;
+
+        const whereClause = userRole === 'admin' ? { id: req.params.id } : { id: req.params.id, posyanduId };
+
+        const kegiatan = await Kegiatan.findOne({ where: whereClause });
+
+        if (!kegiatan) {
+            return res.status(404).json({ error: 'Kegiatan not found' });
+        }
+
+        kegiatan.nama = nama;
+        kegiatan.tanggal = tanggal;
+        kegiatan.jenis = jenis;
+        kegiatan.deskripsi = deskripsi;
+        kegiatan.kader = kader;
+        kegiatan.posyandu = posyandu;
+        await kegiatan.save();
+
+        res.status(200).json(kegiatan);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.delete('/:id', authenticateToken, authorizeRoles('admin', 'kader'), async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
+        const userRole = req.user.role;
 
-        const kegiatan = await Kegiatan.findByPk(req.params.id, {
-            include: [
-                {
-                    model: Pengguna,
-                    as: 'kaderDetail',
-                    include: [
-                        {
-                            model: Posyandu,
-                            as: 'posyanduDetail',
-                            where: { id: posyanduId }
-                        }
-                    ]
-                }
-            ]
-        });
+        const whereClause = userRole === 'admin' ? { id: req.params.id } : { id: req.params.id, posyanduId };
 
-        if (kegiatan) {
-            await kegiatan.destroy();
-            res.status(204).end();
-        } else {
-            res.status(404).json({ error: 'Kegiatan not found' });
+        const kegiatan = await Kegiatan.findOne({ where: whereClause });
+
+        if (!kegiatan) {
+            return res.status(404).json({ error: 'Kegiatan not found' });
         }
+
+        await kegiatan.destroy();
+        res.status(204).end();
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

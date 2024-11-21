@@ -100,7 +100,7 @@ const RegistrationDetails = ({ formData, updateFormData }) => {
                 Detail Pendaftaran
               </h1>
               <h3 className="text-xl font-semibold mb-8 text-center" style={{ color: '#008EB3' }}>
-                Anggota ePosyandu
+                Anggota SiLaBa Tanjungpinang
               </h3>
               <form className="w-full">
                 <div className="mb-6">

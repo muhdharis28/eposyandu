@@ -59,8 +59,8 @@ const Settings = () => {
               <div className="bg-white p-6 rounded-xl shadow-lg w-2/3">
                 <Tabs>
                   <TabList>
-                    <Tab>Orangtua</Tab>
-                    <Tab>Wali</Tab>
+                    <Tab>Data sebagai Orangtua</Tab>
+                    <Tab>Data sebagai Wali</Tab>
                   </TabList>
 
                   <TabPanel>
