@@ -59,7 +59,6 @@ PemeriksaanLansia.init({
             model: Pengguna,
             key: 'id'
         },
-        allowNull: false,
     },
     dokter: {
         type: DataTypes.INTEGER,
