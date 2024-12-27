@@ -33,8 +33,8 @@ const AddLansiaForm = () => {
     provinsi_domisili_lansia: null,
     no_hp_lansia: '',
     email_lansia: '',
-    pekerjaan_lansia: '',
-    pendidikan_lansia: '',
+    pekerjaan_lansia: null,
+    pendidikan_lansia: null,
     status_pernikahan_lansia: '',
     posyandu: null
   });
