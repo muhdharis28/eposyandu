@@ -10,7 +10,6 @@ const { authenticateToken, authorizeRoles } = require('./middleware/authMiddlewa
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-// Create new Pengguna (admin only)
 router.post('/', async (req, res) => {
     try {
         const {
@@ -39,7 +38,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// Login route
 router.post('/login', async (req, res) => {
     try {
         const { no_hp, kata_sandi } = req.body;
@@ -83,11 +81,10 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Get all pengguna (scoped by posyandu)
 router.get('/', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
-        const userRole = req.user.role;  // Get the role of the authenticated user
+        const userRole = req.user.role; 
         const { orangtua, wali } = req.query;
 
         const filterCondition = {
@@ -96,15 +93,15 @@ router.get('/', authenticateToken, async (req, res) => {
                 { model: Wali, as: 'waliDetail' },
                 { model: Posyandu, as: 'posyanduDetail' },
             ],
-            where: {} // Initialize an empty where condition
+            where: {}
         };
 
-        // Apply posyandu filter only if the user is not an admin
+    
         if (userRole !== 'admin') {
             filterCondition.where.posyandu = posyanduId;
         }
 
-        // Apply additional filters if orangtua or wali is provided
+    
         if (orangtua) {
             filterCondition.where.orangtua = orangtua;
         }
@@ -119,11 +116,10 @@ router.get('/', authenticateToken, async (req, res) => {
     }
 });
 
-// Get pengguna by ID (scoped by posyandu)
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const posyanduId = req.user.posyanduId;
-        const userRole = req.user.role;  // Get the role of the authenticated user
+        const userRole = req.user.role; 
         console.log(req.user.posyanduId)
         const filterCondition = {
             include: [
@@ -133,7 +129,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
             ]
         };
 
-        // Apply posyandu filter only if the user is not an admin
+    
         if (userRole !== 'admin') {
             filterCondition.where = { posyandu: posyanduId };
         }
@@ -150,7 +146,6 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// Check phone number availability
 router.post('/check-phone', async (req, res) => {
     try {
         const { no_hp } = req.body;
@@ -161,7 +156,6 @@ router.post('/check-phone', async (req, res) => {
     }
 });
 
-// Check NIK availability
 router.post('/check-nik', async (req, res) => {
     try {
         const { no_ktp } = req.body;
@@ -175,7 +169,7 @@ router.post('/check-nik', async (req, res) => {
 router.get('/orangtua', async (req, res) => {
     try {
         console.log('Fetching user by orangtua ID');
-        const { orangtua } = req.query; // Use req.query for GET request
+        const { orangtua } = req.query;
         if (!orangtua) {
             return res.status(400).json({ error: 'Orangtua ID is required' });
         }
@@ -188,7 +182,6 @@ router.get('/orangtua', async (req, res) => {
     }
 });
 
-// Update pengguna by ID (scoped by posyandu)
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const {
@@ -226,70 +219,64 @@ router.put('/:id', authenticateToken, async (req, res) => {
 
 router.post('/:id/orangtua', authenticateToken, async (req, res) => {
     try {
-        const { orangtua } = req.body; // Extract the orangtua field from the request body
-        const posyanduId = req.user.posyanduId; // Get the posyanduId of the authenticated user
-        const user = await Pengguna.findByPk(req.params.id); // Find the user by the provided id
+        const { orangtua } = req.body;
+        const posyanduId = req.user.posyanduId;
+        const user = await Pengguna.findByPk(req.params.id);
         
-        if (user && user.posyandu === posyanduId) { // Check if the user exists and belongs to the same posyandu
-            // Update only the orangtua field
+        if (user && user.posyandu === posyanduId) {
+        
             console.log('555',orangtua)
             user.orangtua = orangtua;
-            await user.save(); // Save the updated user
+            await user.save();
 
-            res.status(200).json(user); // Send the updated user object as a response
+            res.status(200).json(user);
         } else {
-            res.status(404).json({ error: 'Pengguna not found or unauthorized' }); // Handle case where user is not found or unauthorized
+            res.status(404).json({ error: 'Pengguna not found or unauthorized' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message }); // Handle any errors
+        res.status(500).json({ error: error.message });
     }
 });
 
 router.post('/:id/wali', authenticateToken, async (req, res) => {
     try {
-        const { wali } = req.body; // Extract the wali field from the request body
-        const posyanduId = req.user.posyanduId; // Get the posyanduId of the authenticated user
-        const user = await Pengguna.findByPk(req.params.id); // Find the user by the provided id
+        const { wali } = req.body;
+        const posyanduId = req.user.posyanduId;
+        const user = await Pengguna.findByPk(req.params.id);
 
-        if (user && user.posyandu === posyanduId) { // Check if the user exists and belongs to the same posyandu
-            // Update only the wali field
+        if (user && user.posyandu === posyanduId) {
+        
             user.wali = wali;
-            await user.save(); // Save the updated user
+            await user.save();
 
-            res.status(200).json(user); // Send the updated user object as a response
+            res.status(200).json(user);
         } else {
-            res.status(404).json({ error: 'Pengguna not found or unauthorized' }); // Handle case where user is not found or unauthorized
+            res.status(404).json({ error: 'Pengguna not found or unauthorized' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message }); // Handle any errors
+        res.status(500).json({ error: error.message });
     }
 });
 
 router.post('/:id/verifikasi', authenticateToken, async (req, res) => {
     try {
-        const user = await Pengguna.findByPk(req.params.id); // Find the user by the provided id
+        const user = await Pengguna.findByPk(req.params.id);
 
         user.verifikasi = true;
-        await user.save(); // Save the updated user
+        await user.save();
 
-        res.status(200).json(user); // Send the updated user object as a response
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: error.message }); // Handle any errors
+        res.status(500).json({ error: error.message });
     }
 });
 
-// Delete pengguna by ID (admin only, scoped by posyandu)
 router.delete('/:id', authenticateToken, authorizeRoles('admin'), async (req, res) => {
     try {
-        const posyanduId = req.user.posyanduId;
+        
         const user = await Pengguna.findByPk(req.params.id);
-
-        if (user && user.posyandu === posyanduId) {
-            await user.destroy();
-            res.status(204).end();
-        } else {
-            res.status(404).json({ error: 'Pengguna not found or unauthorized' });
-        }
+        await user.destroy();
+        res.status(204).end();
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
