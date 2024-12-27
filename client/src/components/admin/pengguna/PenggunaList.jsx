@@ -204,7 +204,7 @@ const PenggunaList = () => {
       <div className="flex justify-end gap-2">
         <Button
           className="p-button-text bg-blue-500 text-white hover:bg-blue-600"
-          onClick={() => handleEditKegiatan(rowData.id)}
+          onClick={() => handleEditPengguna(rowData.id)}
         >
           <span className="fas fa-edit mr-3"></span> Edit
         </Button>

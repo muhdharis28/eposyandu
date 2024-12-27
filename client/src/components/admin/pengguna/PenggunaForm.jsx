@@ -186,6 +186,7 @@ const PenggunaForm = () => {
                   onChange={handleChange}
                   required
                 >
+                  <option value="">Pilih Role</option>
                   <option value="kader">Kader</option>
                   <option value="admin">Admin</option>
                 </select>
