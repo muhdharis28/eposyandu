@@ -36,7 +36,7 @@ const AddLansiaForm = () => {
     email_lansia: '',
     pekerjaan_lansia: null,
     pendidikan_lansia: null,
-    status_pernikahan_lansia: '',
+    status_pernikahan_lansia: null,
     posyandu: null
   });
 
@@ -328,7 +328,7 @@ const AddLansiaForm = () => {
                     <option value="">Pilih Wali</option>
                     {waliOptions.map((wali) => (
                       <option key={wali.id} value={wali.id}>
-                        {wali.nama} ({wali.no_hp})
+                        {wali.nama_wali} ({wali.no_hp})
                       </option>
                     ))}
                   </select>
