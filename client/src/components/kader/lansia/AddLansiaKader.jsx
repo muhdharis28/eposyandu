@@ -6,7 +6,8 @@ import SideBar from '../SideBar';
 import { useSidebar } from '../../SideBarContext';
 import { getJobs } from '../../PekerjaanService'; // Import the service
 import { getPendidikans } from '../../PendidikanService';
-import { getPengguna, getPenggunaById } from '../../PenggunaService';
+import { getPenggunaById } from '../../PenggunaService';
+import { getWali } from '../../WaliService';
 import axios from 'axios';
 
 const AddLansiaForm = () => {
@@ -59,7 +60,7 @@ const AddLansiaForm = () => {
       try {
         const pekerjaanRes = await getJobs();
         const pendidikanRes = await getPendidikans();
-        const waliRes = await getPengguna(); // Fetch all users to be selected as Wali
+        const waliRes = await getWali(); // Fetch all users to be selected as Wali
 
         setPekerjaanOptions(pekerjaanRes.data);
         setPendidikanOptions(pendidikanRes.data);
